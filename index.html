@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>Painel de pedidos</title>
 <style>
-:root{--bg:#f4f4f5;--ink:#2e1c11;--mut:#71717a;--line:#ececee;--dk:#3b2314;--em:#ff5a00}
+:root{--bg:#e8e8e9;--ink:#2e1c11;--mut:#71717a;--line:#ececee;--dk:#3b2314;--em:#ff5a00}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
@@ -18,12 +18,13 @@ button.pri,#f button{background:var(--dk);border-color:var(--dk);color:#fff}butt
 #f{display:grid;gap:10px;max-width:380px;margin:12vh auto 0;padding:24px}#f h1{font-size:28px;margin:0}#erro{color:#b91c1c}
 .stats{padding:14px 18px;font-size:17px;font-weight:600}
 .cfg{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;color:var(--mut);font-size:14px}.cfg select{padding:6px 12px}
-.tabs{display:flex;gap:6px;background:#e4e4e7;border-radius:16px;padding:4px;margin:14px 0}
+.tabs{display:flex;gap:6px;background:#d9d9dc;border-radius:16px;padding:4px;margin:14px 0}
 .tab{flex:1;border:0;background:none;font-weight:500;color:var(--mut);border-radius:12px}.tab.on{background:var(--dk);color:#fff}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}.chip{white-space:nowrap;padding:6px 14px;font-size:14px;color:var(--mut);border-radius:99px}
 .chip.on{background:var(--dk);border-color:var(--dk);color:#fff}.mut{color:var(--mut);font-size:14px}
 .card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px 16px;margin:10px 0;cursor:pointer;box-shadow:0 4px 12px #0000000a}
 .card.cancelado{opacity:.6}.top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.card .bt{flex-wrap:nowrap;gap:6px}.card .bt button{flex:1;min-width:0;padding:10px 6px;font-size:13px;white-space:nowrap}.card .bt button.ic{flex:none;padding:10px 12px}
 .meta{color:var(--mut);font-size:14px;margin-top:2px}.warn{color:var(--em);font-weight:500}.chev{float:right}
 .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px}
 .badge.novo{background:#fff1e8;color:var(--em);border:1px solid #ffd9c2}.badge.preparando{background:var(--dk);color:#fff}.badge.pronto{background:#dcfce7;color:#15803d}
@@ -40,14 +41,21 @@ dialog{border:1px solid var(--line);border-radius:24px;padding:20px;width:min(92
 
 /* ===== Menu hambúrguer ===== */
 .ham{display:grid;gap:4px;align-content:center;width:42px;height:42px;padding:0;justify-items:center;flex:none}
+.rf svg{display:block;transform-origin:50% 50%}.rf.spin svg{animation:sp .6s linear}@keyframes sp{to{transform:rotate(360deg)}}
 .ham i{display:block;width:18px;height:2px;border-radius:2px;background:var(--ink)}
 #ov{position:fixed;inset:0;background:#3b231466;z-index:20;opacity:0;transition:opacity .25s}
 #ov.on{opacity:1}
-#drw{position:fixed;top:0;left:0;bottom:0;width:min(78vw,280px);background:#fff;z-index:21;padding:20px 16px;display:flex;flex-direction:column;gap:8px;transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:0 4px 24px #3b231433}
+#drw{position:fixed;top:0;right:0;bottom:0;width:min(78vw,280px);background:#fff;z-index:21;padding:20px 16px;display:flex;flex-direction:column;gap:8px;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:0 4px 24px #3b231433}#drw{overflow-y:auto}.sairb{margin-top:auto}
+.cfgm{display:grid;gap:10px;margin-top:6px;padding:14px;border:1px solid var(--line);border-radius:16px;font-size:14px}.cfgm label{display:flex;gap:10px;align-items:center;color:var(--mut)}.cfgm input[type=checkbox]{width:20px;height:20px;padding:0;flex:none}
 #drw.on{transform:none}
 #drw h2{margin:0 0 8px;font-size:20px}#drw h2 small{display:block;font-size:12px;font-weight:400;color:var(--mut)}
 .mi{text-align:left;display:flex;align-items:center;gap:10px;font-weight:500;padding:12px 14px}
 .mi.on{background:var(--dk);border-color:var(--dk);color:#fff}
+/* ===== Apagar ===== */
+.tab2{flex:1;border:0;background:none;font-weight:500;color:var(--mut);border-radius:12px;padding:10px 4px}.tab2.on{background:var(--dk);color:#fff}
+.xi{display:flex;gap:12px;align-items:center;margin:8px 0}.xi input{width:22px;height:22px;padding:0;flex:none}
+.xf{display:grid;gap:6px;color:var(--mut);font-size:14px;margin:6px 0}
+button.dng{background:#b91c1c;border-color:#b91c1c;color:#fff;font-weight:600;width:100%;position:sticky;bottom:12px;margin-top:10px}button.dng:disabled{background:#d4a5a5;border-color:#d4a5a5}
 /* ===== Dashboard de pedidos ===== */
 .dbtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}.dbtop h2{margin:0;font-size:22px}
 .dash{padding:16px 18px;margin:12px 0}
@@ -64,21 +72,22 @@ dialog{border:1px solid var(--line);border-radius:24px;padding:20px;width:min(92
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @media print{html,body{background:#fff!important;padding:0!important;margin:0!important}body>*:not(#ticket){display:none!important}#ticket{display:block}@page{margin:0}}
 </style></head><body>
-<header id="hd" hidden><div class="hd"><button id="mn" class="ham" aria-label="Abrir menu"><i></i><i></i><i></i></button><div class="brand"><span class="nm"></span><small>Painel de pedidos</small></div><span id="s" class="pill">…</span><button id="sair" style="margin-left:auto">Sair</button></div></header>
+<header id="hd" hidden><div class="hd"><div class="brand"><span class="nm"></span></div><span id="s" class="pill">…</span><button id="rf" class="ham rf" style="margin-left:auto" aria-label="Atualizar" title="Atualizar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button><button id="mn" class="ham" aria-label="Abrir menu"><i></i><i></i><i></i></button></div></header>
 <form id="f" class="box"><h1 class="nm"></h1><span class="mut">Painel de pedidos</span><input id="em" type="email" placeholder="E-mail" autocomplete="username" required>
 <input id="pw" type="password" placeholder="Senha" autocomplete="current-password" required><button>Entrar</button><div id="erro"></div></form>
 <div id="ov" hidden></div>
-<aside id="drw" hidden><h2><span class="nm"></span><small>Painel de pedidos</small></h2>
-<button class="mi" id="mi-home">🏠 Painel</button><button class="mi" id="mi-ped">📊 Pedidos</button></aside>
+<aside id="drw" hidden><button class="mi" id="mi-home">🏠 Painel</button><button class="mi" id="mi-ped">📊 Pedidos</button><button class="mi" id="mi-del">🗑️ Apagar</button>
+<div class="cfgm"><b>Impressão</b><label><input type="checkbox" id="auto"> Imprimir novos automaticamente</label><select id="papel"><option value="w80">80 mm</option><option value="w58">58 mm</option></select></div>
+<button class="mi rd sairb" id="sair">Sair</button></aside>
 <main id="app" hidden>
 <div id="orig">
 <div class="box stats" id="stats"></div>
-<div class="cfg"><label><input type="checkbox" id="auto"> Imprimir novos automaticamente</label><select id="papel"><option value="w80">80 mm</option><option value="w58">58 mm</option></select></div>
 <div class="tabs"><button class="tab" data-t="p">Pedidos</button><button class="tab" data-t="h">Histórico</button></div>
 <div id="vp"><div class="chips" id="chips"></div><div id="dtxt" class="mut"></div><div id="lista"></div></div>
 <div id="vh" hidden></div>
 </div>
-<div id="vd" hidden></div></main>
+<div id="vd" hidden></div>
+<div id="vx" hidden></div></main>
 <dialog id="dlg"><form id="fe"><b>Editar pedido</b><label>Nome<input id="ec" maxlength="80" required></label>
 <label>Total (R$)<input id="et" type="number" step="0.01" min="0" required></label>
 <label>Pedido (texto do cupom)<textarea id="ed"></textarea></label>
@@ -98,16 +107,17 @@ const FI=[['ativos','Ativos'],['novo','Novos'],['preparando','Preparando'],['pro
 document.querySelectorAll('.nm').forEach(e=>e.textContent=CFG.nome);$('#auto').checked=auto;$('#papel').value=papel;
 $('#chips').innerHTML=FI.map(f=>`<button class="chip" data-f="${f[0]}">${f[1]}</button>`).join('');
 
-async function auth(kind,body){const r=await fetch(CFG.url+'/auth/v1/token?grant_type='+kind,{method:'POST',headers:{apikey:CFG.key,'Content-Type':'application/json'},body:JSON.stringify(body)});
- const j=await r.json();if(!r.ok)throw new Error('auth');j.exp=Date.now()+(j.expires_in-60)*1000;ses=j;SV('ses',j)}
+const TO=()=>{const a=new AbortController();a.t=setTimeout(()=>a.abort(),12000);return a};
+async function auth(kind,body){const ac=TO(),r=await fetch(CFG.url+'/auth/v1/token?grant_type='+kind,{signal:ac.signal,method:'POST',headers:{apikey:CFG.key,'Content-Type':'application/json'},body:JSON.stringify(body)});
+ clearTimeout(ac.t);const j=await r.json();if(!r.ok)throw new Error('auth');j.exp=Date.now()+(j.expires_in-60)*1000;ses=j;SV('ses',j)}
 async function api(path,opt={}){if(Date.now()>ses.exp)await auth('refresh_token',{refresh_token:ses.refresh_token});
- const r=await fetch(CFG.url+'/rest/v1/'+path,{...opt,headers:{apikey:CFG.key,Authorization:'Bearer '+ses.access_token,'Content-Type':'application/json',...(opt.headers||{})}});
- if(!r.ok)throw new Error(r.status);return opt.method==='PATCH'?null:r.json()}
+ const ac=TO(),r=await fetch(CFG.url+'/rest/v1/'+path,{signal:ac.signal,...opt,headers:{apikey:CFG.key,Authorization:'Bearer '+ses.access_token,'Content-Type':'application/json',...(opt.headers||{})}});
+ clearTimeout(ac.t);if(!r.ok)throw new Error(r.status);return opt.method==='PATCH'?null:r.json()}
 
 $('#f').onsubmit=async e=>{e.preventDefault();$('#erro').textContent='';audio=audio||new AudioContext();
  try{await auth('password',{email:$('#em').value.trim(),password:$('#pw').value});entrar()}catch(x){$('#erro').textContent='E-mail ou senha incorretos.'}};
-function entrar(){$('#f').hidden=true;$('#app').hidden=false;$('#hd').hidden=false;carregar();clearInterval(tm);tm=setInterval(carregar,5000);try{navigator.wakeLock.request('screen')}catch(e){}}
-function sair(){localStorage.removeItem('ses');ses=null;clearInterval(tm);seen=null;last='';$('#app').hidden=true;$('#hd').hidden=true;$('#f').hidden=false;$('#vd').hidden=true;$('#orig').hidden=false;menu(false)}
+function entrar(){$('#f').hidden=true;$('#app').hidden=false;$('#hd').hidden=false;$('#stats').textContent='Carregando…';carregar();clearInterval(tm);tm=setInterval(carregar,5000);try{navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
+function sair(){localStorage.removeItem('ses');ses=null;clearInterval(tm);seen=null;last='';$('#app').hidden=true;$('#hd').hidden=true;$('#f').hidden=false;$('#vd').hidden=true;$('#vx').hidden=true;$('#orig').hidden=false;menu(false)}
 $('#sair').onclick=sair;
 
 function beep(){try{const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.frequency.value=880;g.gain.value=.2;o.start();o.stop(audio.currentTime+.3)}catch(e){}}
@@ -116,15 +126,15 @@ async function carregar(){try{const d=await api('pedidos?select=id,created_at,cl
  const novos=seen?d.filter(p=>!seen.has(p.id)):[];seen=new Set(d.map(p=>p.id));
  const h=JSON.stringify(d);if(h===last)return;last=h;P=d;desenhar();
  if(novos.length){beep();if(auto)novos.reverse().forEach(imprimir)}
-}catch(e){if(e.message==='401'||e.message==='auth')sair();else{$('#s').textContent='Sem conexão';$('#s').className='pill'}}}
+}catch(e){if(e.message==='401'||e.message==='auth')sair();else{$('#s').textContent='Sem conexão';$('#s').className='pill';if(!P.length)$('#stats').textContent='Sem conexão — toque em ↻ pra tentar de novo'}}}
 
 const ST={novo:'Novo',preparando:'Preparando',pronto:'Pronto',entregue:'Entregue',cancelado:'Cancelado'},ab={};
-const aberto=p=>ab[p.id]??(p.status==='novo');
+const aberto=p=>ab[p.id]??false; // pedido chega fechado; clica no card pra abrir
 function card(p){const nx=NX[p.status],a=ATIVO.includes(p.status),o=aberto(p),b=(x,t,c,ic)=>`<button class="${c||''}" data-a="${x}" data-id="${p.id}"${ic?` aria-label="${ic}" title="${ic}"`:''}>${t}</button>`;
  return `<div class="card" data-id="${p.id}"><div class="top"><b>#${pad(p.n)} ${esc(p.cliente)}</b><span class="badge ${p.status}">${ST[p.status]}</span></div>
 <div class="meta">${new Date(p.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} · ${esc(tipo(p)||'—')} · <b>${R(p.total)}</b>${p.impresso_em?' · 🖨️ impresso':(a?' · <span class="warn">não impresso</span>':'')}<span class="chev">${o?'▾':'▸'}</span></div>
 ${o?`<pre>${esc((p.detalhes||'').replace(/\*/g,''))}</pre>`:''}
-<div class="bt">${b('print','🖨️ Imprimir')}${nx?b(nx[0],nx[1],'pri'):''}${a?b('cancelado','Cancelar','rd'):''}${b('edit','✍️','ic','Editar pedido')}</div></div>`}
+<div class="bt">${b('print','🖨️ Imprimir')}${nx?b(nx[0],nx[1],'pri'):''}${a?b('cancelado','Cancelar','rd'):''}${p.status==='entregue'?'':b('edit','✍️','ic','Editar pedido')}</div></div>`}
 
 function desenhar(){const m={};[...P].reverse().forEach(p=>{const d=dia(p);m[d]=(m[d]||0)+1;p.n=m[d]});
  const hj=P.filter(p=>dia(p)===hoje()&&p.status!=='cancelado');
@@ -175,8 +185,9 @@ function menu(on){const d=$('#drw'),o=$('#ov');
  else{d.classList.remove('on');o.classList.remove('on');setTimeout(()=>{if(!d.classList.contains('on'))d.hidden=o.hidden=true},280)}}
 $('#mn').onclick=()=>menu(true);$('#ov').onclick=()=>menu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
-function marcaMenu(x){$('#mi-home').classList.toggle('on',x==='home');$('#mi-ped').classList.toggle('on',x==='ped')}
-function voltar(){$('#vd').hidden=true;$('#orig').hidden=false;marcaMenu('home');desenhar()}
+function marcaMenu(x){$('#mi-home').classList.toggle('on',x==='home');$('#mi-ped').classList.toggle('on',x==='ped');$('#mi-del').classList.toggle('on',x==='del')}
+function tela(n){['orig','vd','vx'].forEach(k=>$('#'+k).hidden=k!==n)}
+function voltar(){tela('orig');marcaMenu('home');desenhar()}
 $('#mi-home').onclick=()=>{menu(false);voltar()};
 $('#mi-ped').onclick=()=>{menu(false);abrirDash()};
 
@@ -192,20 +203,66 @@ function bloco(titulo,sub,arr,n,idx,rot,atual,mostraNum){
  const lab=c.map((_,i)=>`<span>${(n<=12||i%(n>24?3:5)===0||(n===31&&i===0))?rot(i,1):''}</span>`).join('');
  return `<div class="box dash"><h3>${titulo}</h3><div class="big2"><b>${arr.length}</b><span>pedido${arr.length===1?'':'s'}</span></div>
  <div class="tot">${R(tot)}</div><div class="mut">${sub}</div><div class="bars">${bars}</div><div class="lb">${lab}</div></div>`}
-async function abrirDash(){marcaMenu('ped');$('#orig').hidden=true;const v=$('#vd');v.hidden=false;
- v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">← Voltar</button></div><p class="mut">Carregando…</p>';
+async function abrirDash(){marcaMenu('ped');tela('vd');const v=$('#vd');
+ v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div><p class="mut">Carregando…</p>';
  try{const d=await pedidosAno();
   const L=d.filter(p=>p.status!=='cancelado').map(p=>({dt:new Date(p.created_at),t:+p.total||0}));
   const n=new Date(),Y=n.getFullYear(),M=n.getMonth(),D=n.getDate();
   const mes=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],mesL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const doMes=L.filter(x=>x.dt.getMonth()===M),doDia=doMes.filter(x=>x.dt.getDate()===D);
   const dias=new Date(Y,M+1,0).getDate();
-  v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">← Voltar</button></div>'+
+  v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div>'+
    bloco('Hoje',pad(D)+'/'+pad(M+1)+'/'+Y+' · por hora',doDia,24,x=>x.getHours(),(i,s)=>s?i+'h':i+'h',n.getHours(),false)+
    bloco('Este mês',mesL[M]+' · por dia',doMes,dias,x=>x.getDate()-1,(i,s)=>s?i+1:'Dia '+(i+1),D-1,false)+
    bloco('Este ano',Y+' · por mês',L,12,x=>x.getMonth(),(i)=>mes[i],M,true)+
    '<p class="mut">Pedidos cancelados não entram na contagem nem no valor.</p>'}
- catch(e){v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">← Voltar</button></div><p class="mut">Não foi possível carregar. Confira a conexão.</p>'}}
+ catch(e){v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div><p class="mut">Não foi possível carregar. Confira a conexão.</p>'}}
+
+/* ===== Apagar pedidos: individual / dia / semana / mês ===== */
+const MESL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const XV={dia:hoje(),sem:hoje(),mes:''};let mx='ind',selX=new Set(),xn=0,xtok=0;
+const SQLDEL='grant delete on pedidos to authenticated;\ncreate policy "apagar pedidos" on pedidos for delete to authenticated using (true);';
+function meses(){const n=new Date(),o=[];for(let i=0;i<12;i++){const d=new Date(n.getFullYear(),n.getMonth()-i,1);o.push([d.getFullYear()+'-'+pad(d.getMonth()+1),MESL[d.getMonth()]+' '+d.getFullYear()])}return o}
+// devolve [inicio, fim, texto] do período escolhido (ou null)
+function faixa(m){const f=x=>pad(x.getDate())+'/'+pad(x.getMonth()+1);
+ if(m==='dia'){if(!XV.dia)return null;const[y,mo,d]=XV.dia.split('-').map(Number);return[new Date(y,mo-1,d),new Date(y,mo-1,d+1),f(new Date(y,mo-1,d))+'/'+y]}
+ if(m==='sem'){if(!XV.sem)return null;const[y,mo,d]=XV.sem.split('-').map(Number),dw=(new Date(y,mo-1,d).getDay()+6)%7,a=new Date(y,mo-1,d-dw),b=new Date(y,mo-1,d-dw+7);return[a,b,'Semana '+f(a)+' a '+f(new Date(y,mo-1,d-dw+6))]}
+ const[y,mo]=(XV.mes||meses()[0][0]).split('-').map(Number);return[new Date(y,mo-1,1),new Date(y,mo,1),MESL[mo-1]+' '+y]}
+const qf=f=>'created_at=gte.'+encodeURIComponent(f[0].toISOString())+'&created_at=lt.'+encodeURIComponent(f[1].toISOString());
+function abrirApagar(){marcaMenu('del');tela('vx');selX.clear();renderX()}
+function renderX(){const v=$('#vx'),tb=[['ind','Individual'],['dia','Dia'],['sem','Semana'],['mes','Mês']];
+ const h='<div class="dbtop"><h2>Apagar pedidos</h2><button id="xv">Voltar</button></div><div class="tabs">'+tb.map(t=>`<button class="tab2${mx===t[0]?' on':''}" data-x="${t[0]}">${t[1]}</button>`).join('')+'</div>';
+ if(mx==='ind'){
+  v.innerHTML=h+(P.length?'<p class="mut">Marque os pedidos que quer apagar (últimos '+P.length+').</p>'+P.map(p=>`<label class="card xi"><input type="checkbox" data-id="${p.id}"${selX.has(String(p.id))?' checked':''}><span><b>#${pad(p.n||0)} ${esc(p.cliente)}</b><br><span class="mut">${new Date(p.created_at).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})} · ${ST[p.status]||p.status} · ${R(p.total)}</span></span></label>`).join('')+'<button class="dng" id="xgo" disabled>Apagar</button>':'<p class="mut">Nenhum pedido.</p>');
+  xgoTxt();return}
+ const campo=mx==='dia'?`<label class="xf">Escolha o dia<input type="date" id="xd" value="${XV.dia}"></label>`
+  :mx==='sem'?`<label class="xf">Escolha um dia da semana (apaga de segunda a domingo)<input type="date" id="xs" value="${XV.sem}"></label>`
+  :`<label class="xf">Escolha o mês<select id="xm">${meses().map(m=>`<option value="${m[0]}"${(XV.mes||meses()[0][0])===m[0]?' selected':''}>${m[1]}</option>`).join('')}</select></label>`;
+ v.innerHTML=h+campo+'<div class="box dash" id="xp"></div><button class="dng" id="xgo" disabled>Apagar</button>';previa()}
+function xgoTxt(){const b=$('#xgo');if(!b)return;b.disabled=!selX.size;b.textContent=selX.size?'Apagar '+selX.size+' pedido'+(selX.size>1?'s':''):'Apagar'}
+async function previa(){const f=faixa(mx),box=$('#xp'),go=$('#xgo'),t=++xtok;xn=0;go.disabled=true;go.textContent='Apagar';
+ if(!f){box.innerHTML='<span class="mut">Escolha uma data.</span>';return}
+ box.innerHTML='<span class="mut">Buscando…</span>';
+ try{const d=await api('pedidos?select=id,total,status&'+qf(f)+'&order=created_at.desc',{headers:{'Range-Unit':'items',Range:'0-999'}});if(t!==xtok)return;
+  xn=d.length;const tot=d.filter(p=>p.status!=='cancelado').reduce((a,p)=>a+ +p.total,0);
+  box.innerHTML=`<h3>${f[2]}</h3><div class="big2"><b>${xn}</b><span>pedido${xn===1?'':'s'}</span></div><div class="tot">${R(tot)}</div><div class="mut">valor sem contar cancelados${xn>=1000?' · mostrando 1000, mas todos do período serão apagados':''}</div>`;
+  go.disabled=!xn;go.textContent=xn?'Apagar '+(xn>=1000?'todos os pedidos':xn+' pedido'+(xn>1?'s':'')):'Nada pra apagar'
+ }catch(e){if(t===xtok)box.innerHTML='<span class="mut">Não foi possível buscar. Confira a conexão.</span>'}}
+async function executar(){let qs,esperado,tx;
+ if(mx==='ind'){const ids=[...selX];if(!ids.length)return;qs='id=in.('+ids.join(',')+')';esperado=ids.length;tx=ids.length+' pedido'+(ids.length>1?'s':'')+' selecionado'+(ids.length>1?'s':'')}
+ else{const f=faixa(mx);if(!f||!xn)return;qs=qf(f);esperado=xn;tx='TODOS os pedidos de '+f[2]+' ('+xn+')'}
+ if(!confirm('Apagar '+tx+'?\nIsso não tem volta.'))return;
+ try{const r=await api('pedidos?'+qs+'&select=id',{method:'DELETE',headers:{Prefer:'return=representation'}});
+  if(!r.length&&esperado){alert('Nada foi apagado. Falta liberar a permissão de apagar no Supabase.\nRode no SQL Editor:\n\n'+SQLDEL);return}
+  const ids=new Set(r.map(x=>String(x.id)));P=P.filter(p=>!ids.has(String(p.id)));selX.clear();last='';toast('🗑️ '+r.length+' pedido'+(r.length===1?'':'s')+' apagado'+(r.length===1?'':'s'));desenhar();carregar();renderX()}
+ catch(e){alert('Não foi possível apagar ('+e.message+').\nSe for permissão (401/403), rode no SQL Editor do Supabase:\n\n'+SQLDEL)}}
+$('#mi-del').onclick=()=>{menu(false);abrirApagar()};
+$('#vx').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.id==='xv'){voltar();return}if(b.dataset.x){mx=b.dataset.x;renderX();return}if(b.id==='xgo')executar()};
+$('#vx').onchange=e=>{const t=e.target;
+ if(t.dataset.id!==undefined){const k=String(t.dataset.id);t.checked?selX.add(k):selX.delete(k);xgoTxt();return}
+ if(t.id==='xd'){XV.dia=t.value;previa()}else if(t.id==='xs'){XV.sem=t.value;previa()}else if(t.id==='xm'){XV.mes=t.value;previa()}};
+$('#rf').onclick=()=>{const b=$('#rf');b.classList.remove('spin');void b.offsetWidth;b.classList.add('spin');last='';carregar();if(!$('#vd').hidden)abrirDash()};
 $('#vd').onclick=e=>{if(e.target.id==='dv')voltar()};
 if(ses)entrar();
 </script></body></html>
