@@ -3,51 +3,82 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>Painel de pedidos</title>
 <style>
-:root{--bg:#f6f7f9;--ink:#061b31;--mut:#64748d;--line:#e5edf5;--ind:#533afd;--wash:#e8e9ff;--r:4px}
+:root{--bg:#f4f4f5;--ink:#2e1c11;--mut:#71717a;--line:#ececee;--dk:#3b2314;--em:#ff5a00}
 *{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Inter Tight",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
-.hd{max-width:720px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;gap:10px}
-.brand{font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1.1}.brand small{display:block;font-size:12px;font-weight:400;color:var(--mut);letter-spacing:0}
-main{max-width:720px;margin:0 auto;padding:14px}
-button,input,select,textarea{font:inherit;color:inherit;border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:9px 13px}
-button{cursor:pointer}button:active{background:#eef1f7}
-button.pri,#f button{background:var(--ind);border-color:var(--ind);color:#fff}button.rd{color:#b91c1c}button.ic{margin-left:auto;padding:9px 12px}
-.pill{padding:3px 10px;border-radius:var(--r);font-size:13px;background:#eef2f7;color:var(--mut)}.pill.ok{background:#dcfce7;color:#15803d}
-.box{background:#fff;border:1px solid var(--line);border-radius:var(--r)}
-#f{display:grid;gap:10px;max-width:380px;margin:12vh auto 0;padding:22px}#f h1{font-size:26px;margin:0}#erro{color:#b91c1c}
-.stats{padding:12px 14px;font-size:17px;font-weight:600}
-.cfg{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0;color:var(--mut);font-size:14px}.cfg select{padding:6px 10px}
-.tabs{display:flex;background:#eaecf1;border-radius:var(--r);padding:3px;margin:12px 0}
-.tab{flex:1;border:0;background:none;font-weight:500;color:var(--mut)}.tab.on{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}.chip{white-space:nowrap;padding:6px 12px;font-size:14px;color:var(--mut)}
-.chip.on{background:var(--wash);border-color:#c9caff;color:var(--ind)}.mut{color:var(--mut);font-size:14px}
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin:10px 0;cursor:pointer}
+.hd{max-width:720px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.brand{font-size:22px;font-weight:700;line-height:1.1}.brand small{display:block;font-size:12px;font-weight:400;color:var(--mut)}
+main{max-width:720px;margin:0 auto;padding:16px}
+button,input,select,textarea{font:inherit;color:inherit;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 16px}
+button{cursor:pointer}button:active{background:#ececee}
+button.pri,#f button{background:var(--dk);border-color:var(--dk);color:#fff}button.rd{color:#b91c1c}
+.pill{padding:3px 12px;border-radius:99px;font-size:13px;background:#ececee;color:var(--mut)}.pill.ok{background:#dcfce7;color:#15803d}
+.box{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 4px 12px #0000000a}
+#f{display:grid;gap:10px;max-width:380px;margin:12vh auto 0;padding:24px}#f h1{font-size:28px;margin:0}#erro{color:#b91c1c}
+.stats{padding:14px 18px;font-size:17px;font-weight:600}
+.cfg{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;color:var(--mut);font-size:14px}.cfg select{padding:6px 12px}
+.tabs{display:flex;gap:6px;background:#e4e4e7;border-radius:16px;padding:4px;margin:14px 0}
+.tab{flex:1;border:0;background:none;font-weight:500;color:var(--mut);border-radius:12px}.tab.on{background:var(--dk);color:#fff}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}.chip{white-space:nowrap;padding:6px 14px;font-size:14px;color:var(--mut);border-radius:99px}
+.chip.on{background:var(--dk);border-color:var(--dk);color:#fff}.mut{color:var(--mut);font-size:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px 16px;margin:10px 0;cursor:pointer;box-shadow:0 4px 12px #0000000a}
 .card.cancelado{opacity:.6}.top{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.meta{color:var(--mut);font-size:14px;margin-top:2px}.warn{color:#b45309;font-weight:500}.chev{float:right}
-.badge{font-size:12px;font-weight:600;padding:2px 9px;border-radius:var(--r)}
-.badge.novo{background:#fef3c7;color:#b45309}.badge.preparando{background:var(--wash);color:var(--ind)}.badge.pronto{background:#dcfce7;color:#15803d}
-.badge.entregue{background:#eef2f7;color:var(--mut)}.badge.cancelado{background:#fee2e2;color:#b91c1c}
-pre{white-space:pre-wrap;font:13.5px/1.45 ui-monospace,Menlo,monospace;background:#f8fafd;border:1px solid var(--line);border-radius:var(--r);padding:10px;margin:10px 0 0}
-.bt{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.dia{display:flex;justify-content:space-between}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:var(--r);z-index:9;font-size:14px}
-dialog{border:1px solid var(--line);border-radius:var(--r);padding:18px;width:min(92vw,460px);color:var(--ink)}dialog::backdrop{background:#061b3155}
+.meta{color:var(--mut);font-size:14px;margin-top:2px}.warn{color:var(--em);font-weight:500}.chev{float:right}
+.badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px}
+.badge.novo{background:#fff1e8;color:var(--em);border:1px solid #ffd9c2}.badge.preparando{background:var(--dk);color:#fff}.badge.pronto{background:#dcfce7;color:#15803d}
+.badge.entregue{background:#ececee;color:#52525b}.badge.cancelado{background:#fee2e2;color:#b91c1c}
+pre{white-space:pre-wrap;font:13.5px/1.45 ui-monospace,Menlo,monospace;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0 0}
+.bt{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.dia{display:flex;justify-content:space-between}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--dk);color:#fff;padding:10px 18px;border-radius:14px;z-index:9;font-size:14px}
+dialog{border:1px solid var(--line);border-radius:24px;padding:20px;width:min(92vw,460px);color:var(--ink)}dialog::backdrop{background:#3b231466}
 #fe{display:grid;gap:10px}#fe textarea{min-height:220px;font:13.5px/1.4 ui-monospace,monospace}#fe label{font-size:13px;color:var(--mut);display:grid;gap:4px}
 #ticket{display:none;color:#000;background:#fff;font-family:'Courier New',monospace;font-weight:700;line-height:1.25;margin:0 auto;padding:2mm 0 22mm}
 #ticket.w80{width:72mm;font-size:13px}#ticket.w58{width:48mm;font-size:11px}
 #ticket div{white-space:pre-wrap;overflow-wrap:anywhere}#ticket .c{text-align:center}#ticket .big{font-size:1.25em}
 #ticket .sp{height:6px}#ticket hr{border:0;border-top:2px dashed #000;margin:5px 0}
+
+/* ===== Menu hambúrguer ===== */
+.ham{display:grid;gap:4px;align-content:center;width:42px;height:42px;padding:0;justify-items:center;flex:none}
+.ham i{display:block;width:18px;height:2px;border-radius:2px;background:var(--ink)}
+#ov{position:fixed;inset:0;background:#3b231466;z-index:20;opacity:0;transition:opacity .25s}
+#ov.on{opacity:1}
+#drw{position:fixed;top:0;left:0;bottom:0;width:min(78vw,280px);background:#fff;z-index:21;padding:20px 16px;display:flex;flex-direction:column;gap:8px;transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:0 4px 24px #3b231433}
+#drw.on{transform:none}
+#drw h2{margin:0 0 8px;font-size:20px}#drw h2 small{display:block;font-size:12px;font-weight:400;color:var(--mut)}
+.mi{text-align:left;display:flex;align-items:center;gap:10px;font-weight:500;padding:12px 14px}
+.mi.on{background:var(--dk);border-color:var(--dk);color:#fff}
+/* ===== Dashboard de pedidos ===== */
+.dbtop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}.dbtop h2{margin:0;font-size:22px}
+.dash{padding:16px 18px;margin:12px 0}
+.dash h3{margin:0;font-size:14px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.big2{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 2px}
+.big2 b{font-size:38px;line-height:1;font-weight:700}.big2 span{color:var(--mut);font-size:15px}
+.tot{font-weight:600;font-size:17px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:110px;margin-top:14px}
+.bc{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.bar{width:100%;border-radius:6px 6px 2px 2px;background:var(--dk);opacity:.75;min-height:2px;transform-origin:bottom;animation:grow .5s ease both}
+.bar.z{background:var(--line);opacity:1}.bar.now{background:var(--em);opacity:1}
+.bn{font-size:10px;color:var(--mut);height:14px;line-height:14px}
+.lb{display:flex;gap:3px;margin-top:4px}.lb span{flex:1;min-width:0;text-align:center;font-size:10px;color:var(--mut);white-space:nowrap;overflow:visible}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @media print{html,body{background:#fff!important;padding:0!important;margin:0!important}body>*:not(#ticket){display:none!important}#ticket{display:block}@page{margin:0}}
 </style></head><body>
-<header id="hd" hidden><div class="hd"><div class="brand"><span class="nm"></span><small>Painel de pedidos</small></div><span id="s" class="pill">…</span><button id="sair" style="margin-left:auto">Sair</button></div></header>
+<header id="hd" hidden><div class="hd"><button id="mn" class="ham" aria-label="Abrir menu"><i></i><i></i><i></i></button><div class="brand"><span class="nm"></span><small>Painel de pedidos</small></div><span id="s" class="pill">…</span><button id="sair" style="margin-left:auto">Sair</button></div></header>
 <form id="f" class="box"><h1 class="nm"></h1><span class="mut">Painel de pedidos</span><input id="em" type="email" placeholder="E-mail" autocomplete="username" required>
 <input id="pw" type="password" placeholder="Senha" autocomplete="current-password" required><button>Entrar</button><div id="erro"></div></form>
+<div id="ov" hidden></div>
+<aside id="drw" hidden><h2><span class="nm"></span><small>Painel de pedidos</small></h2>
+<button class="mi" id="mi-home">🏠 Painel</button><button class="mi" id="mi-ped">📊 Pedidos</button></aside>
 <main id="app" hidden>
+<div id="orig">
 <div class="box stats" id="stats"></div>
 <div class="cfg"><label><input type="checkbox" id="auto"> Imprimir novos automaticamente</label><select id="papel"><option value="w80">80 mm</option><option value="w58">58 mm</option></select></div>
 <div class="tabs"><button class="tab" data-t="p">Pedidos</button><button class="tab" data-t="h">Histórico</button></div>
 <div id="vp"><div class="chips" id="chips"></div><div id="dtxt" class="mut"></div><div id="lista"></div></div>
-<div id="vh" hidden></div></main>
+<div id="vh" hidden></div>
+</div>
+<div id="vd" hidden></div></main>
 <dialog id="dlg"><form id="fe"><b>Editar pedido</b><label>Nome<input id="ec" maxlength="80" required></label>
 <label>Total (R$)<input id="et" type="number" step="0.01" min="0" required></label>
 <label>Pedido (texto do cupom)<textarea id="ed"></textarea></label>
@@ -76,7 +107,7 @@ async function api(path,opt={}){if(Date.now()>ses.exp)await auth('refresh_token'
 $('#f').onsubmit=async e=>{e.preventDefault();$('#erro').textContent='';audio=audio||new AudioContext();
  try{await auth('password',{email:$('#em').value.trim(),password:$('#pw').value});entrar()}catch(x){$('#erro').textContent='E-mail ou senha incorretos.'}};
 function entrar(){$('#f').hidden=true;$('#app').hidden=false;$('#hd').hidden=false;carregar();clearInterval(tm);tm=setInterval(carregar,5000);try{navigator.wakeLock.request('screen')}catch(e){}}
-function sair(){localStorage.removeItem('ses');ses=null;clearInterval(tm);seen=null;last='';$('#app').hidden=true;$('#hd').hidden=true;$('#f').hidden=false}
+function sair(){localStorage.removeItem('ses');ses=null;clearInterval(tm);seen=null;last='';$('#app').hidden=true;$('#hd').hidden=true;$('#f').hidden=false;$('#vd').hidden=true;$('#orig').hidden=false;menu(false)}
 $('#sair').onclick=sair;
 
 function beep(){try{const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.frequency.value=880;g.gain.value=.2;o.start();o.stop(audio.currentTime+.3)}catch(e){}}
@@ -137,5 +168,44 @@ $('#dtxt').onclick=e=>{if(e.target.id==='hj'){diaSel=null;desenhar()}};
 $('#vh').onclick=e=>{const c=e.target.closest('[data-d]');if(c){diaSel=c.dataset.d===hoje()?null:c.dataset.d;filtro='todos';aba='p';desenhar()}};
 $('#auto').onchange=e=>{auto=e.target.checked;SV('auto',auto)};$('#papel').onchange=e=>{papel=e.target.value;SV('papel',papel)};
 document.addEventListener('click',()=>{audio=audio||new AudioContext()},{once:true});
+
+/* ===== Menu hambúrguer ===== */
+function menu(on){const d=$('#drw'),o=$('#ov');
+ if(on){d.hidden=o.hidden=false;requestAnimationFrame(()=>{d.classList.add('on');o.classList.add('on')})}
+ else{d.classList.remove('on');o.classList.remove('on');setTimeout(()=>{if(!d.classList.contains('on'))d.hidden=o.hidden=true},280)}}
+$('#mn').onclick=()=>menu(true);$('#ov').onclick=()=>menu(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
+function marcaMenu(x){$('#mi-home').classList.toggle('on',x==='home');$('#mi-ped').classList.toggle('on',x==='ped')}
+function voltar(){$('#vd').hidden=true;$('#orig').hidden=false;marcaMenu('home');desenhar()}
+$('#mi-home').onclick=()=>{menu(false);voltar()};
+$('#mi-ped').onclick=()=>{menu(false);abrirDash()};
+
+/* ===== Dashboard de pedidos: dia / mês / ano ===== */
+// Busca o ano inteiro (paginado de 1000 em 1000, limite padrão do Supabase)
+async function pedidosAno(){const ini=encodeURIComponent(new Date(new Date().getFullYear(),0,1).toISOString());let out=[],i=0;
+ for(;;){const r=await api('pedidos?select=created_at,total,status&created_at=gte.'+ini+'&order=created_at.desc',{headers:{'Range-Unit':'items',Range:i+'-'+(i+999)}});
+  out=out.concat(r);if(r.length<1000)break;i+=1000}
+ return out}
+function bloco(titulo,sub,arr,n,idx,rot,atual,mostraNum){
+ const c=Array(n).fill(0);arr.forEach(x=>c[idx(x.dt)]++);const mx=Math.max(1,...c),tot=arr.reduce((s,x)=>s+x.t,0);
+ const bars=c.map((v,i)=>`<div class="bc" title="${rot(i)}: ${v} pedido${v===1?'':'s'}"><div class="bn">${mostraNum&&v?v:''}</div><div class="bar${v?'':' z'}${i===atual?' now':''}" style="height:${v?Math.max(6,v/mx*88):2}px;animation-delay:${i*12}ms"></div></div>`).join('');
+ const lab=c.map((_,i)=>`<span>${(n<=12||i%(n>24?3:5)===0||(n===31&&i===0))?rot(i,1):''}</span>`).join('');
+ return `<div class="box dash"><h3>${titulo}</h3><div class="big2"><b>${arr.length}</b><span>pedido${arr.length===1?'':'s'}</span></div>
+ <div class="tot">${R(tot)}</div><div class="mut">${sub}</div><div class="bars">${bars}</div><div class="lb">${lab}</div></div>`}
+async function abrirDash(){marcaMenu('ped');$('#orig').hidden=true;const v=$('#vd');v.hidden=false;
+ v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">← Voltar</button></div><p class="mut">Carregando…</p>';
+ try{const d=await pedidosAno();
+  const L=d.filter(p=>p.status!=='cancelado').map(p=>({dt:new Date(p.created_at),t:+p.total||0}));
+  const n=new Date(),Y=n.getFullYear(),M=n.getMonth(),D=n.getDate();
+  const mes=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],mesL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const doMes=L.filter(x=>x.dt.getMonth()===M),doDia=doMes.filter(x=>x.dt.getDate()===D);
+  const dias=new Date(Y,M+1,0).getDate();
+  v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">← Voltar</button></div>'+
+   bloco('Hoje',pad(D)+'/'+pad(M+1)+'/'+Y+' · por hora',doDia,24,x=>x.getHours(),(i,s)=>s?i+'h':i+'h',n.getHours(),false)+
+   bloco('Este mês',mesL[M]+' · por dia',doMes,dias,x=>x.getDate()-1,(i,s)=>s?i+1:'Dia '+(i+1),D-1,false)+
+   bloco('Este ano',Y+' · por mês',L,12,x=>x.getMonth(),(i)=>mes[i],M,true)+
+   '<p class="mut">Pedidos cancelados não entram na contagem nem no valor.</p>'}
+ catch(e){v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">← Voltar</button></div><p class="mut">Não foi possível carregar. Confira a conexão.</p>'}}
+$('#vd').onclick=e=>{if(e.target.id==='dv')voltar()};
 if(ses)entrar();
 </script></body></html>
