@@ -373,12 +373,19 @@ function formCat(c){dlgForm(c?'Editar categoria':'Nova categoria',
  c&&(async()=>{const n=PRD.filter(p=>p.categoria_id===c.id).length;
   if(!confirm('Excluir a categoria "'+c.nome+'"?'+(n?'\nOs '+n+' produtos dela ficam sem categoria.':'')))return;
   try{await apagarId('categorias',c.id);CAT=CAT.filter(x=>x.id!==c.id);PRD.forEach(p=>{if(p.categoria_id===c.id)p.categoria_id=null});$('#dg').close();renderC();toast('Categoria excluída')}catch(e){toast('Não foi possível excluir.')}}))}
+const nrm=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+async function renomearPrato(p,velho){const c=CAT.find(x=>x.id===p.categoria_id);if(!c||nrm(c.nome)!=='pratos'||nrm(velho)===nrm(p.nome))return;
+ const pc=CAT.find(x=>nrm(x.nome)==='proteinas');if(!pc)return;
+ for(const q of PRD.filter(x=>x.categoria_id===pc.id&&x.descricao)){const L=q.descricao.split(',').map(s=>s.trim());
+  if(!L.some(s=>nrm(s)===nrm(velho)))continue;
+  const nd=L.map(s=>nrm(s)===nrm(velho)?p.nome:s).join(', ');
+  try{await api('produtos?id=eq.'+q.id,{method:'PATCH',body:JSON.stringify({descricao:nd})});q.descricao=nd}catch(e){toast('Prato renomeado, mas não atualizei: '+q.nome)}}}
 function formPrd(p){const op=CAT.map(c=>`<option value="${c.id}"${p&&p.categoria_id===c.id?' selected':''}>${esc(c.nome)}</option>`).join('');
  dlgForm(p?'Editar produto':'Novo produto',
  `<label>Nome<input id="gn" maxlength="80" required value="${esc(p?.nome||'')}"></label><label>Descrição (opcional)<input id="gde" maxlength="200" value="${esc(p?.descricao||'')}"></label><label>Preço (R$) — vazio = incluso<input id="gp" inputmode="decimal" value="${p?fmt(p.preco):''}"></label><label>Categoria<select id="gc"><option value="">Sem categoria</option>${op}</select></label>`,
  async()=>{const preco=$('#gp').value.trim()===''?0:num($('#gp').value);if(!(preco>=0)){toast('Preço inválido');throw 0}
   const d={nome:$('#gn').value.trim(),descricao:$('#gde').value.trim()||null,preco,categoria_id:$('#gc').value?+$('#gc').value:null};
-  if(p){await api('produtos?id=eq.'+p.id,{method:'PATCH',body:JSON.stringify(d)});Object.assign(p,d)}
+  if(p){const velho=p.nome;await api('produtos?id=eq.'+p.id,{method:'PATCH',body:JSON.stringify(d)});Object.assign(p,d);await renomearPrato(p,velho)}
   else{const r=await api('produtos',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(d)});PRD.push(r[0]);PRD.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))}
   toast('Produto salvo')},
  p&&(async()=>{if(!confirm('Excluir "'+p.nome+'"?\nIsso não tem volta. (Se for só falta de ingrediente, use Pausar.)'))return;
