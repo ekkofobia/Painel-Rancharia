@@ -85,6 +85,11 @@ button.dng{background:#b91c1c;border-color:#b91c1c;color:#fff;font-weight:600;wi
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @media print{html,body{background:#fff!important;padding:0!important;margin:0!important}body>*:not(#ticket){display:none!important}#ticket{display:block}@page{margin:0}}
 
+.rkh0{margin:20px 0 4px;font-size:16px}.rk summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:16px}.rk summary::-webkit-details-marker{display:none}.rk summary::after{content:"▾";color:var(--mut);transition:transform .2s}.rk[open] summary::after{transform:rotate(180deg)}
+.rkh{margin:16px 0 4px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.rki{display:flex;gap:10px;align-items:center;margin:9px 0}.rkn{width:28px;flex:none;font-size:13px;color:var(--mut);font-weight:600}.rkb{flex:1;min-width:0}
+.rkt{display:flex;justify-content:space-between;gap:8px;font-size:14px}.rkt span{font-weight:700}
+.rkbar{height:6px;border-radius:99px;background:var(--line);margin-top:4px}.rkbar i{display:block;height:100%;border-radius:99px;background:var(--dk)}
 /* ===== Cardápio no estilo do site ===== */
 #vc{--g:#f2c46d;--cr:#f7ecd8;--mu:#cdb99c;--ln:rgba(242,196,109,.24);background:#2a1509;color:var(--cr);font-family:Outfit,system-ui,sans-serif;border-radius:22px;padding:16px 14px 20px;margin:-4px 0 0}
 #vc .ctop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
@@ -247,7 +252,30 @@ function bloco(titulo,sub,arr,n,idx,rot,atual,mostraNum){
  const lab=c.map((_,i)=>`<span>${(n<=12||i%(n>24?3:5)===0||(n===31&&i===0))?rot(i,1):''}</span>`).join('');
  return `<div class="box dash"><h3>${titulo}</h3><div class="big2"><b>${arr.length}</b><span>pedido${arr.length===1?'':'s'}</span></div>
  <div class="tot">${R(tot)}</div><div class="mut">${sub}</div><div class="bars">${bars}</div><div class="lb">${lab}</div></div>`}
-async function abrirDash(){marcaMenu('ped');tela('vd');const v=$('#vd');
+/* ===== Ranking de itens (semana / mês / 6 meses) ===== */
+let RKD=null;
+const RKP=[['Semana (últimos 7 dias)',7],['Mês (últimos 30 dias)',30],['6 meses',0]];
+const rkIni=k=>{const d=new Date();if(k)d.setDate(d.getDate()-k);else d.setMonth(d.getMonth()-6);d.setHours(0,0,0,0);return d};
+async function pedidosRk(){const ini=encodeURIComponent(rkIni(0).toISOString());let out=[],i=0;
+ for(;;){const r=await api('pedidos?select=created_at,status,detalhes&created_at=gte.'+ini+'&order=created_at.desc',{headers:{'Range-Unit':'items',Range:i+'-'+(i+999)}});out=out.concat(r);if(r.length<1000)break;i+=1000}
+ return out}
+function rkParse(det){const its=[];String(det||'').split('\n').forEach(l=>{let m=l.match(/^\s*(\d+)x\s+(.+?)\s+—\s+R\$/);
+ if(m){its.push({q:+m[1],n:m[2].trim(),b:[]});return}
+ m=l.match(/^\s*•\s*([^:]+):\s*(.*)$/);if(m&&its.length)its[its.length-1].b.push([m[1].trim(),m[2].trim()])});return its}
+function rkCalc(arr){const C={p:{},g:{},s:{},b:{}},add=(c,k,q)=>{if(k)C[c][k]=(C[c][k]||0)+q};
+ arr.forEach(o=>rkParse(o.detalhes).forEach(it=>{
+  if(!it.b.some(x=>/^prote/i.test(x[0]))){add('b',it.n,it.q);return}
+  add('p',it.n,it.q);
+  it.b.forEach(([k,v])=>{if(/^prote|^obs/i.test(k))return;
+   v.split(',').map(s=>s.trim()).filter(s=>s&&!/^nenhuma$/i.test(s)).forEach(n=>add(/^guarni/i.test(k)?'g':'s',n,it.q))})}));return C}
+function rkHTML(C){return [['p','Pratos'],['g','Guarnições'],['s','Saladas'],['b','Bebidas']].map(([k,t])=>{
+ const L=Object.entries(C[k]).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt-BR')),mx=L.length?L[0][1]:1;
+ return `<div class="rkh">${t}</div>`+(L.length?L.map((x,i)=>`<div class="rki"><span class="rkn">${i+1}º</span><div class="rkb"><div class="rkt"><b>${esc(x[0])}</b><span>${x[1]}</span></div><div class="rkbar"><i style="width:${Math.max(4,x[1]/mx*100)}%"></i></div></div></div>`).join(''):'<p class="mut">Sem pedidos no período.</p>')}).join('')}
+const rkCards=()=>'<h3 class="rkh0">Ranking de itens pedidos</h3>'+RKP.map(([t,d])=>`<details class="box dash rk" data-rk="${d}"><summary>${t}</summary><div class="rkc"><p class="mut">Carregando…</p></div></details>`).join('');
+$('#vd').addEventListener('toggle',async e=>{const d=e.target;if(!d.matches||!d.matches('details.rk')||!d.open)return;const box=d.querySelector('.rkc');
+ try{RKD=RKD||pedidosRk();const data=await RKD,ini=rkIni(+d.dataset.rk);box.innerHTML=rkHTML(rkCalc(data.filter(o=>o.status!=='cancelado'&&new Date(o.created_at)>=ini)))}
+ catch(x){RKD=null;box.innerHTML='<p class="mut">Não foi possível carregar o ranking.</p>'}},true);
+async function abrirDash(){RKD=null;marcaMenu('ped');tela('vd');const v=$('#vd');
  v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div><p class="mut">Carregando…</p>';
  try{const d=await pedidosAno();
   const L=d.filter(p=>p.status!=='cancelado').map(p=>({dt:new Date(p.created_at),t:+p.total||0}));
@@ -259,7 +287,7 @@ async function abrirDash(){marcaMenu('ped');tela('vd');const v=$('#vd');
    bloco('Hoje',pad(D)+'/'+pad(M+1)+'/'+Y+' · por hora',doDia,24,x=>x.getHours(),(i,s)=>s?i+'h':i+'h',n.getHours(),false)+
    bloco('Este mês',mesL[M]+' · por dia',doMes,dias,x=>x.getDate()-1,(i,s)=>s?i+1:'Dia '+(i+1),D-1,false)+
    bloco('Este ano',Y+' · por mês',L,12,x=>x.getMonth(),(i)=>mes[i],M,true)+
-   '<p class="mut">Pedidos cancelados não entram na contagem nem no valor.</p>'}
+   rkCards()+'<p class="mut">Pedidos cancelados não entram na contagem nem no valor.</p>'}
  catch(e){v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div><p class="mut">Não foi possível carregar. Confira a conexão.</p>'}}
 
 /* ===== Apagar pedidos: individual / dia / semana / mês ===== */
