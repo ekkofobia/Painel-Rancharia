@@ -492,7 +492,6 @@ function pintaLoja(){const b=$('#lojaBt');if(!b)return;b.className='rb lj'+(LOJA
  b.setAttribute('aria-label',LOJA===null?'Status da loja indisponível — toque para tentar':LOJA?'Loja fechada — toque para abrir':'Loja aberta — toque para fechar')}
 async function loadLoja(){try{const r=await api('categorias?select=id&nome=eq.__loja_fechada');LOJA=r.length>0}catch(e){LOJA=null}pintaLoja()}
 $('#lojaBt').onclick=async()=>{if(LOJA===null)return loadLoja();
- if(!LOJA&&!confirm('Fechar a loja?\nOs clientes continuam vendo o site, mas não conseguem fazer pedidos.'))return;
  try{if(LOJA)await api('categorias?nome=eq.__loja_fechada',{method:'DELETE'});
   else await api('categorias',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({nome:'__loja_fechada',ordem:9999})});
   LOJA=!LOJA;pintaLoja();toast(LOJA?'Loja fechada':'Loja aberta')}catch(e){toast('Não foi possível alterar (erro '+e.message+')')}};
