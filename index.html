@@ -51,6 +51,19 @@ dialog{border:1px solid var(--line);border-radius:24px;padding:20px;width:min(92
 #drw h2{margin:0 0 8px;font-size:20px}#drw h2 small{display:block;font-size:12px;font-weight:400;color:var(--mut)}
 .mi{text-align:left;display:flex;align-items:center;gap:10px;font-weight:500;padding:12px 14px}
 .mi.on{background:var(--dk);border-color:var(--dk);color:#fff}
+/* ===== Cardápio ===== */
+#fg{display:grid;gap:10px}#fg label{font-size:13px;color:var(--mut);display:grid;gap:4px}#fg .bt button{flex:1}
+.cb{display:flex;gap:8px;margin:10px 0}.cb button{flex:1}
+.cg{margin:18px 0 4px;display:flex;align-items:center;justify-content:space-between;gap:8px}.cg h3{margin:0;font-size:16px}.cg button{padding:6px 14px;font-size:13px}
+.pr{padding:14px;margin:8px 0;display:grid;gap:12px}.pr.off{background:#f3e9e4}.pr.off .pn{opacity:.55;text-decoration:line-through}
+.pt{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pn{display:block;background:none;border:0;padding:0;text-align:left;font-size:16px;font-weight:600;color:var(--ink);border-radius:0}
+.pd{color:var(--mut);font-size:13px;margin-top:2px}
+.bdg{display:inline-block;margin-top:6px;background:#b91c1c;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;letter-spacing:.04em}
+.pp{display:flex;align-items:center;gap:6px;white-space:nowrap;color:var(--mut);font-size:14px}.pp input{width:92px;text-align:right;font-weight:700;color:var(--ink);padding:8px 10px}
+.pz{width:100%;padding:15px;font-size:16px;font-weight:700;background:#fff;border:2px solid #b91c1c;color:#b91c1c}
+.pz.on{background:#15803d;border-color:#15803d;color:#fff}
+.sqlb{background:#f4f4f5;border:1px solid var(--line);border-radius:12px;padding:12px;font:12px/1.4 ui-monospace,monospace;max-height:200px;overflow:auto;white-space:pre;margin:8px 0}
 /* ===== Apagar ===== */
 .tab2{flex:1;border:0;background:none;font-weight:500;color:var(--mut);border-radius:12px;padding:10px 4px}.tab2.on{background:var(--dk);color:#fff}
 .xi{display:flex;gap:12px;align-items:center;margin:8px 0}.xi input{width:22px;height:22px;padding:0;flex:none}
@@ -71,12 +84,40 @@ button.dng{background:#b91c1c;border-color:#b91c1c;color:#fff;font-weight:600;wi
 .lb{display:flex;gap:3px;margin-top:4px}.lb span{flex:1;min-width:0;text-align:center;font-size:10px;color:var(--mut);white-space:nowrap;overflow:visible}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @media print{html,body{background:#fff!important;padding:0!important;margin:0!important}body>*:not(#ticket){display:none!important}#ticket{display:block}@page{margin:0}}
-</style></head><body>
+
+/* ===== Cardápio no estilo do site ===== */
+#vc{--g:#f2c46d;--cr:#f7ecd8;--mu:#cdb99c;--ln:rgba(242,196,109,.24);background:#2a1509;color:var(--cr);font-family:Outfit,system-ui,sans-serif;border-radius:22px;padding:16px 14px 20px;margin:-4px 0 0}
+#vc .ctop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+#vc .ctop h2{margin:0;font:400 38px/1 Anton,Impact,sans-serif;text-transform:uppercase;color:var(--cr)}
+#vc .ctop .scr{display:block;margin-top:-4px;font:400 30px/1 Yellowtail,cursive;color:var(--g)}
+#vc button{font-family:inherit}#vc #cv{background:none;border:1px solid var(--ln);color:var(--cr);border-radius:999px;padding:8px 16px}
+#vc .mut{color:var(--mu)}#vc .box{background:#341d0f;border:1px solid var(--ln);color:var(--cr);border-radius:18px}#vc .dash h3{color:var(--g)}
+#vc .cb button{border:1px solid var(--g);background:none;color:var(--g);border-radius:999px;font-weight:700;padding:12px}#vc .cb .pri,#vc .box .pri{background:var(--g);color:#2a1509;border-color:var(--g)}
+#vc .plate{padding:14px;margin:14px 0;border-radius:22px;background:linear-gradient(160deg,#402617,#341d0f 55%);border:1px solid var(--ln)}
+#vc .ph{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+#vc .ph h3{margin:0;font-weight:800;font-size:21px;line-height:1.1;color:var(--g);text-transform:uppercase}#vc .ph h3 span{color:var(--mu);font-size:13px;font-weight:600}
+#vc .ph button{background:none;border:1px solid var(--ln);color:var(--cr);border-radius:999px;padding:6px 14px;font-size:13px}
+#vc .it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--ln)}
+#vc .it.off .pn2{opacity:.5;text-decoration:line-through}
+#vc .pn2{background:none;border:0;padding:0;text-align:left;font-size:16px;font-weight:600;color:var(--cr)}
+#vc .pd2{color:var(--mu);font-size:13px;margin-top:2px}
+#vc .bdg{display:inline-block;margin-top:5px;background:#b91c1c;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
+#vc .itr{display:flex;align-items:center;gap:8px;flex:none}
+#vc .pill{display:flex;align-items:center;justify-content:center;gap:2px;width:78px;box-sizing:border-box;background:var(--g);color:#2a1509;border-radius:999px;padding:2px 8px;font-weight:800}#vc .pill small{font-size:11.2px}
+#vc .pill input{width:100%;min-width:0;background:none;border:0;padding:3px 0;color:#2a1509;font-weight:800;font-size:16.7px;text-align:right;outline:none}
+#vc .pxb{flex:none;width:30px;height:30px;padding:0;display:grid;place-items:center;background:none;border:1px solid #e58b8b;color:#e58b8b;border-radius:50%;font-size:17px;line-height:1}
+#vc .inc{color:var(--mu);font-size:13px;padding:0 6px}
+#vc .pzb{background:none;border:1px solid #e58b8b;color:#e58b8b;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:600}#vc .pzb.on{border-color:#7bd389;color:#7bd389}
+#dg{background:#341d0f;color:#f7ecd8;border:1px solid rgba(242,196,109,.4);border-radius:22px;font-family:Outfit,system-ui,sans-serif}#dg::backdrop{background:#2a150999}
+#dg label,#dg .mut{color:#cdb99c}#dg input,#dg select{background:#2a1509;color:#f7ecd8;border:1px solid rgba(242,196,109,.3);border-radius:12px}
+#dg .bt button{border-radius:999px;background:none;border:1px solid rgba(242,196,109,.4);color:#f7ecd8}#dg .bt .pri{background:#f2c46d;color:#2a1509;border-color:#f2c46d;font-weight:700}#dg .bt .rd{color:#e58b8b;border-color:#e58b8b}
+</style><link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@400;500;600;700;800&family=Yellowtail&display=swap" rel="stylesheet"></head><body>
 <header id="hd" hidden><div class="hd"><div class="brand"><span class="nm"></span></div><span id="s" class="pill">…</span><button id="rf" class="ham rf" style="margin-left:auto" aria-label="Atualizar" title="Atualizar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button><button id="mn" class="ham" aria-label="Abrir menu"><i></i><i></i><i></i></button></div></header>
 <form id="f" class="box"><h1 class="nm"></h1><span class="mut">Painel de pedidos</span><input id="em" type="email" placeholder="E-mail" autocomplete="username" required>
 <input id="pw" type="password" placeholder="Senha" autocomplete="current-password" required><button>Entrar</button><div id="erro"></div></form>
 <div id="ov" hidden></div>
-<aside id="drw" hidden><button class="mi" id="mi-home">🏠 Painel</button><button class="mi" id="mi-ped">📊 Pedidos</button><button class="mi" id="mi-del">🗑️ Apagar</button>
+<aside id="drw" hidden><button class="mi" id="mi-home">🏠 Painel</button><button class="mi" id="mi-ped">📊 Pedidos</button><button class="mi" id="mi-cat">🍽️ Cardápio</button>
+<button class="mi" id="mi-del">🗑️ Apagar</button>
 <div class="cfgm"><b>Impressão</b><label><input type="checkbox" id="auto"> Imprimir novos automaticamente</label><select id="papel"><option value="w80">80 mm</option><option value="w58">58 mm</option></select></div>
 <button class="mi rd sairb" id="sair">Sair</button></aside>
 <main id="app" hidden>
@@ -87,11 +128,13 @@ button.dng{background:#b91c1c;border-color:#b91c1c;color:#fff;font-weight:600;wi
 <div id="vh" hidden></div>
 </div>
 <div id="vd" hidden></div>
-<div id="vx" hidden></div></main>
+<div id="vx" hidden></div>
+<div id="vc" hidden></div></main>
 <dialog id="dlg"><form id="fe"><b>Editar pedido</b><label>Nome<input id="ec" maxlength="80" required></label>
 <label>Total (R$)<input id="et" type="number" step="0.01" min="0" required></label>
 <label>Pedido (texto do cupom)<textarea id="ed"></textarea></label>
 <div class="bt"><button type="button" id="ecancel">Cancelar</button><button class="pri">Salvar</button></div></form></dialog>
+<dialog id="dg"><form id="fg"></form></dialog>
 <div id="toast" hidden></div>
 <div id="ticket"></div>
 <script>
@@ -112,12 +155,12 @@ async function auth(kind,body){const ac=TO(),r=await fetch(CFG.url+'/auth/v1/tok
  clearTimeout(ac.t);const j=await r.json();if(!r.ok)throw new Error('auth');j.exp=Date.now()+(j.expires_in-60)*1000;ses=j;SV('ses',j)}
 async function api(path,opt={}){if(Date.now()>ses.exp)await auth('refresh_token',{refresh_token:ses.refresh_token});
  const ac=TO(),r=await fetch(CFG.url+'/rest/v1/'+path,{signal:ac.signal,...opt,headers:{apikey:CFG.key,Authorization:'Bearer '+ses.access_token,'Content-Type':'application/json',...(opt.headers||{})}});
- clearTimeout(ac.t);if(!r.ok)throw new Error(r.status);return opt.method==='PATCH'?null:r.json()}
+ clearTimeout(ac.t);if(!r.ok)throw new Error(r.status);if(opt.method==='PATCH')return null;const tx=await r.text();return tx?JSON.parse(tx):null}
 
 $('#f').onsubmit=async e=>{e.preventDefault();$('#erro').textContent='';audio=audio||new AudioContext();
  try{await auth('password',{email:$('#em').value.trim(),password:$('#pw').value});entrar()}catch(x){$('#erro').textContent='E-mail ou senha incorretos.'}};
 function entrar(){$('#f').hidden=true;$('#app').hidden=false;$('#hd').hidden=false;$('#stats').textContent='Carregando…';carregar();clearInterval(tm);tm=setInterval(carregar,5000);try{navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
-function sair(){localStorage.removeItem('ses');ses=null;clearInterval(tm);seen=null;last='';$('#app').hidden=true;$('#hd').hidden=true;$('#f').hidden=false;$('#vd').hidden=true;$('#vx').hidden=true;$('#orig').hidden=false;menu(false)}
+function sair(){localStorage.removeItem('ses');ses=null;clearInterval(tm);seen=null;last='';$('#app').hidden=true;$('#hd').hidden=true;$('#f').hidden=false;$('#vd').hidden=true;$('#vx').hidden=true;$('#vc').hidden=true;$('#orig').hidden=false;menu(false)}
 $('#sair').onclick=sair;
 
 function beep(){try{const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.frequency.value=880;g.gain.value=.2;o.start();o.stop(audio.currentTime+.3)}catch(e){}}
@@ -185,8 +228,8 @@ function menu(on){const d=$('#drw'),o=$('#ov');
  else{d.classList.remove('on');o.classList.remove('on');setTimeout(()=>{if(!d.classList.contains('on'))d.hidden=o.hidden=true},280)}}
 $('#mn').onclick=()=>menu(true);$('#ov').onclick=()=>menu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
-function marcaMenu(x){$('#mi-home').classList.toggle('on',x==='home');$('#mi-ped').classList.toggle('on',x==='ped');$('#mi-del').classList.toggle('on',x==='del')}
-function tela(n){['orig','vd','vx'].forEach(k=>$('#'+k).hidden=k!==n)}
+function marcaMenu(x){$('#mi-home').classList.toggle('on',x==='home');$('#mi-ped').classList.toggle('on',x==='ped');$('#mi-del').classList.toggle('on',x==='del');$('#mi-cat').classList.toggle('on',x==='cat')}
+function tela(n){['orig','vd','vx','vc'].forEach(k=>$('#'+k).hidden=k!==n)}
 function voltar(){tela('orig');marcaMenu('home');desenhar()}
 $('#mi-home').onclick=()=>{menu(false);voltar()};
 $('#mi-ped').onclick=()=>{menu(false);abrirDash()};
@@ -262,6 +305,99 @@ $('#vx').onclick=e=>{const b=e.target.closest('button');if(!b)return;
 $('#vx').onchange=e=>{const t=e.target;
  if(t.dataset.id!==undefined){const k=String(t.dataset.id);t.checked?selX.add(k):selX.delete(k);xgoTxt();return}
  if(t.id==='xd'){XV.dia=t.value;previa()}else if(t.id==='xs'){XV.sem=t.value;previa()}else if(t.id==='xm'){XV.mes=t.value;previa()}};
+
+/* ===== Gestão de Cardápio: categorias, preços e Pausar produto ===== */
+let CAT=[],PRD=[];
+const SQLCAT=`create table if not exists categorias (id bigint generated always as identity primary key, nome text not null, ordem int not null default 0, created_at timestamptz not null default now());
+create table if not exists produtos (id bigint generated always as identity primary key, categoria_id bigint references categorias(id) on delete set null, nome text not null, descricao text, preco numeric(10,2) not null default 0, pausado boolean not null default false, created_at timestamptz not null default now());
+alter table categorias enable row level security;
+alter table produtos enable row level security;
+create policy "painel gerencia categorias" on categorias for all to authenticated using (true) with check (true);
+create policy "painel gerencia produtos" on produtos for all to authenticated using (true) with check (true);
+create policy "site le categorias" on categorias for select to anon using (true);
+create policy "site le produtos" on produtos for select to anon using (true);
+grant select on categorias, produtos to anon;
+grant select, insert, update, delete on categorias, produtos to authenticated;`;
+const num=t=>{t=String(t).trim();return parseFloat(t.includes(',')?t.replace(/\./g,'').replace(',','.'):t)};
+const fmt=v=>Number(v).toFixed(2).replace('.',',');
+const SEED=(()=>{const C=[['Pratos'],['Proteínas'],['Guarnições'],['Salada'],['Bebidas · Refrigerante'],['Bebidas · Cerveja'],['Bebidas · Suco']],P=[];
+ [['Clássica',15,'Com uma proteína'],['Premium',18,'Com uma proteína'],['Gourmet',22,'Com duas proteínas'],['Executivo',25,'Com uma proteína']].forEach(x=>P.push([0,...x]));
+ [['Ensopado de carne moída','Clássica, Gourmet'],['Linguiça toscana','Clássica, Gourmet'],['Frango a passarinha','Premium, Gourmet'],['Bode cozido','Premium, Gourmet'],['Carne do sol','Executivo'],['Cupim','Executivo'],['Contra filé','Executivo'],['Bode','Executivo']].forEach(x=>P.push([1,x[0],0,x[1]]));
+ ['Baião','Arroz','Feijão caldo','Feijão verde','Feijão tropeiro','Macarrão','Farofa'].forEach(n=>P.push([2,n,0,null]));
+ ['Alface','Tomate','Cebola roxa','Pepino','Milho'].forEach(n=>P.push([3,n,0,null]));
+ const B=(i,t,pr,L)=>L.forEach(n=>P.push([i,n,pr,t]));
+ B(4,'Lata',5,['Coca-Cola','Guaraná Antarctica','Fanta Laranja']);B(4,'1 Litro',8,['Coca-Cola','Guaraná Antarctica','Fanta Laranja']);B(4,'2 Litros',12,['Coca-Cola','Guaraná Antarctica','Fanta Laranja']);
+ B(5,'Piriguete',4,['Skol','Brahma','Antarctica']);B(5,'Long neck',8,['Heineken','Budweiser','Original']);B(5,'600ml',12,['Skol','Brahma','Antarctica']);B(5,'1 Litro',16,['Skol','Brahma','Antarctica']);
+ B(6,'500ml',6,['Laranja','Abacaxi','Maracujá']);return{C,P}})();
+const semPreco=p=>{const c=CAT.find(x=>x.id===p.categoria_id);return !!c&&['proteinas','guarnicoes','salada'].includes(c.nome.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim())};
+async function importarSite(auto){const b=$('#cimp');if(b){b.disabled=true;b.textContent='Importando…'}
+ try{const ex=await api('categorias?select=*');const ids=[];
+  for(let i=0;i<SEED.C.length;i++){const f=ex.find(c=>c.nome===SEED.C[i][0]);
+   if(f){ids.push(f.id);continue}
+   const r=await api('categorias',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({nome:SEED.C[i][0],ordem:ex.length+i})});ids.push(r[0].id)}
+  await api('produtos',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(SEED.P.map(x=>({categoria_id:ids[x[0]],nome:x[1],preco:x[2],descricao:x[3]})))});
+  toast('Cardápio do site importado');return true}catch(e){toast('Falha ao importar (erro '+e.message+')');if(b){b.disabled=false;b.textContent='Importar cardápio do site'}return false}}
+const CTOP='<div class="ctop"><div><h2>Rancharia</h2><span class="scr">Cardápio</span></div><button id="cv">Voltar</button></div>';
+async function abrirCardapio(){marcaMenu('cat');tela('vc');const v=$('#vc');v.innerHTML=CTOP+'<p class="mut">Carregando…</p>';
+ try{const L=()=>Promise.all([api('categorias?select=*&order=ordem.asc,id.asc'),api('produtos?select=*&order=nome.asc')]);[CAT,PRD]=await L();
+  if(!PRD.length&&!window.__imp){window.__imp=1;v.innerHTML=CTOP+'<p class="mut">Importando o cardápio do site…</p>';if(await importarSite(true))[CAT,PRD]=await L()}
+  renderC()}
+ catch(e){if(['404','401','403'].includes(e.message))v.innerHTML=CTOP+`<div class="box dash"><h3>Configurar o banco (uma vez)</h3><p class="mut">As tabelas de cardápio ainda não existem (ou faltam permissões). Apague tudo que estiver no SQL Editor do Supabase, cole este SQL e toque em Run.</p><div class="sqlb" id="sqlc">${esc(SQLCAT)}</div><button class="pri" id="csql" style="width:100%">Copiar SQL</button></div>`;
+  else v.innerHTML=CTOP+'<p class="mut">Não foi possível carregar. Confira a conexão.</p><button id="cretry">Tentar de novo</button>'}}
+function cardP(p){const sp=semPreco(p);return `<div class="it${p.pausado?' off':''}"><div><button class="pn2" data-ep="${p.id}">${esc(p.nome)}</button>${p.descricao?`<div class="pd2">${esc(p.descricao)}</div>`:''}${p.pausado?'<span class="bdg">PAUSADO</span>':''}</div><div class="itr">${sp?'<span class="inc">incluso</span>':`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${p.id}" value="${fmt(p.preco)}" aria-label="Preço de ${esc(p.nome)}"></label>`}<button class="pzb${p.pausado?' on':''}" data-pz="${p.id}">${p.pausado?'Reativar':'Pausar'}</button><button class="pxb" data-px="${p.id}" aria-label="Apagar ${esc(p.nome)}">×</button></div></div>`}
+function renderC(){const v=$('#vc'),y=scrollY,pz=PRD.filter(p=>p.pausado).length;
+ const grupo=(titulo,L,cid)=>`<article class="plate"><div class="ph"><h3>${esc(titulo)} <span>(${L.length})</span></h3>${cid?`<button data-ec="${cid}">Editar</button>`:''}</div>`+(L.length?L.map(cardP).join(''):'<p class="mut">Nenhum produto nesta categoria.</p>')+'</article>';
+ const sem=PRD.filter(p=>!CAT.some(c=>c.id===p.categoria_id));
+ v.innerHTML=CTOP+'<div class="cb"><button id="ncat">Nova categoria</button><button class="pri" id="nprd">Novo produto</button></div>'+
+  (pz?`<p class="mut"><b style="color:#e58b8b">${pz} produto${pz>1?'s':''} pausado${pz>1?'s':''}</b> — não aparece${pz>1?'m':''} pro cliente.</p>`:'')+
+  (CAT.length||PRD.length?'':'<div class="box dash"><h3>Cardápio vazio</h3><p class="mut">Importe o cardápio atual do site e depois edite, apague ou adicione o que quiser.</p><button class="pri" id="cimp" style="width:100%">Importar cardápio do site</button></div>')+
+  CAT.map(c=>grupo(c.nome,PRD.filter(p=>p.categoria_id===c.id),c.id)).join('')+(sem.length?grupo('Sem categoria',sem):'');
+ scrollTo(0,y)}
+function dlgForm(titulo,html,onSave,onDel){const f=$('#fg');
+ f.innerHTML=`<b>${titulo}</b>${html}<div class="bt"><button type="button" id="gx">Cancelar</button>${onDel?'<button type="button" class="rd" id="gd">Excluir</button>':''}<button class="pri">Salvar</button></div>`;
+ $('#gx').onclick=()=>$('#dg').close();if(onDel)$('#gd').onclick=onDel;
+ f.onsubmit=async e=>{e.preventDefault();try{await onSave();$('#dg').close();renderC()}catch(x){if(x!==0)toast('Não foi possível salvar. Tente de novo.')}};
+ $('#dg').showModal()}
+const apagarId=async(t,id)=>{const r=await api(t+'?id=eq.'+id+'&select=id',{method:'DELETE',headers:{Prefer:'return=representation'}});if(!r.length)throw 0};
+function formCat(c){dlgForm(c?'Editar categoria':'Nova categoria',
+ `<label>Nome<input id="gn" maxlength="60" required value="${esc(c?.nome||'')}"></label><label>Posição na lista (0 = primeiro)<input id="go" type="number" min="0" value="${c?c.ordem:CAT.length}"></label>`,
+ async()=>{const d={nome:$('#gn').value.trim(),ordem:parseInt($('#go').value)||0};
+  if(c){await api('categorias?id=eq.'+c.id,{method:'PATCH',body:JSON.stringify(d)});Object.assign(c,d)}
+  else{const r=await api('categorias',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(d)});CAT.push(r[0])}
+  CAT.sort((a,b)=>a.ordem-b.ordem||a.id-b.id);toast('Categoria salva')},
+ c&&(async()=>{const n=PRD.filter(p=>p.categoria_id===c.id).length;
+  if(!confirm('Excluir a categoria "'+c.nome+'"?'+(n?'\nOs '+n+' produtos dela ficam sem categoria.':'')))return;
+  try{await apagarId('categorias',c.id);CAT=CAT.filter(x=>x.id!==c.id);PRD.forEach(p=>{if(p.categoria_id===c.id)p.categoria_id=null});$('#dg').close();renderC();toast('Categoria excluída')}catch(e){toast('Não foi possível excluir.')}}))}
+function formPrd(p){const op=CAT.map(c=>`<option value="${c.id}"${p&&p.categoria_id===c.id?' selected':''}>${esc(c.nome)}</option>`).join('');
+ dlgForm(p?'Editar produto':'Novo produto',
+ `<label>Nome<input id="gn" maxlength="80" required value="${esc(p?.nome||'')}"></label><label>Descrição (opcional)<input id="gde" maxlength="200" value="${esc(p?.descricao||'')}"></label><label>Preço (R$) — vazio = incluso<input id="gp" inputmode="decimal" value="${p?fmt(p.preco):''}"></label><label>Categoria<select id="gc"><option value="">Sem categoria</option>${op}</select></label>`,
+ async()=>{const preco=$('#gp').value.trim()===''?0:num($('#gp').value);if(!(preco>=0)){toast('Preço inválido');throw 0}
+  const d={nome:$('#gn').value.trim(),descricao:$('#gde').value.trim()||null,preco,categoria_id:$('#gc').value?+$('#gc').value:null};
+  if(p){await api('produtos?id=eq.'+p.id,{method:'PATCH',body:JSON.stringify(d)});Object.assign(p,d)}
+  else{const r=await api('produtos',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(d)});PRD.push(r[0]);PRD.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))}
+  toast('Produto salvo')},
+ p&&(async()=>{if(!confirm('Excluir "'+p.nome+'"?\nIsso não tem volta. (Se for só falta de ingrediente, use Pausar.)'))return;
+  try{await apagarId('produtos',p.id);PRD=PRD.filter(x=>x.id!==p.id);$('#dg').close();renderC();toast('Produto excluído')}catch(e){toast('Não foi possível excluir.')}}))}
+// Pausa/reativa na hora (atualiza a tela primeiro, desfaz se o servidor falhar)
+async function pausar(id){const p=PRD.find(x=>String(x.id)===String(id));if(!p)return;const novo=!p.pausado;p.pausado=novo;renderC();
+ try{await api('produtos?id=eq.'+p.id,{method:'PATCH',body:JSON.stringify({pausado:novo})});toast((novo?'Pausado: ':'De volta ao cardápio: ')+p.nome)}
+ catch(e){p.pausado=!novo;renderC();toast('Não foi possível salvar. Tente de novo.')}}
+async function salvarPreco(inp){const p=PRD.find(x=>String(x.id)===inp.dataset.pr);if(!p)return;const v=num(inp.value);
+ if(!(v>=0)){inp.value=fmt(p.preco);toast('Preço inválido');return}
+ if(v===+p.preco){inp.value=fmt(v);return}
+ const antigo=p.preco;p.preco=v;inp.value=fmt(v);
+ try{await api('produtos?id=eq.'+p.id,{method:'PATCH',body:JSON.stringify({preco:v})});toast('Preço salvo: '+p.nome)}
+ catch(e){p.preco=antigo;inp.value=fmt(antigo);toast('Não foi possível salvar o preço.')}}
+async function apagarProd(id){const p=PRD.find(x=>String(x.id)===String(id));if(!p)return;
+ if(!confirm('Apagar "'+p.nome+'"?\nIsso não tem volta. (Se for só falta de ingrediente, use Pausar.)'))return;
+ try{await apagarId('produtos',p.id);PRD=PRD.filter(x=>x.id!==p.id);renderC();toast('Produto apagado')}catch(e){toast('Não foi possível apagar.')}}
+$('#mi-cat').onclick=()=>{menu(false);abrirCardapio()};
+$('#vc').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(b.id==='cv')voltar();else if(b.id==='ncat')formCat();else if(b.id==='nprd')formPrd();else if(b.id==='cretry')abrirCardapio();else if(b.id==='cimp'){importarSite().then(ok=>ok&&abrirCardapio())}
+ else if(b.id==='csql'){const f=()=>toast('SQL copiado');navigator.clipboard?.writeText(SQLCAT).then(f,()=>{const r=document.createRange();r.selectNodeContents($('#sqlc'));getSelection().removeAllRanges();getSelection().addRange(r);toast('Selecione e copie o SQL')})}
+ else if(d.pz)pausar(d.pz);else if(d.px)apagarProd(d.px);else if(d.ep)formPrd(PRD.find(x=>String(x.id)===d.ep));else if(d.ec)formCat(CAT.find(x=>String(x.id)===d.ec))};
+$('#vc').onchange=e=>{if(e.target.dataset.pr)salvarPreco(e.target)};
+$('#vc').onkeydown=e=>{if(e.key==='Enter'&&e.target.dataset.pr)e.target.blur()};
 $('#rf').onclick=()=>{const b=$('#rf');b.classList.remove('spin');void b.offsetWidth;b.classList.add('spin');last='';carregar();if(!$('#vd').hidden)abrirDash()};
 $('#vd').onclick=e=>{if(e.target.id==='dv')voltar()};
 if(ses)entrar();
