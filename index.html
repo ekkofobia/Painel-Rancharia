@@ -122,7 +122,7 @@ button.dng{background:#b91c1c;border-color:#b91c1c;color:#fff;font-weight:600;wi
 <form id="f" class="box"><h1 class="nm"></h1><span class="mut">Painel de pedidos</span><input id="em" type="email" placeholder="E-mail" autocomplete="username" required>
 <input id="pw" type="password" placeholder="Senha" autocomplete="current-password" required><button>Entrar</button><div id="erro"></div></form>
 <div id="ov" hidden></div>
-<aside id="drw" hidden><button class="mi" id="mi-home">🏠 Painel</button><button class="mi" id="mi-ped">📊 Pedidos</button><button class="mi" id="mi-cat">🍽️ Cardápio</button>
+<aside id="drw" hidden><button class="mi" id="mi-home">🏠 Painel</button><button class="mi" id="mi-ped">📊 Análise</button><button class="mi" id="mi-cat">🍽️ Cardápio</button>
 <button class="mi" id="mi-del">🗑️ Apagar</button>
 <div class="cfgm"><b>Impressão</b><label><input type="checkbox" id="auto"> Imprimir novos automaticamente</label><select id="papel"><option value="w80">80 mm</option><option value="w58">58 mm</option></select></div>
 <button class="mi rd sairb" id="sair">Sair</button></aside>
@@ -254,9 +254,9 @@ function bloco(titulo,sub,arr,n,idx,rot,atual,mostraNum){
  <div class="tot">${R(tot)}</div><div class="mut">${sub}</div><div class="bars">${bars}</div><div class="lb">${lab}</div></div>`}
 /* ===== Ranking de itens (semana / mês / 6 meses) ===== */
 let RKD=null;
-const RKP=[['Semana (últimos 7 dias)',7],['Mês (últimos 30 dias)',30],['6 meses',0]];
-const rkIni=k=>{const d=new Date();if(k)d.setDate(d.getDate()-k);else d.setMonth(d.getMonth()-6);d.setHours(0,0,0,0);return d};
-async function pedidosRk(){const ini=encodeURIComponent(rkIni(0).toISOString());let out=[],i=0;
+const RKP=[['Semana (últimos 7 dias)','d7'],['Mês (últimos 30 dias)','d30'],['3 meses','m3'],['6 meses','m6'],['12 meses','m12']];
+const rkIni=k=>{const d=new Date(),n=+String(k).slice(1);if(k[0]==='d')d.setDate(d.getDate()-n);else d.setMonth(d.getMonth()-n);d.setHours(0,0,0,0);return d};
+async function pedidosRk(){const ini=encodeURIComponent(rkIni('m12').toISOString());let out=[],i=0;
  for(;;){const r=await api('pedidos?select=created_at,status,detalhes&created_at=gte.'+ini+'&order=created_at.desc',{headers:{'Range-Unit':'items',Range:i+'-'+(i+999)}});out=out.concat(r);if(r.length<1000)break;i+=1000}
  return out}
 function rkParse(det){const its=[];String(det||'').split('\n').forEach(l=>{let m=l.match(/^\s*(\d+)x\s+(.+?)\s+—\s+R\$/);
@@ -273,22 +273,22 @@ function rkHTML(C){return [['p','Pratos'],['g','Guarnições'],['s','Saladas'],[
  return `<div class="rkh">${t}</div>`+(L.length?L.map((x,i)=>`<div class="rki"><span class="rkn">${i+1}º</span><div class="rkb"><div class="rkt"><b>${esc(x[0])}</b><span>${x[1]}</span></div><div class="rkbar"><i style="width:${Math.max(4,x[1]/mx*100)}%"></i></div></div></div>`).join(''):'<p class="mut">Sem pedidos no período.</p>')}).join('')}
 const rkCards=()=>'<h3 class="rkh0">Ranking de itens pedidos</h3>'+RKP.map(([t,d])=>`<details class="box dash rk" data-rk="${d}"><summary>${t}</summary><div class="rkc"><p class="mut">Carregando…</p></div></details>`).join('');
 $('#vd').addEventListener('toggle',async e=>{const d=e.target;if(!d.matches||!d.matches('details.rk')||!d.open)return;const box=d.querySelector('.rkc');
- try{RKD=RKD||pedidosRk();const data=await RKD,ini=rkIni(+d.dataset.rk);box.innerHTML=rkHTML(rkCalc(data.filter(o=>o.status!=='cancelado'&&new Date(o.created_at)>=ini)))}
+ try{RKD=RKD||pedidosRk();const data=await RKD,ini=rkIni(d.dataset.rk);box.innerHTML=rkHTML(rkCalc(data.filter(o=>o.status!=='cancelado'&&new Date(o.created_at)>=ini)))}
  catch(x){RKD=null;box.innerHTML='<p class="mut">Não foi possível carregar o ranking.</p>'}},true);
 async function abrirDash(){RKD=null;marcaMenu('ped');tela('vd');const v=$('#vd');
- v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div><p class="mut">Carregando…</p>';
+ v.innerHTML='<div class="dbtop"><h2>Análise</h2><button id="dv">Voltar</button></div><p class="mut">Carregando…</p>';
  try{const d=await pedidosAno();
   const L=d.filter(p=>p.status!=='cancelado').map(p=>({dt:new Date(p.created_at),t:+p.total||0}));
   const n=new Date(),Y=n.getFullYear(),M=n.getMonth(),D=n.getDate();
   const mes=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],mesL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const doMes=L.filter(x=>x.dt.getMonth()===M),doDia=doMes.filter(x=>x.dt.getDate()===D);
   const dias=new Date(Y,M+1,0).getDate();
-  v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div>'+
+  v.innerHTML='<div class="dbtop"><h2>Análise</h2><button id="dv">Voltar</button></div>'+
    bloco('Hoje',pad(D)+'/'+pad(M+1)+'/'+Y+' · por hora',doDia,24,x=>x.getHours(),(i,s)=>s?i+'h':i+'h',n.getHours(),false)+
    bloco('Este mês',mesL[M]+' · por dia',doMes,dias,x=>x.getDate()-1,(i,s)=>s?i+1:'Dia '+(i+1),D-1,false)+
    bloco('Este ano',Y+' · por mês',L,12,x=>x.getMonth(),(i)=>mes[i],M,true)+
    rkCards()+'<p class="mut">Pedidos cancelados não entram na contagem nem no valor.</p>'}
- catch(e){v.innerHTML='<div class="dbtop"><h2>Pedidos</h2><button id="dv">Voltar</button></div><p class="mut">Não foi possível carregar. Confira a conexão.</p>'}}
+ catch(e){v.innerHTML='<div class="dbtop"><h2>Análise</h2><button id="dv">Voltar</button></div><p class="mut">Não foi possível carregar. Confira a conexão.</p>'}}
 
 /* ===== Apagar pedidos: individual / dia / semana / mês ===== */
 const MESL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
