@@ -136,6 +136,8 @@ body.tsite .badge.pronto{background:#14301b;color:#7bd389}body.tsite .badge.entr
 body.tsite pre,body.tsite .sqlb{background:#2a1509;border-color:var(--line)}
 body.tsite #drw{background:#341d0f}body.tsite dialog::backdrop{background:#2a150999}
 body.tsite #vc{background:none;padding:0;margin:0}
+.lojabt{width:100%;margin:10px 0 0;padding:14px;font-weight:700;font-size:16px;border-radius:18px;border:1px solid var(--line);background:#fff}
+.lojabt.on{background:#14301b;border-color:#7bd389;color:#7bd389}.lojabt.off{background:#3a1515;border-color:#e58b8b;color:#e58b8b}
 </style><link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@400;500;600;700;800&family=Yellowtail&display=swap" rel="stylesheet"></head><body>
 <header id="hd" hidden><div class="hd"><div class="brand"><span class="nm"></span></div><span id="s" class="pill">…</span><button id="rf" class="ham rf" style="margin-left:auto" aria-label="Atualizar" title="Atualizar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button><button id="mn" class="ham" aria-label="Abrir menu"><i></i><i></i><i></i></button></div></header>
 <form id="f" class="box"><h1 class="nm"></h1><span class="mut">Painel de pedidos</span><input id="em" type="email" placeholder="E-mail" autocomplete="username" required>
@@ -148,7 +150,7 @@ body.tsite #vc{background:none;padding:0;margin:0}
 <button class="mi rd sairb" id="sair">Sair</button></aside>
 <main id="app" hidden>
 <div id="orig">
-<div class="box stats" id="stats"></div>
+<div class="box stats" id="stats"></div><button id="lojaBt" class="lojabt">Loja: carregando…</button>
 <div class="tabs"><button class="tab" data-t="p">Pedidos</button><button class="tab" data-t="h">Histórico</button></div>
 <div id="vp"><div class="chips" id="chips"></div><div id="dtxt" class="mut"></div><div id="lista"></div></div>
 <div id="vh" hidden></div>
@@ -185,7 +187,7 @@ async function api(path,opt={}){if(Date.now()>ses.exp)await auth('refresh_token'
 
 $('#f').onsubmit=async e=>{e.preventDefault();$('#erro').textContent='';audio=audio||new AudioContext();
  try{await auth('password',{email:$('#em').value.trim(),password:$('#pw').value});entrar()}catch(x){$('#erro').textContent='E-mail ou senha incorretos.'}};
-function entrar(){$('#f').hidden=true;$('#app').hidden=false;$('#hd').hidden=false;$('#stats').textContent='Carregando…';carregar();clearInterval(tm);tm=setInterval(carregar,5000);try{navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
+function entrar(){$('#f').hidden=true;$('#app').hidden=false;$('#hd').hidden=false;$('#stats').textContent='Carregando…';carregar();loadLoja();clearInterval(tm);tm=setInterval(carregar,5000);try{navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
 function sair(){localStorage.removeItem('ses');ses=null;clearInterval(tm);seen=null;last='';$('#app').hidden=true;$('#hd').hidden=true;$('#f').hidden=false;$('#vd').hidden=true;$('#vx').hidden=true;$('#vc').hidden=true;$('#orig').hidden=false;menu(false)}
 $('#sair').onclick=sair;
 
@@ -404,7 +406,7 @@ async function migrarModelo(){const pc=CAT.find(c=>nrm(c.nome)==='pratos'),qc=CA
  await api('categorias?id=in.('+[pc.id,qc&&qc.id].filter(Boolean).join(',')+')',{method:'DELETE'})}
 const CTOP='<div class="ctop"><div><h2>Rancharia</h2><span class="scr">Cardápio</span></div><button id="cv">Voltar</button></div>';
 async function abrirCardapio(){marcaMenu('cat');tela('vc');const v=$('#vc');v.innerHTML=CTOP+'<p class="mut">Carregando…</p>';
- try{const L=()=>Promise.all([api('categorias?select=*&order=ordem.asc,id.asc'),api('produtos?select=*&order=nome.asc')]);[CAT,PRD]=await L();
+ try{const L=()=>Promise.all([api('categorias?select=*&order=ordem.asc,id.asc'),api('produtos?select=*&order=nome.asc')]).then(([c,q])=>[c.filter(x=>!String(x.nome).startsWith('__')),q]);[CAT,PRD]=await L();
   if(CAT.some(c=>nrm(c.nome)==='pratos')){v.innerHTML=CTOP+'<p class="mut">Atualizando o cardápio…</p>';await migrarModelo();[CAT,PRD]=await L()}
   if(!PRD.length&&!window.__imp){window.__imp=1;v.innerHTML=CTOP+'<p class="mut">Importando o cardápio do site…</p>';
    if(await importarSite(true))[CAT,PRD]=await L();else{window.__imp=0;throw new Error(window.__err||'importação')}}
@@ -471,5 +473,15 @@ $('#vd').onclick=e=>{if(e.target.id==='dv')voltar()};
 const TEMA=()=>LS('tema','site');
 function aplicaTema(){const t=TEMA();document.body.classList.toggle('tsite',t==='site');$('#mi-tema').textContent='🎨 Tema: '+(t==='site'?'Site (escuro)':'Claro')}
 $('#mi-tema').onclick=()=>{SV('tema',TEMA()==='site'?'claro':'site');aplicaTema()};aplicaTema();
+/* ===== Abrir / fechar loja (guarda uma categoria especial "__loja_fechada" no Supabase) ===== */
+let LOJA=null;
+function pintaLoja(){const b=$('#lojaBt');if(!b)return;b.className='lojabt '+(LOJA===null?'':LOJA?'off':'on');
+ b.textContent=LOJA===null?'Loja: não foi possível ler o status (toque para tentar)':LOJA?'🔴 Loja fechada — toque para abrir':'🟢 Loja aberta — toque para fechar'}
+async function loadLoja(){try{const r=await api('categorias?select=id&nome=eq.__loja_fechada');LOJA=r.length>0}catch(e){LOJA=null}pintaLoja()}
+$('#lojaBt').onclick=async()=>{if(LOJA===null)return loadLoja();
+ if(!LOJA&&!confirm('Fechar a loja?\nOs clientes continuam vendo o site, mas não conseguem fazer pedidos.'))return;
+ try{if(LOJA)await api('categorias?nome=eq.__loja_fechada',{method:'DELETE'});
+  else await api('categorias',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({nome:'__loja_fechada',ordem:9999})});
+  LOJA=!LOJA;pintaLoja();toast(LOJA?'Loja fechada':'Loja aberta')}catch(e){toast('Não foi possível alterar (erro '+e.message+')')}};
 if(ses)entrar();
 </script></body></html>
