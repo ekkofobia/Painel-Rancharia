@@ -145,9 +145,11 @@ body.tsite #vc{background:none;padding:0;margin:0}
 .sw.r .k{transform:translateX(50px)}
 body.tsite .sw{background:#341d0f}body.tsite .sw .ic{color:#7d6a52}body.tsite .sw .k{color:#2a1509}
 body .sw.lj .k{color:#fff}.sw.lj.ok .k{background:#2f9e5a}.sw.lj.bad .k{background:#d14343}.sw.lj.nul .k{background:#8a8a8a}
-.ham{width:39px;height:39px;gap:3.7px}.ham i{width:16.7px}.rf svg{width:20.5px;height:20.5px}
+.hd{gap:8px}.ham{width:34px;height:34px;gap:3.3px}.ham i{width:15px}.rf svg{width:18px;height:18px}
+.rb{flex:none;width:34px;height:34px;padding:0;border-radius:50%;display:grid;place-items:center;border:0;color:#fff;box-shadow:0 3px 8px #0003}.rb svg{width:18px;height:18px;display:block}
+body .rb.lj.ok{background:#2f9e5a;color:#fff}body .rb.lj.bad{background:#d14343;color:#fff}body .rb.lj.nul{background:#8a8a8a;color:#fff}
 </style><link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@400;500;600;700;800&family=Yellowtail&display=swap" rel="stylesheet"></head><body>
-<header id="hd" hidden><div class="hd"><div class="brand"><span class="nm"></span></div><span id="s" class="pill">…</span><button id="rf" class="ham rf" style="margin-left:auto" aria-label="Atualizar" title="Atualizar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button><button id="mn" class="ham" aria-label="Abrir menu"><i></i><i></i><i></i></button></div></header>
+<header id="hd" hidden><div class="hd"><div class="brand"><span class="nm"></span></div><span id="s" class="pill">…</span><button id="lojaBt" class="rb lj nul" type="button" style="margin-left:auto"></button><button id="rf" class="ham rf" aria-label="Atualizar" title="Atualizar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button><button id="mn" class="ham" aria-label="Abrir menu"><i></i><i></i><i></i></button></div></header>
 <form id="f" class="box"><h1 class="nm"></h1><span class="mut">Painel de pedidos</span><input id="em" type="email" placeholder="E-mail" autocomplete="username" required>
 <input id="pw" type="password" placeholder="Senha" autocomplete="current-password" required><button>Entrar</button><div id="erro"></div></form>
 <div id="ov" hidden></div>
@@ -158,7 +160,7 @@ body .sw.lj .k{color:#fff}.sw.lj.ok .k{background:#2f9e5a}.sw.lj.bad .k{backgrou
 <button class="mi rd sairb" id="sair">Sair</button></aside>
 <main id="app" hidden>
 <div id="orig">
-<div class="box stats" id="stats"></div><button id="lojaBt" class="sw lj nul" type="button"></button>
+<div class="box stats" id="stats"></div>
 <div class="tabs"><button class="tab" data-t="p">Pedidos</button><button class="tab" data-t="h">Histórico</button></div>
 <div id="vp"><div class="chips" id="chips"></div><div id="dtxt" class="mut"></div><div id="lista"></div></div>
 <div id="vh" hidden></div>
@@ -486,7 +488,7 @@ function aplicaTema(){const t=TEMA();document.body.classList.toggle('tsite',t===
 $('#mi-tema').onclick=()=>{SV('tema',TEMA()==='site'?'claro':'site');aplicaTema()};aplicaTema();
 /* ===== Abrir / fechar loja (guarda uma categoria especial "__loja_fechada" no Supabase) ===== */
 let LOJA=null;
-function pintaLoja(){const b=$('#lojaBt');if(!b)return;b.className='sw lj'+(LOJA===null?' nul':LOJA?' bad':' ok');pintaSw(b,LOJA===true,'store','lock');
+function pintaLoja(){const b=$('#lojaBt');if(!b)return;b.className='rb lj'+(LOJA===null?' nul':LOJA?' bad':' ok');b.innerHTML=IC[LOJA?'lock':'store'];
  b.setAttribute('aria-label',LOJA===null?'Status da loja indisponível — toque para tentar':LOJA?'Loja fechada — toque para abrir':'Loja aberta — toque para fechar')}
 async function loadLoja(){try{const r=await api('categorias?select=id&nome=eq.__loja_fechada');LOJA=r.length>0}catch(e){LOJA=null}pintaLoja()}
 $('#lojaBt').onclick=async()=>{if(LOJA===null)return loadLoja();
