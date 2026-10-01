@@ -312,6 +312,10 @@ const SQLCAT=`create table if not exists categorias (id bigint generated always 
 create table if not exists produtos (id bigint generated always as identity primary key, categoria_id bigint references categorias(id) on delete set null, nome text not null, descricao text, preco numeric(10,2) not null default 0, pausado boolean not null default false, created_at timestamptz not null default now());
 alter table categorias enable row level security;
 alter table produtos enable row level security;
+drop policy if exists "painel gerencia categorias" on categorias;
+drop policy if exists "painel gerencia produtos" on produtos;
+drop policy if exists "site le categorias" on categorias;
+drop policy if exists "site le produtos" on produtos;
 create policy "painel gerencia categorias" on categorias for all to authenticated using (true) with check (true);
 create policy "painel gerencia produtos" on produtos for all to authenticated using (true) with check (true);
 create policy "site le categorias" on categorias for select to anon using (true);
@@ -336,14 +340,15 @@ async function importarSite(auto){const b=$('#cimp');if(b){b.disabled=true;b.tex
    if(f){ids.push(f.id);continue}
    const r=await api('categorias',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({nome:SEED.C[i][0],ordem:ex.length+i})});ids.push(r[0].id)}
   await api('produtos',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(SEED.P.map(x=>({categoria_id:ids[x[0]],nome:x[1],preco:x[2],descricao:x[3]})))});
-  toast('Cardápio do site importado');return true}catch(e){toast('Falha ao importar (erro '+e.message+')');if(b){b.disabled=false;b.textContent='Importar cardápio do site'}return false}}
+  toast('Cardápio do site importado');return true}catch(e){window.__err=e.message;toast('Falha ao importar (erro '+e.message+')');if(b){b.disabled=false;b.textContent='Importar cardápio do site'}return false}}
 const CTOP='<div class="ctop"><div><h2>Rancharia</h2><span class="scr">Cardápio</span></div><button id="cv">Voltar</button></div>';
 async function abrirCardapio(){marcaMenu('cat');tela('vc');const v=$('#vc');v.innerHTML=CTOP+'<p class="mut">Carregando…</p>';
  try{const L=()=>Promise.all([api('categorias?select=*&order=ordem.asc,id.asc'),api('produtos?select=*&order=nome.asc')]);[CAT,PRD]=await L();
-  if(!PRD.length&&!window.__imp){window.__imp=1;v.innerHTML=CTOP+'<p class="mut">Importando o cardápio do site…</p>';if(await importarSite(true))[CAT,PRD]=await L()}
+  if(!PRD.length&&!window.__imp){window.__imp=1;v.innerHTML=CTOP+'<p class="mut">Importando o cardápio do site…</p>';
+   if(await importarSite(true))[CAT,PRD]=await L();else{window.__imp=0;throw new Error(window.__err||'importação')}}
   renderC()}
- catch(e){if(['404','401','403'].includes(e.message))v.innerHTML=CTOP+`<div class="box dash"><h3>Configurar o banco (uma vez)</h3><p class="mut">As tabelas de cardápio ainda não existem (ou faltam permissões). Apague tudo que estiver no SQL Editor do Supabase, cole este SQL e toque em Run.</p><div class="sqlb" id="sqlc">${esc(SQLCAT)}</div><button class="pri" id="csql" style="width:100%">Copiar SQL</button></div>`;
-  else v.innerHTML=CTOP+'<p class="mut">Não foi possível carregar. Confira a conexão.</p><button id="cretry">Tentar de novo</button>'}}
+ catch(e){window.__imp=0;const m=String(e&&e.message||e);
+  v.innerHTML=CTOP+`<div class="box dash"><h3>Não foi possível abrir o cardápio (erro ${esc(m)})</h3><p class="mut">${['404','401','403','400','406'].includes(m)||m==='importação'?'As tabelas de cardápio ainda não existem ou faltam permissões. No Supabase, abra o SQL Editor, apague o que estiver lá, cole este SQL e toque em Run. Depois volte e toque em Tentar de novo.':'Confira a conexão e tente de novo.'}</p><div class="sqlb" id="sqlc">${esc(SQLCAT)}</div><button class="pri" id="csql" style="width:100%">Copiar SQL</button><button id="cretry" style="width:100%;margin-top:8px">Tentar de novo</button></div>`}}
 function cardP(p){const sp=semPreco(p);return `<div class="it${p.pausado?' off':''}"><div><button class="pn2" data-ep="${p.id}">${esc(p.nome)}</button>${p.descricao?`<div class="pd2">${esc(p.descricao)}</div>`:''}${p.pausado?'<span class="bdg">PAUSADO</span>':''}</div><div class="itr">${sp?'<span class="inc">incluso</span>':`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${p.id}" value="${fmt(p.preco)}" aria-label="Preço de ${esc(p.nome)}"></label>`}<button class="pzb${p.pausado?' on':''}" data-pz="${p.id}">${p.pausado?'Reativar':'Pausar'}</button><button class="pxb" data-px="${p.id}" aria-label="Apagar ${esc(p.nome)}">×</button></div></div>`}
 function renderC(){const v=$('#vc'),y=scrollY,pz=PRD.filter(p=>p.pausado).length;
  const grupo=(titulo,L,cid)=>`<article class="plate"><div class="ph"><h3>${esc(titulo)} <span>(${L.length})</span></h3>${cid?`<button data-ec="${cid}">Editar</button>`:''}</div>`+(L.length?L.map(cardP).join(''):'<p class="mut">Nenhum produto nesta categoria.</p>')+'</article>';
