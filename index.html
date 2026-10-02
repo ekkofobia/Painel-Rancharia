@@ -105,6 +105,11 @@ button.dng{background:#b91c1c;border-color:#b91c1c;color:#fff;font-weight:600;wi
 #vc .ph .ttl{background:none;border:0;padding:0;border-radius:0;color:var(--g);font:inherit;font-weight:800;font-size:21px;text-transform:uppercase;text-align:left}#vc .ph .itr{gap:8px}
 #vc .it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--ln)}
 #vc .it.off .pn2{opacity:.5;text-decoration:line-through}
+#vc .ph>div:first-child,#vc .it{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#vc .drag{position:fixed!important;z-index:60;margin:0!important;box-shadow:0 14px 34px rgba(0,0,0,.55);opacity:.96;pointer-events:none;border-radius:16px;background:#4a2d1a;scale:1.02}
+#vc .it.drag{padding-left:12px;padding-right:12px}
+#vc .dph{border:2px dashed var(--g);border-radius:16px;opacity:.55}
+body.dragging{overscroll-behavior:contain}
 #vc .pn2{background:none;border:0;padding:0;text-align:left;font-size:16px;font-weight:600;color:var(--cr)}
 #vc .pd2{color:var(--mu);font-size:13px;margin-top:2px}
 #vc .bdg{display:inline-block;margin-top:5px;background:#b91c1c;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
@@ -391,8 +396,10 @@ grant select on categorias, produtos to anon;
 grant select, insert, update, delete on categorias, produtos to authenticated;`;
 const num=t=>{t=String(t).trim();return parseFloat(t.includes(',')?t.replace(/\./g,'').replace(',','.'):t)};
 const fmt=v=>Number(v).toFixed(2).replace('.',',');
-const PLAN='Valor do prato',MARK='__tipo',LUG='__lugar',SPECIAL=['pratos','proteinas','guarnicoes','salada'],isPlanCat=cid=>PRD.some(x=>x.categoria_id===cid&&x.nome===PLAN);
-const temMarca=cid=>isPlanCat(cid)||PRD.some(x=>x.categoria_id===cid&&(x.nome===MARK||x.nome===LUG));
+const PLAN='Valor do prato',MARK='__tipo',LUG='__lugar',ORD='__ordem',SPECIAL=['pratos','proteinas','guarnicoes','salada'],isPlanCat=cid=>PRD.some(x=>x.categoria_id===cid&&x.nome===PLAN);
+const temMarca=cid=>isPlanCat(cid)||PRD.some(x=>x.categoria_id===cid&&x.nome===MARK);
+const isMk=x=>x.nome===MARK||x.nome===LUG||x.nome===ORD;
+const ordenar=(L,cid)=>{const m=PRD.find(x=>x.categoria_id===cid&&x.nome===ORD);if(!m||!m.descricao)return L;const ids=String(m.descricao).split(',').map(Number),pos=x=>{const i=ids.indexOf(x.id);return i<0?1e9:i};return L.map((x,i)=>[x,i]).sort((a,b)=>pos(a[0])-pos(b[0])||a[1]-b[1]).map(z=>z[0])};
 const lugarDe=cid=>((PRD.find(x=>x.categoria_id===cid&&x.nome===LUG)||{}).descricao||'');
 const LUGARES=[['principal','Principal (página principal)'],['bump','Order Bump (tela de bebidas antes do check-out)'],['sub','Sub categoria (tela de guarnições, proteínas e saladas)']];
 const tipoDe=cid=>isPlanCat(cid)?'ccc':((PRD.find(x=>x.categoria_id===cid&&x.nome===MARK)||{}).descricao||'min');
@@ -446,16 +453,86 @@ async function abrirCardapio(){marcaMenu('cat');tela('vc');const v=$('#vc');v.in
   renderC()}
  catch(e){window.__imp=0;const m=String(e&&e.message||e);
   v.innerHTML=CTOP+`<div class="box dash"><h3>Não foi possível abrir o cardápio (erro ${esc(m)})</h3><p class="mut">${['404','401','403','400','406'].includes(m)||m==='importação'?'As tabelas de cardápio ainda não existem ou faltam permissões. No Supabase, abra o SQL Editor, apague o que estiver lá, cole este SQL e toque em Run. Depois volte e toque em Tentar de novo.':'Confira a conexão e tente de novo.'}</p><div class="sqlb" id="sqlc">${esc(SQLCAT)}</div><button class="pri" id="csql" style="width:100%">Copiar SQL</button><button id="cretry" style="width:100%;margin-top:8px">Tentar de novo</button></div>`}}
-function cardP(p){const sp=semPreco(p);return `<div class="it${p.pausado?' off':''}"><div><button class="pn2" data-ep="${p.id}">${esc(p.nome)}</button>${p.descricao?`<div class="pd2">${esc(p.descricao)}</div>`:''}${p.pausado?'<span class="bdg">PAUSADO</span>':''}</div><div class="itr">${tipoDe(p.categoria_id)==='aviso'?'':sp?'<span class="inc">incluso</span>':`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${p.id}" value="${fmt(p.preco)}" aria-label="Preço de ${esc(p.nome)}"></label>`}<button class="pzb${p.pausado?' on':''}" data-pz="${p.id}">${p.pausado?'Reativar':'Pausar'}</button><button class="pxb" data-px="${p.id}" aria-label="Apagar ${esc(p.nome)}">×</button></div></div>`}
+function cardP(p){const sp=semPreco(p);return `<div class="it${p.pausado?' off':''}" data-pid="${p.id}"><div><button class="pn2" data-ep="${p.id}">${esc(p.nome)}</button>${p.descricao?`<div class="pd2">${esc(p.descricao)}</div>`:''}${p.pausado?'<span class="bdg">PAUSADO</span>':''}</div><div class="itr">${tipoDe(p.categoria_id)==='aviso'?'':sp?'<span class="inc">incluso</span>':`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${p.id}" value="${fmt(p.preco)}" aria-label="Preço de ${esc(p.nome)}"></label>`}<button class="pzb${p.pausado?' on':''}" data-pz="${p.id}">${p.pausado?'Reativar':'Pausar'}</button><button class="pxb" data-px="${p.id}" aria-label="Apagar ${esc(p.nome)}">×</button></div></div>`}
 function renderC(){const v=$('#vc'),y=scrollY,pz=PRD.filter(p=>p.pausado).length;
- const grupo=(titulo,L,cid)=>{const pl=cid&&PRD.find(x=>x.categoria_id===cid&&x.nome===PLAN),it=L.filter(x=>x!==pl&&x.nome!==MARK&&x.nome!==LUG),tp=cid&&!SPECIAL.includes(nrm(titulo))?tipoDe(cid):'',lb0={min:'Minimizado',csc:'Card sem categoria',aviso:'Aviso'}[tp]||'',lg={principal:'Principal',bump:'Order Bump',sub:'Sub categoria'}[tp&&tp!=='ccc'?lugarDe(cid):'']||'',lb=[lb0,lg].filter(Boolean).join(' · ');
-  return `<article class="plate"><div class="ph"><div><h3>${cid?`<button class="ttl" data-ec="${cid}">${esc(titulo)}</button>`:esc(titulo)} <span>(${it.length})</span></h3>${pl?`<div class="pd2">${esc(pl.descricao||'')}</div>`:(lb?`<div class="pd2">${lb}</div>`:'')}</div><div class="itr">${pl?`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${pl.id}" value="${fmt(pl.preco)}" aria-label="Preço de ${esc(titulo)}"></label>`:''}${cid?`<button data-ad="${cid}">Adicionar</button>`:''}</div></div>`+(it.length?it.map(cardP).join(''):'<p class="mut">Nenhum item nesta categoria.</p>')+'</article>'};
+ const grupo=(titulo,L,cid)=>{const pl=cid&&PRD.find(x=>x.categoria_id===cid&&x.nome===PLAN),it=L.filter(x=>x!==pl&&!isMk(x)),tp=cid&&!SPECIAL.includes(nrm(titulo))?tipoDe(cid):'',lb0={min:'Minimizado',csc:'Card sem categoria',aviso:'Aviso'}[tp]||'',lg={principal:'Principal',bump:'Order Bump',sub:'Sub categoria'}[tp&&tp!=='ccc'?lugarDe(cid):'']||'',lb=[lb0,lg].filter(Boolean).join(' · ');
+  return `<article class="plate"${cid?` data-cid="${cid}"`:''}><div class="ph"><div><h3>${cid?`<button class="ttl" data-ec="${cid}">${esc(titulo)}</button>`:esc(titulo)} <span>(${it.length})</span></h3>${pl?`<div class="pd2">${esc(pl.descricao||'')}</div>`:(lb?`<div class="pd2">${lb}</div>`:'')}</div><div class="itr">${pl?`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${pl.id}" value="${fmt(pl.preco)}" aria-label="Preço de ${esc(titulo)}"></label>`:''}${cid?`<button data-ad="${cid}">Adicionar</button>`:''}</div></div>`+(it.length?it.map(cardP).join(''):'<p class="mut">Nenhum item nesta categoria.</p>')+'</article>'};
  const sem=PRD.filter(p=>!CAT.some(c=>c.id===p.categoria_id));
  v.innerHTML=CTOP+'<div class="cb"><button id="ncat">Nova categoria</button><button class="pri" id="nprd">Novo produto</button></div>'+
   (pz?`<p class="mut"><b style="color:#e58b8b">${pz} produto${pz>1?'s':''} pausado${pz>1?'s':''}</b> — não aparece${pz>1?'m':''} pro cliente.</p>`:'')+
   (CAT.length||PRD.length?'':'<div class="box dash"><h3>Cardápio vazio</h3><p class="mut">Importe o cardápio atual do site e depois edite, apague ou adicione o que quiser.</p><button class="pri" id="cimp" style="width:100%">Importar cardápio do site</button></div>')+
-  CAT.map(c=>grupo(c.nome,PRD.filter(p=>p.categoria_id===c.id),c.id)).join('')+(sem.length?grupo('Sem categoria',sem):'');
+  CAT.map(c=>grupo(c.nome,ordenar(PRD.filter(p=>p.categoria_id===c.id),c.id),c.id)).join('')+(sem.length?grupo('Sem categoria',sem):'');
  scrollTo(0,y)}
+/* ===== Arrastar pra reordenar: segure ~0,4s no título (move o card) ou no item (move dentro do card) ===== */
+async function salvarOrdemCat(ids){
+ try{for(let i=0;i<ids.length;i++){const c=CAT.find(x=>x.id===ids[i]);if(c&&c.ordem!==i){await api('categorias?id=eq.'+c.id,{method:'PATCH',body:JSON.stringify({ordem:i})});c.ordem=i}}
+  CAT.sort((a,b)=>a.ordem-b.ordem||a.id-b.id);toast('Ordem salva')}
+ catch(e){toast('Não foi possível salvar a ordem.')}
+ renderC()}
+async function salvarOrdemItens(cid,ids){
+ const mk=PRD.find(x=>x.categoria_id===cid&&x.nome===ORD),v=ids.join(',');
+ try{if(mk){if(mk.descricao!==v){await api('produtos?id=eq.'+mk.id,{method:'PATCH',body:JSON.stringify({descricao:v})});mk.descricao=v}}
+  else{const r=await api('produtos',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({categoria_id:cid,nome:ORD,preco:0,descricao:v})});PRD.push(r[0])}
+  toast('Ordem salva')}
+ catch(e){toast('Não foi possível salvar a ordem.')}
+ renderC()}
+(function(){
+ const vc=document.getElementById('vc'),HOLD=380;let S=null,fim=0;
+ const pegar=t=>{
+  const it=t.closest('.it');
+  if(it&&!t.closest('input,.pzb,.pxb,label')){const a=it.closest('article.plate');return a&&a.dataset.cid?{kind:'it',el:it}:null}
+  const h=t.closest('.ph > div:first-child');
+  if(h&&!t.closest('[data-ad]')){const a=h.closest('article.plate');if(a&&a.dataset.cid)return{kind:'cat',el:a}}
+  return null};
+ function mover(){
+  const el=S.el;let top=S.y-S.offY;
+  if(S.kind==='it'){const ar=S.parent.getBoundingClientRect();top=Math.min(Math.max(top,ar.top-8),ar.bottom-el.offsetHeight+8)}
+  el.style.top=top+'px';
+  const irm=[...S.parent.children].filter(c=>c!==el&&c!==S.ph&&c.matches(S.sel));
+  if(!irm.length)return;
+  let antes=null;
+  for(const c of irm){const r=c.getBoundingClientRect();if(S.y<r.top+r.height/2){antes=c;break}}
+  if(antes){if(S.ph.nextElementSibling!==antes)S.parent.insertBefore(S.ph,antes)}
+  else{const u=irm[irm.length-1];if(u.nextElementSibling!==S.ph)u.after(S.ph)}}
+ function loop(){
+  if(!S||!S.on)return;
+  const h=innerHeight;let d=0;
+  if(S.y<110)d=-16*(1-Math.max(S.y,0)/110);else if(S.y>h-110)d=16*(1-Math.max(h-S.y,0)/110);
+  if(d)scrollBy(0,d);
+  mover();requestAnimationFrame(loop)}
+ function comecar(){
+  if(!S)return;S.on=true;
+  const el=S.el,r=el.getBoundingClientRect();
+  S.parent=el.parentNode;S.sel=S.kind==='it'?'.it[data-pid]':'article.plate[data-cid]';
+  S.ph=document.createElement('div');S.ph.className='dph';S.ph.style.height=r.height+'px';
+  const cs=getComputedStyle(el);S.ph.style.margin=cs.marginTop+' 0 '+cs.marginBottom;
+  S.parent.insertBefore(S.ph,el);
+  S.offY=S.y-r.top;
+  el.classList.add('drag');el.style.width=r.width+'px';el.style.left=r.left+'px';el.style.top=r.top+'px';
+  document.body.classList.add('dragging');
+  navigator.vibrate&&navigator.vibrate(15);
+  requestAnimationFrame(loop)}
+ async function soltar(){
+  const s=S;S=null;clearTimeout(s.timer);
+  if(!s.on)return;
+  const el=s.el;el.classList.remove('drag');el.style.width=el.style.left=el.style.top='';
+  s.ph.replaceWith(el);document.body.classList.remove('dragging');fim=Date.now();
+  if(s.kind==='cat')await salvarOrdemCat([...vc.querySelectorAll('article.plate[data-cid]')].map(a=>+a.dataset.cid));
+  else await salvarOrdemItens(+s.parent.dataset.cid,[...s.parent.querySelectorAll('.it[data-pid]')].map(x=>+x.dataset.pid))}
+ vc.addEventListener('pointerdown',e=>{
+  if(S||(e.pointerType==='mouse'&&e.button!==0))return;
+  const p=pegar(e.target);if(!p)return;
+  S={...p,x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY,on:false,timer:setTimeout(comecar,HOLD)}});
+ addEventListener('pointermove',e=>{
+  if(!S)return;S.x=e.clientX;S.y=e.clientY;
+  if(S.on){e.preventDefault();return}
+  if(Math.hypot(S.x-S.x0,S.y-S.y0)>10){clearTimeout(S.timer);S=null}},{passive:false});
+ addEventListener('pointerup',()=>{if(S)soltar()});
+ addEventListener('pointercancel',()=>{if(S)soltar()});
+ document.addEventListener('touchmove',e=>{if(S&&S.on)e.preventDefault()},{passive:false});
+ vc.addEventListener('contextmenu',e=>{if(pegar(e.target))e.preventDefault()});
+ document.addEventListener('click',e=>{if(Date.now()-fim<500){e.stopPropagation();e.preventDefault()}},true);
+})();
 function dlgForm(titulo,html,onSave,onDel){const f=$('#fg');
  f.innerHTML=`<b>${titulo}</b>${html}<div class="bt"><button type="button" id="gx">Cancelar</button>${onDel?'<button type="button" class="rd" id="gd">Excluir</button>':''}<button class="pri">Salvar</button></div>`;
  $('#gx').onclick=()=>$('#dg').close();if(onDel)$('#gd').onclick=onDel;
@@ -468,9 +545,10 @@ function formCat(c){dlgForm(c?'Editar categoria':'Nova categoria',
   if(c){await api('categorias?id=eq.'+c.id,{method:'PATCH',body:JSON.stringify(d)});Object.assign(c,d);await setTipo(c.id)}
   else{const r=await api('categorias',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(d)});CAT.push(r[0]);await setTipo(r[0].id)}
   CAT.sort((a,b)=>a.ordem-b.ordem||a.id-b.id);toast('Categoria salva')},
- c&&(async()=>{const n=PRD.filter(p=>p.categoria_id===c.id).length;
+ c&&(async()=>{const n=PRD.filter(p=>p.categoria_id===c.id&&p.nome!==LUG&&p.nome!==ORD).length;
   if(!confirm('Excluir a categoria "'+c.nome+'"?'+(n?(temMarca(c.id)?'\nOs itens dela também serão apagados.':'\nOs '+n+' produtos dela ficam sem categoria.'):'')))return;
-  try{if(temMarca(c.id)){await api('produtos?categoria_id=eq.'+c.id,{method:'DELETE'});PRD=PRD.filter(x=>x.categoria_id!==c.id)}await apagarId('categorias',c.id);CAT=CAT.filter(x=>x.id!==c.id);PRD.forEach(p=>{if(p.categoria_id===c.id)p.categoria_id=null});$('#dg').close();renderC();toast('Categoria excluída')}catch(e){toast('Não foi possível excluir.')}}))}
+  try{const mks=PRD.filter(x=>x.categoria_id===c.id&&(x.nome===LUG||x.nome===ORD));if(mks.length){await api('produtos?id=in.('+mks.map(x=>x.id).join(',')+')',{method:'DELETE'});PRD=PRD.filter(x=>!mks.includes(x))}
+  if(temMarca(c.id)){await api('produtos?categoria_id=eq.'+c.id,{method:'DELETE'});PRD=PRD.filter(x=>x.categoria_id!==c.id)}await apagarId('categorias',c.id);CAT=CAT.filter(x=>x.id!==c.id);PRD.forEach(p=>{if(p.categoria_id===c.id)p.categoria_id=null});$('#dg').close();renderC();toast('Categoria excluída')}catch(e){toast('Não foi possível excluir.')}}))}
 function formPrd(p,cid0){const cs=p?p.categoria_id:cid0,op=CAT.map(c=>`<option value="${c.id}"${cs===c.id?' selected':''}>${esc(c.nome)}</option>`).join('');
  dlgForm(p?'Editar produto':'Novo produto',
  `<label>Nome<input id="gn" maxlength="80" required value="${esc(p?.nome||'')}"></label><label>Descrição (opcional)<input id="gde" maxlength="200" value="${esc(p?.descricao||'')}"></label><label>Preço (R$) — vazio = incluso<input id="gp" inputmode="decimal" value="${p?fmt(p.preco):''}"></label><label>Categoria<select id="gc"><option value="">Sem categoria</option>${op}</select></label>`,
