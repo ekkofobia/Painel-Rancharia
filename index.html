@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
@@ -392,7 +391,20 @@ grant select on categorias, produtos to anon;
 grant select, insert, update, delete on categorias, produtos to authenticated;`;
 const num=t=>{t=String(t).trim();return parseFloat(t.includes(',')?t.replace(/\./g,'').replace(',','.'):t)};
 const fmt=v=>Number(v).toFixed(2).replace('.',',');
-const PLAN='Valor do prato',isPlanCat=cid=>PRD.some(x=>x.categoria_id===cid&&x.nome===PLAN);
+const PLAN='Valor do prato',MARK='__tipo',SPECIAL=['pratos','proteinas','guarnicoes','salada'],isPlanCat=cid=>PRD.some(x=>x.categoria_id===cid&&x.nome===PLAN);
+const temMarca=cid=>isPlanCat(cid)||PRD.some(x=>x.categoria_id===cid&&x.nome===MARK);
+const tipoDe=cid=>isPlanCat(cid)?'ccc':((PRD.find(x=>x.categoria_id===cid&&x.nome===MARK)||{}).descricao||'min');
+const TIPOS=[['min','Minimizado (só o título; toque abre os itens)'],['ccc','Card com categoria (como Clássica/Gourmet)'],['csc','Card sem categoria (itens com contador)'],['aviso','Aviso (promoção, limite, validade…)']];
+function tipoSel(c){if(c&&SPECIAL.includes(nrm(c.nome)))return '';const cur=c?tipoDe(c.id):'min',pl=c&&PRD.find(x=>x.categoria_id===c.id&&x.nome===PLAN),duas=pl&&/duas|2/i.test(pl.descricao||'');
+ return `<label>Tipo<select id="gt">${TIPOS.map(t=>`<option value="${t[0]}"${t[0]===cur?' selected':''}>${t[1]}</option>`).join('')}</select></label><label id="gprw"${cur==='ccc'?'':' hidden'}>Proteínas por prato<select id="gpr"><option${duas?'':' selected'}>Com uma proteína</option><option${duas?' selected':''}>Com duas proteínas</option></select></label>`}
+async function setTipo(cid){const g=$('#gt');if(!g)return;const tipo=g.value,prot=($('#gpr')||{}).value||'Com uma proteína',
+ pl=PRD.find(x=>x.categoria_id===cid&&x.nome===PLAN),mk=PRD.find(x=>x.categoria_id===cid&&x.nome===MARK);
+ const del=async q=>{await api('produtos?id=eq.'+q.id,{method:'DELETE'});PRD=PRD.filter(x=>x!==q)};
+ const add=async(nome,descricao)=>{const r=await api('produtos',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({categoria_id:cid,nome,preco:0,descricao})});PRD.push(r[0])};
+ const upd=async(q,descricao)=>{if(q.descricao===descricao)return;await api('produtos?id=eq.'+q.id,{method:'PATCH',body:JSON.stringify({descricao})});q.descricao=descricao};
+ if(tipo==='ccc'){if(mk)await del(mk);if(pl)await upd(pl,prot);else await add(PLAN,prot)}
+ else{if(pl)await del(pl);if(tipo==='min'){if(mk)await del(mk)}else if(mk)await upd(mk,tipo);else await add(MARK,tipo)}}
+document.addEventListener('change',e=>{if(e.target.id==='gt'){const w=$('#gprw');if(w)w.hidden=e.target.value!=='ccc'}});
 const SEED=(()=>{const C=['Clássica','Premium','Gourmet','Executivo','Guarnições','Salada','Bebidas · Refrigerante','Bebidas · Cerveja','Bebidas · Suco'].map(n=>[n]),P=[];
  [[0,15,'Com uma proteína',['Ensopado de carne moída','Linguiça toscana']],[1,18,'Com uma proteína',['Frango a passarinha','Bode cozido']],[2,22,'Com duas proteínas',['Ensopado de carne moída','Linguiça toscana','Frango a passarinha','Bode cozido']],[3,25,'Com uma proteína',['Carne do sol','Cupim','Contra filé','Bode']]].forEach(([c,pr,d,L])=>{P.push([c,PLAN,pr,d]);L.forEach(n=>P.push([c,n,0,null]))});
  ['Baião','Arroz','Feijão caldo','Feijão verde','Feijão tropeiro','Macarrão','Farofa'].forEach(n=>P.push([4,n,0,null]));
@@ -430,10 +442,10 @@ async function abrirCardapio(){marcaMenu('cat');tela('vc');const v=$('#vc');v.in
   renderC()}
  catch(e){window.__imp=0;const m=String(e&&e.message||e);
   v.innerHTML=CTOP+`<div class="box dash"><h3>Não foi possível abrir o cardápio (erro ${esc(m)})</h3><p class="mut">${['404','401','403','400','406'].includes(m)||m==='importação'?'As tabelas de cardápio ainda não existem ou faltam permissões. No Supabase, abra o SQL Editor, apague o que estiver lá, cole este SQL e toque em Run. Depois volte e toque em Tentar de novo.':'Confira a conexão e tente de novo.'}</p><div class="sqlb" id="sqlc">${esc(SQLCAT)}</div><button class="pri" id="csql" style="width:100%">Copiar SQL</button><button id="cretry" style="width:100%;margin-top:8px">Tentar de novo</button></div>`}}
-function cardP(p){const sp=semPreco(p);return `<div class="it${p.pausado?' off':''}"><div><button class="pn2" data-ep="${p.id}">${esc(p.nome)}</button>${p.descricao?`<div class="pd2">${esc(p.descricao)}</div>`:''}${p.pausado?'<span class="bdg">PAUSADO</span>':''}</div><div class="itr">${sp?'<span class="inc">incluso</span>':`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${p.id}" value="${fmt(p.preco)}" aria-label="Preço de ${esc(p.nome)}"></label>`}<button class="pzb${p.pausado?' on':''}" data-pz="${p.id}">${p.pausado?'Reativar':'Pausar'}</button><button class="pxb" data-px="${p.id}" aria-label="Apagar ${esc(p.nome)}">×</button></div></div>`}
+function cardP(p){const sp=semPreco(p);return `<div class="it${p.pausado?' off':''}"><div><button class="pn2" data-ep="${p.id}">${esc(p.nome)}</button>${p.descricao?`<div class="pd2">${esc(p.descricao)}</div>`:''}${p.pausado?'<span class="bdg">PAUSADO</span>':''}</div><div class="itr">${tipoDe(p.categoria_id)==='aviso'?'':sp?'<span class="inc">incluso</span>':`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${p.id}" value="${fmt(p.preco)}" aria-label="Preço de ${esc(p.nome)}"></label>`}<button class="pzb${p.pausado?' on':''}" data-pz="${p.id}">${p.pausado?'Reativar':'Pausar'}</button><button class="pxb" data-px="${p.id}" aria-label="Apagar ${esc(p.nome)}">×</button></div></div>`}
 function renderC(){const v=$('#vc'),y=scrollY,pz=PRD.filter(p=>p.pausado).length;
- const grupo=(titulo,L,cid)=>{const pl=cid&&PRD.find(x=>x.categoria_id===cid&&x.nome===PLAN),it=L.filter(x=>x!==pl);
-  return `<article class="plate"><div class="ph"><div><h3>${cid?`<button class="ttl" data-ec="${cid}">${esc(titulo)}</button>`:esc(titulo)} <span>(${it.length})</span></h3>${pl?`<div class="pd2">${esc(pl.descricao||'')}</div>`:''}</div><div class="itr">${pl?`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${pl.id}" value="${fmt(pl.preco)}" aria-label="Preço de ${esc(titulo)}"></label>`:''}${cid?`<button data-ad="${cid}">Adicionar</button>`:''}</div></div>`+(it.length?it.map(cardP).join(''):'<p class="mut">Nenhum item nesta categoria.</p>')+'</article>'};
+ const grupo=(titulo,L,cid)=>{const pl=cid&&PRD.find(x=>x.categoria_id===cid&&x.nome===PLAN),it=L.filter(x=>x!==pl&&x.nome!==MARK),tp=cid&&!SPECIAL.includes(nrm(titulo))?tipoDe(cid):'',lb={min:'Minimizado',csc:'Card sem categoria',aviso:'Aviso'}[tp]||'';
+  return `<article class="plate"><div class="ph"><div><h3>${cid?`<button class="ttl" data-ec="${cid}">${esc(titulo)}</button>`:esc(titulo)} <span>(${it.length})</span></h3>${pl?`<div class="pd2">${esc(pl.descricao||'')}</div>`:(lb?`<div class="pd2">${lb}</div>`:'')}</div><div class="itr">${pl?`<label class="pill"><small>R$</small><input inputmode="decimal" data-pr="${pl.id}" value="${fmt(pl.preco)}" aria-label="Preço de ${esc(titulo)}"></label>`:''}${cid?`<button data-ad="${cid}">Adicionar</button>`:''}</div></div>`+(it.length?it.map(cardP).join(''):'<p class="mut">Nenhum item nesta categoria.</p>')+'</article>'};
  const sem=PRD.filter(p=>!CAT.some(c=>c.id===p.categoria_id));
  v.innerHTML=CTOP+'<div class="cb"><button id="ncat">Nova categoria</button><button class="pri" id="nprd">Novo produto</button></div>'+
   (pz?`<p class="mut"><b style="color:#e58b8b">${pz} produto${pz>1?'s':''} pausado${pz>1?'s':''}</b> — não aparece${pz>1?'m':''} pro cliente.</p>`:'')+
@@ -447,14 +459,14 @@ function dlgForm(titulo,html,onSave,onDel){const f=$('#fg');
  $('#dg').showModal()}
 const apagarId=async(t,id)=>{const r=await api(t+'?id=eq.'+id+'&select=id',{method:'DELETE',headers:{Prefer:'return=representation'}});if(!r.length)throw 0};
 function formCat(c){dlgForm(c?'Editar categoria':'Nova categoria',
- `<label>Nome<input id="gn" maxlength="60" required value="${esc(c?.nome||'')}"></label><label>Posição na lista (0 = primeiro)<input id="go" type="number" min="0" value="${c?c.ordem:CAT.length}"></label>${(!c||isPlanCat(c.id))?`<label>Tipo<select id="gt">${(c?[]:[['','Lista simples']]).concat([['Com uma proteína','Prato com uma proteína'],['Com duas proteínas','Prato com duas proteínas']]).map(o=>`<option value="${o[0]}"${c&&(PRD.find(x=>x.categoria_id===c.id&&x.nome===PLAN)||{}).descricao===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></label>`:''}`,
+ `<label>Nome<input id="gn" maxlength="60" required value="${esc(c?.nome||'')}"></label><label>Posição na lista (0 = primeiro)<input id="go" type="number" min="0" value="${c?c.ordem:CAT.length}"></label>${tipoSel(c)}`,
  async()=>{const d={nome:$('#gn').value.trim(),ordem:parseInt($('#go').value)||0};
-  if(c){await api('categorias?id=eq.'+c.id,{method:'PATCH',body:JSON.stringify(d)});Object.assign(c,d);const gt=$('#gt'),pp=PRD.find(x=>x.categoria_id===c.id&&x.nome===PLAN);if(gt&&pp&&gt.value!==pp.descricao){await api('produtos?id=eq.'+pp.id,{method:'PATCH',body:JSON.stringify({descricao:gt.value})});pp.descricao=gt.value}}
-  else{const r=await api('categorias',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(d)});CAT.push(r[0]);const gt=$('#gt');if(gt&&gt.value){const q=await api('produtos',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({categoria_id:r[0].id,nome:PLAN,preco:0,descricao:gt.value})});PRD.push(q[0])}}
+  if(c){await api('categorias?id=eq.'+c.id,{method:'PATCH',body:JSON.stringify(d)});Object.assign(c,d);await setTipo(c.id)}
+  else{const r=await api('categorias',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(d)});CAT.push(r[0]);await setTipo(r[0].id)}
   CAT.sort((a,b)=>a.ordem-b.ordem||a.id-b.id);toast('Categoria salva')},
  c&&(async()=>{const n=PRD.filter(p=>p.categoria_id===c.id).length;
-  if(!confirm('Excluir a categoria "'+c.nome+'"?'+(n?(isPlanCat(c.id)?'\nOs itens dela também serão apagados.':'\nOs '+n+' produtos dela ficam sem categoria.'):'')))return;
-  try{if(isPlanCat(c.id)){await api('produtos?categoria_id=eq.'+c.id,{method:'DELETE'});PRD=PRD.filter(x=>x.categoria_id!==c.id)}await apagarId('categorias',c.id);CAT=CAT.filter(x=>x.id!==c.id);PRD.forEach(p=>{if(p.categoria_id===c.id)p.categoria_id=null});$('#dg').close();renderC();toast('Categoria excluída')}catch(e){toast('Não foi possível excluir.')}}))}
+  if(!confirm('Excluir a categoria "'+c.nome+'"?'+(n?(temMarca(c.id)?'\nOs itens dela também serão apagados.':'\nOs '+n+' produtos dela ficam sem categoria.'):'')))return;
+  try{if(temMarca(c.id)){await api('produtos?categoria_id=eq.'+c.id,{method:'DELETE'});PRD=PRD.filter(x=>x.categoria_id!==c.id)}await apagarId('categorias',c.id);CAT=CAT.filter(x=>x.id!==c.id);PRD.forEach(p=>{if(p.categoria_id===c.id)p.categoria_id=null});$('#dg').close();renderC();toast('Categoria excluída')}catch(e){toast('Não foi possível excluir.')}}))}
 function formPrd(p,cid0){const cs=p?p.categoria_id:cid0,op=CAT.map(c=>`<option value="${c.id}"${cs===c.id?' selected':''}>${esc(c.nome)}</option>`).join('');
  dlgForm(p?'Editar produto':'Novo produto',
  `<label>Nome<input id="gn" maxlength="80" required value="${esc(p?.nome||'')}"></label><label>Descrição (opcional)<input id="gde" maxlength="200" value="${esc(p?.descricao||'')}"></label><label>Preço (R$) — vazio = incluso<input id="gp" inputmode="decimal" value="${p?fmt(p.preco):''}"></label><label>Categoria<select id="gc"><option value="">Sem categoria</option>${op}</select></label>`,
