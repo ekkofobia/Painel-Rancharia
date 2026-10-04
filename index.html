@@ -55,16 +55,17 @@ body.is-dragging{
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 
-/* BARRA FIXA SUPERIOR COMPLETA */
+/* BARRA FIXA SUPERIOR COMPLETA - VEDAÇÃO TOTAL */
 .fixed-top-container{
-  position:fixed;top:0;left:0;right:0;width:100%;height:60px;z-index:60;
-  background:var(--header-bg);border-bottom:1px solid var(--line);
-  box-shadow:0 4px 14px rgba(0,0,0,.04);
+  position:fixed;top:0;left:0;right:0;width:100%;height:auto;z-index:60;
+  background:var(--header-bg) !important;border-bottom:1px solid var(--line);
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
 }
 
 .topbar{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
   padding:10px 16px;width:100%;height:60px;
+  background:var(--header-bg);
 }
 .brand-group{
   display:flex;align-items:center;gap:10px;min-width:0;
@@ -122,9 +123,10 @@ body.tsite .store-badge{background:#f2c46d;color:#2a1509}
 }
 .ham-btn i{display:block;width:15px;height:2px;border-radius:2px;background:var(--ink)}
 
-/* SUB-BARRA DE PEDIDOS */
+/* SUB-BARRA DE PEDIDOS COM FUNDO SÓLIDO */
 .sticky-sub-bar{
-  padding:4px 16px 10px;display:flex;flex-direction:column;gap:8px;
+  padding:4px 16px 12px;display:flex;flex-direction:column;gap:8px;
+  background:var(--header-bg);
 }
 .search-wrap{
   width:100%;display:flex;align-items:center;gap:10px;
@@ -199,9 +201,9 @@ body.tsite .sw .ic{color:#7d6a52}
 body.tsite .sw .k{background:var(--pink);color:#2a1509}
 .sw.r .k{transform:translateX(52px)}
 
-/* CONTEÚDO PRINCIPAL */
+/* CONTEÚDO PRINCIPAL - PADDING DINÂMICO */
 .main{
-  padding:154px 14px 40px;
+  padding:165px 14px 40px;
   width:100%;max-width:1100px;margin:0 auto;box-sizing:border-box;
 }
 .main.compact-top{
@@ -550,9 +552,10 @@ body.tsite .drag-active{background:#341d0f!important}
   width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);
 }
 
+/* COMANDA TÉRMICA (+2px na fonte geral) */
 #ticket{display:none;color:#000;background:#fff;font-family:'Courier New',monospace;font-weight:700;line-height:1.25;padding:4mm 0}
-#ticket.w80{width:72mm;font-size:13px}
-#ticket.w58{width:48mm;font-size:11px}
+#ticket.w80{width:72mm;font-size:15px}
+#ticket.w58{width:48mm;font-size:13px}
 #ticket div{white-space:pre-wrap;overflow-wrap:anywhere}
 #ticket .c{text-align:center}
 #ticket hr{border:0;border-top:1px dashed #000;margin:6px 0}
@@ -1086,7 +1089,7 @@ function showToast(msg) {
   t.tm = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-/* ================== REDIRECIONAMENTO E RETORNO PELA LOGO ================== */
+/* ================== ATALHOS DE CLIQUES NA LOGO ================== */
 let logoClickCount = 0;
 let logoClickTimer = null;
 
@@ -1096,19 +1099,22 @@ if (logoEl) {
     logoClickCount++;
     clearTimeout(logoClickTimer);
 
-    if (logoClickCount >= 5) {
+    if (logoClickCount === 5) {
       logoClickCount = 0;
       window.location.href = 'https://rancharia.vercel.app';
       return;
     }
 
     logoClickTimer = setTimeout(() => {
-      // Se deu cliques normais (menos de 5), volta para a tela de Pedidos
-      if (logoClickCount > 0 && logoClickCount < 5) {
+      if (logoClickCount === 1) {
         navigateTo('orders');
+      } else if (logoClickCount === 2) {
+        navigateTo('menu');
+      } else if (logoClickCount === 3) {
+        navigateTo('organize');
       }
       logoClickCount = 0;
-    }, 380);
+    }, 400);
   });
 }
 
@@ -1137,7 +1143,7 @@ async function loadOrders() {
       if (autoPrint) novos.reverse().forEach(p => printOrder(p));
     }
   } catch(err) {
-    if (err.message === '401' || err.message === 'auth') $('#btnLogout').click();
+    if (err.message === '401' || err.message === '403' || err.message === 'auth') $('#btnLogout').click();
     else setLiveStatus(false);
   }
 }
@@ -1825,7 +1831,7 @@ $('#tabOrgBump').onclick = () => {
   renderOrganizePage();
 };
 
-/* ================== MODAL DE CATEGORIA AJUSTADO ================== */
+/* ================== MODAL DE CATEGORIA ================== */
 $('#btnNewCat').onclick = () => openCategoryModal();
 
 function openCategoryModal(cat) {
@@ -2142,24 +2148,79 @@ function processPrintQueue(sync) {
   };
   sync ? run() : setTimeout(run, 150);
 }
+
 function buildTicket(p) {
   const t = $('#ticket');
   t.className = paperWidth;
   t.innerHTML = '';
-  const add = (text, cls) => {
+
+  const add = (text, cls = '') => {
     const div = document.createElement('div');
     if (cls) div.className = cls;
     div.textContent = text;
     t.appendChild(div);
   };
-  add('PEDIDO Nº ' + pad(p.n || 0), 'c');
-  add(new Date(p.created_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }), 'c');
+
+  const dt = new Date(p.created_at);
+  const diaFmt = String(dt.getDate()).padStart(2, '0');
+  const mesFmt = String(dt.getMonth() + 1).padStart(2, '0');
+  const anoFmt = dt.getFullYear();
+  const horaFmt = String(dt.getHours()).padStart(2, '0');
+  const minFmt = String(dt.getMinutes()).padStart(2, '0');
+  const dataStr = `${diaFmt}-${mesFmt}-${anoFmt}`;
+  const horaStr = `${horaFmt}:${minFmt}`;
+
+  // Cabeçalho duplex: data e hora no canto direito
+  const headerWrap = document.createElement('div');
+  headerWrap.style.display = 'flex';
+  headerWrap.style.justifyContent = 'space-between';
+  headerWrap.style.alignItems = 'flex-start';
+
+  const brandDiv = document.createElement('div');
+  brandDiv.style.fontWeight = '800';
+  brandDiv.style.fontSize = '17px';
+  brandDiv.textContent = 'RANCHARIA';
+
+  const dtDiv = document.createElement('div');
+  dtDiv.style.textAlign = 'right';
+  dtDiv.style.fontSize = '13px';
+  dtDiv.innerHTML = `${dataStr}<br>${horaStr}`;
+
+  headerWrap.appendChild(brandDiv);
+  headerWrap.appendChild(dtDiv);
+  t.appendChild(headerWrap);
+
+  if (p.n) {
+    add(`PEDIDO Nº ${pad(p.n)}`, 'c');
+  }
   t.appendChild(document.createElement('hr'));
-  (p.detalhes ? p.detalhes.replace(/\*/g, '') : `Cliente: ${p.cliente}\nTotal: ${R(p.total)}`).split('\n').forEach(l => {
-    l = l.trimEnd();
-    if (/^[━─=\-]{5,}$/.test(l.trim())) t.appendChild(document.createElement('hr'));
-    else add(l, /^(Tipo:|Total:)/.test(l) ? 'c' : '');
+
+  const linhas = String(p.detalhes || '').replace(/\*/g, '').split('\n');
+  linhas.forEach(l => {
+    const limpa = l.trimEnd();
+    if (!limpa) {
+      add('');
+      return;
+    }
+    if (limpa.startsWith('RANCHARIA') || limpa.match(/^\d{2}-\d{2}-\d{4}/) || limpa.match(/^\d{2}:\d{2}/)) {
+      return;
+    }
+    if (/^[━─=\-]{5,}$/.test(limpa.trim())) {
+      t.appendChild(document.createElement('hr'));
+    } else if (limpa.startsWith('Total:')) {
+      add(limpa);
+    } else if (limpa.startsWith('CNPJ:') || limpa.includes('CNPJ:')) {
+      t.appendChild(document.createElement('br'));
+      add(limpa.trim(), 'c');
+    } else {
+      add(limpa);
+    }
   });
+
+  if (!String(p.detalhes || '').includes('CNPJ:')) {
+    t.appendChild(document.createElement('br'));
+    add('CNPJ: 12.345.678/0001-90', 'c');
+  }
 }
 
 function navigateTo(page) {
