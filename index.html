@@ -971,8 +971,9 @@ body.tsite .drag-active{background:#341d0f!important}
   .brand-title{font-size:22px}
   .live-pill{font-size:11px;padding:2px 8px}
 }
-.plate-group.is-subcat-card{background:#2d2e32;border-color:#45474c;color:#f1f1f3;--ink:#f1f1f3;--muted:#b4b6bc;--line:#4a4c52}
+.plate-group.is-subcat-card,body.tsite .plate-group.is-subcat-card{background:#2d2e32 !important;border-color:#45474c !important;color:#f1f1f3;--ink:#f1f1f3;--muted:#b4b6bc;--line:#4a4c52}
 .plate-group.is-subcat-card h3 button{color:#f1f1f3}
+.plate-group.is-subcat-card .btn.light{background:#3a3c41 !important;color:#f1f1f3 !important;border-color:#5a5d63 !important}
 .adm-card{background:#c0392b;color:#fff;border-radius:16px;padding:12px 14px;margin-bottom:12px;box-shadow:0 4px 14px rgba(192,57,43,.35)}
 .adm-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .adm-head strong{font-size:17px}
@@ -981,11 +982,13 @@ body.tsite .drag-active{background:#341d0f!important}
 .adm-card button{background:#fff;color:#c0392b;font-weight:800;border-radius:999px;min-height:34px;padding:0 16px;margin-top:6px}
 .sm-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px}
 .sm-row input{width:100%;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 12px;font:inherit}
-.ent-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ent-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;min-height:134px}
+.ent-actions{display:grid;gap:8px;flex:none}
 .ent-info{min-width:0;display:grid;gap:6px;justify-items:start}
 .ent-info strong{font-size:17px}
 .ent-call{flex:none;white-space:nowrap}
-#motoPicker{flex-wrap:wrap;overflow:visible;gap:8px}
+#motoPicker{flex-wrap:nowrap;overflow:visible;gap:8px;justify-content:center}
+#motoPicker .filter-pill{flex:1 1 0;min-width:0;max-width:140px;padding-left:6px;padding-right:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 </style>
 </head>
 <body>
@@ -1324,7 +1327,7 @@ body.tsite .drag-active{background:#341d0f!important}
     </section>
 
     <section class="page" id="page-entregar">
-      <div class="page-heading"><h1>Entregar</h1></div>
+      <div class="page-heading" style="flex-direction:row;align-items:center;justify-content:space-between;gap:10px"><h1>Entregar</h1><button type="button" class="btn light small" data-moto-edit>Editar</button></div>
       <div class="card" style="margin-bottom:14px">
         <div class="filter-pills" id="motoPicker" style="align-items:center"></div>
         <div id="motoEdit" hidden style="margin-top:12px"></div>
@@ -1880,8 +1883,24 @@ const ST = {
   cancelado: 'Cancelado' 
 };
 
-async function loadOrders() {
+let lastSig = '', lastFull = 0, tickN = 0;
+async function loadOrders(force) {
   try {
+    // Consulta leve a cada ciclo (só o último pedido + status dos ativos).
+    // A lista completa só é baixada quando algo muda (ou a cada 5 min / ao tocar em atualizar).
+    if (!force && lastHash) {
+      tickN++;
+      if (document.hidden && tickN % 3 !== 0) return;   // aba escondida: consulta menos
+      const [ult, ativos] = await Promise.all([
+        api('pedidos?select=id,created_at&order=created_at.desc&limit=1'),
+        api('pedidos?select=id,status,impresso_em,total,cliente&status=not.in.(entregue,cancelado)&order=id.desc&limit=100')
+      ]);
+      setLiveStatus(true);
+      const sig = JSON.stringify([ult, ativos]);
+      if (sig === lastSig && Date.now() - lastFull < 300000) return;
+      lastSig = sig;
+    }
+    lastFull = Date.now();
     const raw = await api('pedidos?select=*&order=created_at.desc&limit=500');
     setLiveStatus(true);
     const novosRaw = seen ? raw.filter(p => !seen.has(p.id)) : [];
@@ -3408,8 +3427,7 @@ async function salvaMoto() {
 
 function renderEntregarPage() {
   const sel = MOTO.contatos[MOTO.sel] || MOTO.contatos[0];
-  $('#motoPicker').innerHTML = MOTO.contatos.map((c, i) => `<button type="button" class="filter-pill ${i === MOTO.sel ? 'active' : ''}" data-moto="${i}">${esc(c.nome)}${c.tel ? '' : ' ⚠'}</button>`).join('') +
-    `<button type="button" class="btn light small" data-moto-edit aria-label="Editar WhatsApp" title="Editar WhatsApp">✎</button>`;
+  $('#motoPicker').innerHTML = MOTO.contatos.map((c, i) => `<button type="button" class="filter-pill ${i === MOTO.sel ? 'active' : ''}" data-moto="${i}">${esc(c.nome)}${c.tel ? '' : ' ⚠'}</button>`).join('') ;
   const ed = $('#motoEdit');
   ed.hidden = !motoEditando;
   if (motoEditando) {
@@ -3429,9 +3447,11 @@ function renderEntregarPage() {
       <div class="ent-info">
         <strong>${esc(p.cliente)}</strong>
         <div class="subtitle">${esc(a.full || 'Endereço não informado')}</div>
+      </div>
+      <div class="ent-actions">
+        <button type="button" class="btn small ent-call" data-chamar="${p.id}">Chamar motoboy</button>
         <button type="button" class="btn light small" data-copy-end="${p.id}">Copiar endereço</button>
       </div>
-      <button type="button" class="btn small ent-call" data-chamar="${p.id}">Chamar motoboy</button>
     </div>`;
   }).join('') : '<p class="subtitle" style="text-align:center;padding:28px">Nenhuma entrega pronta no momento.</p>';
 }
@@ -3476,7 +3496,7 @@ $('#page-entregar').addEventListener('click', async e => {
     if (!tel) { motoEditando = true; renderEntregarPage(); showToast('Cadastre o WhatsApp do motoboy (✎)'); return; }
     if (tel.length <= 11) tel = '55' + tel;
     const bairro = enderecoDe(p).bairro || 'bairro não informado';
-    const msg = `Olá, ${c.nome}! Tenho uma entrega pra você.\nRetirar na loja: ${MOTO.lojaBairro}\nEntregar no bairro: ${bairro}`;
+    const msg = `${MOTO.lojaBairro} x ${bairro}`;
     window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
   }
 });
@@ -4495,9 +4515,10 @@ $('#menuFilterPills').addEventListener('click', e => {
 $('#globalSearch').addEventListener('input', renderOrders);
 $('#btnRefresh').onclick = () => {
   const btn = $('#btnRefresh');
+  lastSig = '';
   btn.classList.add('spin');
   setTimeout(() => btn.classList.remove('spin'), 600);
-  loadOrders();
+  loadOrders(true);
   loadMenu();
 };
 
