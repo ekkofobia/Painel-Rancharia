@@ -725,8 +725,11 @@ body.tsite .plate-group{background:linear-gradient(160deg,#402617,#341d0f 55%) !
   margin:0;font-size:17px;font-weight:700;display:flex;align-items:center;gap:6px;
   text-align:left;line-height:1.2;
 }
+.plate-header{flex-wrap:wrap !important}
+.plate-header-left{flex:1 1 170px !important}
+.plate-header h3{flex-wrap:wrap}
 .plate-header h3 button{
-  text-align:left;word-break:break-word;border:0;background:none;font:inherit;padding:0;cursor:pointer;color:inherit;
+  text-align:left;word-break:normal;overflow-wrap:normal;hyphens:none;border:0;background:none;font:inherit;padding:0;cursor:pointer;color:inherit;
 }
 
 .tag-lugar{
@@ -743,6 +746,9 @@ body.tsite .tag-lugar{background:rgba(255,255,255,.08);color:var(--pink)}
 body.tsite .tag-lugar.is-subcat-pill{background:var(--yellow) !important;color:#2a1509 !important}
 .plate-header .tag-lugar{font-size:8px}
 
+.plate-group.colapsado > .items-list, .plate-group.colapsado > .subcat-min-container{display:none !important}
+.plate-group{cursor:pointer}
+.plate-header .drag-handle{padding:10px 8px 10px 0;margin:-10px 0;cursor:pointer;touch-action:manipulation}
 .drag-handle{
   display:inline-flex;align-items:center;justify-content:center;
   color:var(--muted);font-size:16px;user-select:none;flex-shrink:0;
@@ -980,7 +986,12 @@ body.tsite .drag-active{background:#341d0f!important}
 .adm-head small{opacity:.85}
 .adm-card pre{margin:8px 0 10px;white-space:pre-wrap;word-break:break-word;font:13px/1.45 ui-monospace,Menlo,monospace;background:rgba(0,0,0,.2);border-radius:10px;padding:10px;color:#fff}
 .adm-card button{background:#fff;color:#c0392b;font-weight:800;border-radius:999px;min-height:34px;padding:0 16px;margin-top:6px}
-.sm-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px}
+.sm-row{display:grid;grid-template-columns:1fr 1fr 38px;gap:8px;margin-bottom:8px;align-items:center}
+.sm-x{width:38px;height:38px;min-height:38px;padding:0;border-radius:50%;flex:none;font-size:13px}
+.sm-actions{display:flex;gap:10px;margin-top:12px}
+.sm-btn{flex:1;min-height:44px;height:44px;padding:0 16px;font-size:13px}
+.br-row{display:grid;grid-template-columns:1fr 84px 38px;gap:8px;margin-bottom:8px;align-items:center}
+.br-row input,.br-busca{width:100%;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 12px;font:inherit}
 .sm-row input{width:100%;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 12px;font:inherit}
 .ent-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;min-height:134px}
 .ent-actions{display:grid;gap:8px;flex:none}
@@ -1319,19 +1330,33 @@ body.tsite .drag-active{background:#341d0f!important}
         <div class="form-group">
           <label>Horário de funcionamento</label>
           <div id="smHoras"></div>
-          <button class="btn light small" id="smAddHora" type="button" style="margin-top:8px">+ Linha</button>
         </div>
-        <button class="btn btn-save-lg" id="smSalvar" type="button">Salvar</button>
+        <div class="sm-actions">
+          <button class="btn light sm-btn" id="smAddHora" type="button">+ Linha</button>
+          <button class="btn sm-btn" id="smSalvar" type="button">Salvar</button>
+        </div>
         <p class="subtitle" id="smMsg" style="margin-top:10px"></p>
       </div>
     </section>
 
     <section class="page" id="page-entregar">
-      <div class="page-heading" style="flex-direction:row;align-items:center;justify-content:space-between;gap:10px"><h1>Entregar</h1><button type="button" class="btn light small" data-moto-edit>Editar</button></div>
+      <div class="page-heading" style="flex-direction:row;align-items:center;justify-content:space-between;gap:10px"><h1>Entregar</h1><div style="display:flex;gap:8px"><button type="button" class="btn light small" data-bairros-toggle>Bairros e taxas</button><button type="button" class="btn light small" data-moto-edit>Editar</button></div></div>
       <div class="card" style="margin-bottom:14px">
         <div class="filter-pills" id="motoPicker" style="align-items:center"></div>
         <div id="motoEdit" hidden style="margin-top:12px"></div>
       </div>
+      <div class="card" id="bairrosPanel" hidden style="margin-bottom:14px">
+        <h3 style="margin:0 0 4px;font-size:16px">Bairros e taxas de entrega</h3>
+        <p class="subtitle" style="margin:0 0 10px">O site usa esta lista no checkout.</p>
+        <input type="text" id="brBusca" placeholder="Buscar bairro…" class="br-busca">
+        <div id="brList" style="max-height:340px;overflow-y:auto;margin:10px 0"></div>
+        <div class="sm-actions">
+          <button class="btn light sm-btn" id="brAdd" type="button">+ Adicionar</button>
+          <button class="btn sm-btn" id="brSalvar" type="button">Salvar</button>
+        </div>
+        <p class="subtitle" id="brMsg" style="margin-top:10px"></p>
+      </div>
+
       <div id="entregarList"></div>
     </section>
 
@@ -1596,6 +1621,11 @@ const classDispTag = disp => {
 };
 
 async function cleanupTechnicalMarkers(lista) {
+  const cfgs = {};                                            // registros __config repetidos: mantém só o mais novo
+  (lista || []).filter(p => p.nome === '__config').forEach(p => { (cfgs[p.categoria_id] = cfgs[p.categoria_id] || []).push(p); });
+  const velhos = [];
+  Object.values(cfgs).forEach(a => { if (a.length > 1) { a.sort((x, y) => x.id - y.id); velhos.push(...a.slice(0, -1)); } });
+  for (const v of velhos) { try { await api('produtos?id=eq.' + v.id, { method: 'DELETE' }); } catch (e) {} }
   const markers = (lista || []).filter(p => /^__(lugar|parent)/.test(String(p.nome || '')));
   if (!markers.length) return;
   for (const m of markers) {
@@ -1748,7 +1778,9 @@ async function ensureSession(force = false) {
   }
 }
 
+let lastWrite = 0;
 async function api(path, opt = {}) {
+  if (opt.method && opt.method !== 'GET') lastWrite = Date.now();
   await ensureSession();
   const ac = timeoutAbort();
   const token = ses?.access_token || CFG.key;
@@ -1790,7 +1822,8 @@ function startDashboard() {
   loadMenu();
   loadLoja();
   clearInterval(pollInterval);
-  pollInterval = setInterval(loadOrders, 5000);
+  pollInterval = setInterval(() => loadOrders(), 5000);
+  iniciarRealtime();
 }
 
 $('#formLogin').onsubmit = async e => {
@@ -1808,6 +1841,7 @@ $('#formLogin').onsubmit = async e => {
 $('#btnLogout').onclick = () => {
   localStorage.removeItem('ses');
   ses = null;
+  pararRealtime();
   clearInterval(pollInterval);
   setLiveStatus(false);
   $('#modalLogin').classList.add('open');
@@ -1890,6 +1924,7 @@ async function loadOrders(force) {
     // A lista completa só é baixada quando algo muda (ou a cada 5 min / ao tocar em atualizar).
     if (!force && lastHash) {
       tickN++;
+      if (rtEstado === 'SUBSCRIBED' && tickN % 6 !== 0) return;   // com Realtime conectado, só confere a cada ~30 s
       if (document.hidden && tickN % 3 !== 0) return;   // aba escondida: consulta menos
       const [ult, ativos] = await Promise.all([
         api('pedidos?select=id,created_at&order=created_at.desc&limit=1'),
@@ -1903,33 +1938,38 @@ async function loadOrders(force) {
     lastFull = Date.now();
     const raw = await api('pedidos?select=*&order=created_at.desc&limit=500');
     setLiveStatus(true);
-    const novosRaw = seen ? raw.filter(p => !seen.has(p.id)) : [];
-    seen = new Set(raw.map(p => p.id));
-    const hash = JSON.stringify(raw);
-    if (hash === lastHash) return;
-    lastHash = hash;
-    const data = raw.filter(p => !isAdm(p));
-    ADM = raw.filter(p => isAdm(p) && !['entregue', 'cancelado'].includes(p.status) && !admHidden.has(p.id));
-    const novos = novosRaw.filter(p => !isAdm(p));
-    const novosAdm = novosRaw.filter(isAdm);
-    P = data;
-    renderOrders();
-    updateReportsMetrics();
-    if ($('#page-reports').classList.contains('active')) {
-      renderBIComponent();
-      renderParetoDonutComponent();
-      renderOpsAndMatrixInsideReports();
-      renderCategoriesAccordion();
-    }
-    if ($('#page-entregar').classList.contains('active')) renderEntregarPage();
-    if (novosAdm.length) { beep(); showToast('Mensagem ADM do site'); }
-    if (novos.length) {
-      beep();
-      if (autoPrint) novos.reverse().forEach(p => printOrder(p));
-    }
+    aplicaPedidos(raw);
   } catch(err) {
     if (err.message === '401' || err.message === '403') $('#btnLogout').click();
     else setLiveStatus(false);
+  }
+}
+
+function aplicaPedidos(raw) {
+  RAWP = raw;
+  const novosRaw = seen ? raw.filter(p => !seen.has(p.id)) : [];
+  seen = new Set(raw.map(p => p.id));
+  const hash = JSON.stringify(raw);
+  if (hash === lastHash) return;
+  lastHash = hash;
+  const data = raw.filter(p => !isAdm(p));
+  ADM = raw.filter(p => isAdm(p) && !['entregue', 'cancelado'].includes(p.status) && !admHidden.has(p.id));
+  const novos = novosRaw.filter(p => !isAdm(p));
+  const novosAdm = novosRaw.filter(isAdm);
+  P = data;
+  renderOrders();
+  updateReportsMetrics();
+  if ($('#page-reports').classList.contains('active')) {
+    renderBIComponent();
+    renderParetoDonutComponent();
+    renderOpsAndMatrixInsideReports();
+    renderCategoriesAccordion();
+  }
+  if ($('#page-entregar').classList.contains('active')) renderEntregarPage();
+  if (novosAdm.length) { beep(); showToast('Mensagem ADM do site'); }
+  if (novos.length) {
+    beep();
+    if (autoPrint) novos.reverse().forEach(p => printOrder(p));
   }
 }
 
@@ -3088,6 +3128,7 @@ function setupUniversalDrag() {
     if (!dragS) return;
     clearTimeout(dragS.timer);
     if (dragS.active) {
+      window.__dragFim = Date.now();
       document.body.classList.remove('is-dragging');
       try { dragS.target.releasePointerCapture(dragS.pointerId); } catch(err){}
       dragS.target.classList.remove('drag-active');
@@ -3365,7 +3406,7 @@ function desenhaSiteMenu() {
   $('#smHoras').innerHTML = SM.horarios.map((h, i) => `<div class="sm-row">
     <input type="text" data-sm-d="${i}" value="${esc(h[0])}" placeholder="Dia(s)">
     <input type="text" data-sm-h="${i}" value="${esc(h[1])}" placeholder="Horário">
-    <button type="button" class="btn light small" data-sm-del="${i}" aria-label="Remover">✕</button>
+    <button type="button" class="btn light small sm-x" data-sm-del="${i}" aria-label="Remover">✕</button>
   </div>`).join('');
 }
 
@@ -3508,10 +3549,183 @@ async function carregaMoto() {
   } catch (e) {}
 }
 
+/* ===== REALTIME: pedidos chegam e mudam na hora ===== */
+const RT_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.js';
+let RAWP = [];
+let rtClient = null, rtCh = null, rtRelay = null, rtEstado = 'off', rtTokenUsado = '', rtUltimaTentativa = 0;
+
+function carregaLibRT() {
+  return new Promise(res => {
+    if (window.supabase) return res(true);
+    const s = document.createElement('script');
+    s.src = RT_CDN;
+    s.onload = () => res(!!window.supabase);
+    s.onerror = () => res(false);
+    document.head.appendChild(s);
+  });
+}
+
+function pararRealtime() {
+  try { if (rtClient) rtClient.removeAllChannels(); } catch (e) {}
+  rtClient = null; rtCh = null; rtRelay = null; rtEstado = 'off';
+}
+
+async function iniciarRealtime() {
+  if (!ses) return;
+  rtUltimaTentativa = Date.now();
+  if (!(await carregaLibRT())) { rtEstado = 'sem-lib'; return; }
+  pararRealtime();
+  try {
+    rtClient = window.supabase.createClient(CFG.url, CFG.key, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      realtime: { params: { eventsPerSecond: 20 } }
+    });
+    rtTokenUsado = ses.access_token;
+    rtClient.realtime.setAuth(rtTokenUsado);                 // entra com o login do painel (passa pela segurança do banco)
+    rtRelay = rtClient.channel('status-pedidos').subscribe(); // canal que avisa os clientes no site
+    rtCh = rtClient.channel('painel-pedidos')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, onPedidoMudou)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categorias' }, () => catMudou(true))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'produtos' }, () => catMudou(false))
+      .subscribe(st => {
+        rtEstado = st;
+        if (st === 'SUBSCRIBED') { lastSig = ''; loadOrders(true); loadLoja(); }   // ao (re)conectar, busca o que perdeu
+      });
+  } catch (e) { rtEstado = 'erro'; }
+}
+
+let catTimer = null, catLoja = false;
+function catMudou(loja) {                                    // cardápio / loja mudou (outro aparelho ou outra aba)
+  if (loja) catLoja = true;
+  clearTimeout(catTimer);
+  catTimer = setTimeout(() => {
+    const fazLoja = catLoja; catLoja = false;
+    if (fazLoja) loadLoja();
+    if (Date.now() - lastWrite < 4000) return;               // foi esta própria tela que salvou
+    const a = document.activeElement;
+    if (a && a.closest && a.closest('#menuContainer') && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;   // não atrapalha quem está digitando
+    loadMenu();
+  }, 1200);
+}
+
+function onPedidoMudou(pl) {
+  if (!lastHash) return;                                     // primeira carga ainda não terminou
+  const tipo = pl.eventType, rec = pl.new || {}, old = pl.old || {};
+  if (tipo === 'DELETE') {
+    RAWP = RAWP.filter(p => p.id !== old.id);
+  } else if (rec.id != null) {
+    const i = RAWP.findIndex(p => p.id === rec.id);
+    if (i >= 0) RAWP[i] = { ...RAWP[i], ...rec };            // junta: colunas grandes não alteradas podem não vir no aviso
+    else RAWP = [rec, ...RAWP];
+    RAWP.sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    if (tipo === 'UPDATE' && (rec.ref || (i >= 0 && RAWP.find(p => p.id === rec.id)?.ref)) && rtRelay) {
+      const ref = rec.ref || RAWP.find(p => p.id === rec.id).ref;
+      try { rtRelay.send({ type: 'broadcast', event: 'status', payload: { ref } }); } catch (e) {}   // avisa o cliente na hora
+    }
+  }
+  aplicaPedidos(RAWP.slice(0, 500));
+}
+
+function retomarRealtime() {
+  if (!ses) return;
+  if (!rtCh || rtCh.state !== 'joined') iniciarRealtime();
+  lastSig = '';
+  loadOrders(true);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) retomarRealtime(); });
+window.addEventListener('pageshow', e => { if (e.persisted) retomarRealtime(); });
+window.addEventListener('online', retomarRealtime);
+setInterval(() => {                                          // vigia: renova o login e reconecta se caiu
+  if (!ses) return;
+  if (rtClient && ses.access_token !== rtTokenUsado) { rtTokenUsado = ses.access_token; try { rtClient.realtime.setAuth(rtTokenUsado); } catch (e) {} }
+  if (rtEstado !== 'SUBSCRIBED' && Date.now() - rtUltimaTentativa > 20000) iniciarRealtime();
+}, 10000);
+
+/* ===== Bairros e taxas de entrega ===== */
+const BAIRROS_DEF = [
+  ['Água Bela', 8], ['Alto da Aliança', 8], ['Alto da Maravilha', 7], ['Alto do Alencar', 7], ['Alto do Cruzeiro', 7],
+  ['Angari', 7], ['Antônio Conselheiro', 8], ['Antônio Guilhermino', 8], ['Argemiro', 8], ['Cajueiro', 7],
+  ['Castelo Branco', 7], ['Centenário', 6], ['Centro', 6], ['Country Club', 8], ['Dom José Rodrigues', 8],
+  ['Dom Tomás', 9], ['Expedito Nascimento', 9], ['Jardim Flórida', 7], ['Jardim Novo Encontro', 9], ['Jardim Primavera', 8],
+  ['Jardim São Paulo', 7], ['Jardim Universitário', 7], ['Jardim Vitória', 8], ['João Paulo II', 8], ['João XXIII', 7],
+  ['Lomanto Júnior', 6], ['Malhada da Areia', 9], ['Maringá', 7], ['Monte Castelo', 6], ['Monte Serrat', 6],
+  ['Mussambê', 9], ['Nossa Senhora da Penha', 7], ['Nossa Senhora das Grotas', 8], ['Nova Esperança', 8], ['Nova Vitória', 9],
+  ['Novo Encontro', 9], ['Padre Vicente', 7], ['Palmares', 7], ['Parque Jatobá', 8], ['Parque Residencial', 7],
+  ['Pedra do Lord', 9], ['Piranga', 6], ['Piranga I', 7], ['Piranga II', 7], ['Quidé', 7],
+  ['Quidezinho', 8], ['Reta do Angari', 7], ['Santo Antônio', 6], ['São Geraldo', 6], ['Sol Levante', 8],
+  ['Sol Nascente', 8], ['Tabuleiro', 9], ['Tancredo Neves', 8], ['Vila Tiradentes', 6]
+];
+let BR = BAIRROS_DEF.map(b => [...b]);
+let brBusca = '', brAberto = false;
+const parseTaxa = v => { const n = parseFloat(String(v).trim().replace(',', '.')); return isNaN(n) ? NaN : n; };
+
+function desenhaBairros() {
+  const q = brBusca.trim().toLowerCase();
+  const html = BR.map((b, i) => ({ b, i })).filter(({ b }) => !q || String(b[0]).toLowerCase().includes(q)).map(({ b, i }) => `
+    <div class="br-row">
+      <input type="text" data-br-n="${i}" value="${esc(b[0])}" placeholder="Bairro">
+      <input type="text" inputmode="decimal" data-br-t="${i}" value="${b[1] === '' ? '' : fmt(b[1])}" placeholder="R$">
+      <button type="button" class="btn light small sm-x" data-br-del="${i}" aria-label="Remover">✕</button>
+    </div>`).join('');
+  $('#brList').innerHTML = html || '<p class="subtitle" style="padding:10px 0">Nenhum bairro encontrado.</p>';
+}
+
+async function abrirBairros() {
+  brAberto = !brAberto;
+  $('#bairrosPanel').hidden = !brAberto;
+  if (!brAberto) return;
+  $('#brMsg').textContent = '';
+  desenhaBairros();
+  try {
+    const v = await cfgGet('bairros');
+    if (Array.isArray(v) && v.length) { BR = v.map(b => [b[0], Number(b[1])]); desenhaBairros(); }
+  } catch (e) { $('#brMsg').textContent = 'Não consegui ler os bairros salvos (rode o SQL de ajuste 3). Mostrando a lista padrão.'; }
+}
+
+$('#page-entregar').addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.brN !== undefined) BR[+t.dataset.brN][0] = t.value;
+  else if (t.dataset.brT !== undefined) BR[+t.dataset.brT][1] = t.value;
+  else if (t.id === 'brBusca') { brBusca = t.value; desenhaBairros(); }
+});
+
+$('#page-entregar').addEventListener('click', async e => {
+  if (e.target.closest('[data-bairros-toggle]')) { abrirBairros(); return; }
+  if (e.target.id === 'brAdd') {
+    brBusca = ''; $('#brBusca').value = '';
+    BR.unshift(['', '']); desenhaBairros();
+    const inp = $('#brList input'); if (inp) inp.focus();
+    return;
+  }
+  const del = e.target.closest('[data-br-del]');
+  if (del) { BR.splice(+del.dataset.brDel, 1); desenhaBairros(); return; }
+  if (e.target.id === 'brSalvar') {
+    const lista = [], vistos = new Set();
+    for (const b of BR) {
+      const nome = String(b[0]).trim(); if (!nome && String(b[1]).trim() === '') continue;
+      const taxa = parseTaxa(b[1]);
+      if (!nome || isNaN(taxa) || taxa < 0) { $('#brMsg').textContent = `Confira a linha "${nome || 'sem nome'}": preencha o bairro e um valor válido.`; return; }
+      const k = nome.toLowerCase(); if (vistos.has(k)) { $('#brMsg').textContent = `"${nome}" está repetido.`; return; }
+      vistos.add(k); lista.push([nome, Math.round(taxa * 100) / 100]);
+    }
+    if (!lista.length) { $('#brMsg').textContent = 'Adicione pelo menos um bairro.'; return; }
+    lista.sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'));
+    try {
+      await cfgSet('bairros', lista);
+      BR = lista.map(b => [...b]); desenhaBairros();
+      $('#brMsg').textContent = 'Salvo. O site já usa os novos bairros e valores.';
+      showToast('Bairros e taxas salvos');
+    } catch (err) {
+      $('#brMsg').textContent = 'Erro ao salvar (' + err.message + '). Rode o SQL de ajuste 3 no Supabase.';
+    }
+  }
+});
+
 /* CARDÁPIO */
 async function loadMenu() {
   const container = $('#menuContainer');
-  container.innerHTML = '<p class="subtitle">A carregar o cardápio...</p>';
+  const scrollY = window.scrollY;
+  if (!PRD.length && !CAT.length) container.innerHTML = '<p class="subtitle">A carregar o cardápio...</p>';   // só mostra o aviso na 1ª carga: não perde a posição da tela
   try {
     const [c, pr] = await Promise.all([
       api('categorias?select=*&order=ordem.asc,id.asc'),
@@ -3525,6 +3739,7 @@ async function loadMenu() {
     salvarTiposFaltando();
     renderCategoriesAccordion();
     renderParetoDonutComponent();
+    window.scrollTo(0, scrollY); requestAnimationFrame(() => window.scrollTo(0, scrollY));
   } catch(e) {
     container.innerHTML = `<p class="subtitle" style="color:var(--red)">Não foi possível carregar o cardápio (${e.message}).</p>`;
   }
@@ -3570,6 +3785,21 @@ function renderPlateItemsHtml(items, isPrato = false) {
     </div>
   `).join('');
 }
+
+let COLAPSADOS = new Set();
+try { COLAPSADOS = new Set(JSON.parse(localStorage.getItem('rancharia_colapsados') || '[]')); } catch (e) {}
+document.addEventListener('click', e => {                    // toque nos 6 pontinhos: minimiza / abre o card da categoria
+  if (e.target.closest('button, input, label, select, textarea, a, .item-name, [data-edit-cat], .subcat-min-accordion, .price-pill')) return;
+  const h = e.target.closest('.plate-group');
+  if (!h) return;
+  if (window.getSelection && String(window.getSelection()).length) return;
+  if (Date.now() - (window.__dragFim || 0) < 600) return;    // era um arrastar, não um toque
+  const card = h;
+  const id = Number(card.dataset.cid);
+  const min = card.classList.toggle('colapsado');
+  if (min) COLAPSADOS.add(id); else COLAPSADOS.delete(id);
+  try { localStorage.setItem('rancharia_colapsados', JSON.stringify([...COLAPSADOS])); } catch (e) {}
+});
 
 function renderMenu() {
   const container = $('#menuContainer');
@@ -3638,7 +3868,7 @@ function renderMenu() {
     }
 
     return `
-    <article class="plate-group ${isSubcatPill ? 'is-subcat-card' : ''}" data-cid="${c.id}" id="cat-card-${c.id}">
+    <article class="plate-group ${isSubcatPill ? 'is-subcat-card' : ''} ${COLAPSADOS.has(c.id) ? 'colapsado' : ''}" data-cid="${c.id}" id="cat-card-${c.id}">
       <div class="plate-header">
         <div class="plate-header-left">
           <span class="drag-handle">⠿</span>
@@ -3756,7 +3986,7 @@ function openCategoryModal(cat, fromBatch = false) {
     `).join('')}
   ` : '<span style="font-size:11px;color:var(--muted)">Nenhuma outra categoria principal cadastrada.</span>';
 
-  const isSubMin = (curLugar === 'item' && curDisp === 'min');
+  const isSubMin = (curDisp === 'min');
 
   const f = $('#formMenuGeneric');
   f.innerHTML = `
@@ -3868,7 +4098,7 @@ function openCategoryModal(cat, fromBatch = false) {
   }
 
   function syncMinSubcatFields() {
-    const isMinSub = (curLugar === 'item' && curDisp === 'min');
+    const isMinSub = (curDisp === 'min');
     $('#groupCatApartir').style.display = isMinSub ? 'block' : 'none';
     $('#groupCatSubstituto').style.display = isMinSub ? 'block' : 'none';
   }
