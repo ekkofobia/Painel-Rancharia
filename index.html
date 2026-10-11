@@ -991,6 +991,27 @@ body.tsite .drag-active{background:#341d0f!important}
 .sm-actions{display:flex;gap:10px;margin-top:12px}
 .sm-btn{flex:1;min-height:44px;height:44px;padding:0 16px;font-size:13px}
 .br-row{display:grid;grid-template-columns:1fr 84px 38px;gap:8px;margin-bottom:8px;align-items:center}
+.tt-tabs{display:flex;gap:8px;margin:0 0 12px}
+.tt-tab{flex:1;min-height:42px;border-radius:12px;border:1.5px solid var(--ink);background:var(--surface);color:var(--ink);font-weight:700;cursor:pointer}
+.tt-tab.active{background:var(--ink);color:var(--bg)}
+.yt{position:relative;margin-bottom:8px}
+.yt-b{position:relative;box-sizing:border-box;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;line-height:1.3;font:inherit;line-height:1.3}
+.yt textarea{position:absolute;inset:0;box-sizing:border-box;width:100%;height:100%;margin:0;padding:10px 12px;border:0;outline:0;resize:none;overflow:hidden;background:transparent;color:transparent;caret-color:var(--ink);font:inherit;line-height:1.3;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+.yt textarea::placeholder{color:var(--muted);opacity:.7}
+.yt:focus-within .yt-b{border-color:#e0a800}
+.yt.big .yt-b,.yt.big textarea{font-size:21px;font-weight:800}
+.yt.big .yt-b{min-height:52px}
+.tt-al{display:inline-flex;gap:6px;margin:2px 0 8px}
+.tt-al button{width:42px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.tt-al button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tt-y{color:#e0a800;font-weight:800}
+.tt-card{border:1px solid var(--line);background:var(--surface);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.tt-h{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;min-height:44px;cursor:pointer}
+.tt-card.open,.tt-card.grey{background:rgba(128,128,128,.22)}
+.tt-body{padding:0 14px 14px}
+.tt-lb{font-size:12px;color:var(--muted);font-weight:700;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em}
+.tt-row{display:flex;gap:8px;align-items:center}
+.tt-row .yt{flex:1}
 .br-row input,.br-busca{width:100%;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 12px;font:inherit}
 .sm-row input{width:100%;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 12px;font:inherit}
 .ent-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;min-height:134px}
@@ -1063,6 +1084,7 @@ body.tsite .drag-active{background:#341d0f!important}
       <button class="nav-item" data-page="reports">Relatórios</button>
       <button class="nav-item" data-page="sitemenu">Menu do site</button>
       <button class="nav-item" data-page="entregar">Entregar</button>
+      <button class="nav-item" data-page="titulos">Títulos</button>
       <button class="nav-item" data-page="delete">Apagar</button>
     </nav>
 
@@ -1348,16 +1370,30 @@ body.tsite .drag-active{background:#341d0f!important}
       <div class="card" id="bairrosPanel" hidden style="margin-bottom:14px">
         <h3 style="margin:0 0 4px;font-size:16px">Bairros e taxas de entrega</h3>
         <p class="subtitle" style="margin:0 0 10px">O site usa esta lista no checkout.</p>
+        <label style="display:flex;align-items:center;gap:10px;margin:0 0 10px;font-weight:600;cursor:pointer"><input type="checkbox" id="brCombinar" style="width:20px;height:20px"> Taxa de entrega a combinar</label>
+        <p class="subtitle" id="brCombMsg" hidden style="margin:0 0 10px;font-weight:700">Taxa da entrega a combinar</p>
+        <div id="brBox">
         <input type="text" id="brBusca" placeholder="Buscar bairro…" class="br-busca">
         <div id="brList" style="max-height:340px;overflow-y:auto;margin:10px 0"></div>
         <div class="sm-actions">
           <button class="btn light sm-btn" id="brAdd" type="button">+ Adicionar</button>
           <button class="btn sm-btn" id="brSalvar" type="button">Salvar</button>
         </div>
+        </div>
+        <div class="sm-actions" id="brSalvarCombinar" hidden><button class="btn sm-btn" id="brSalvar2" type="button">Salvar</button></div>
         <p class="subtitle" id="brMsg" style="margin-top:10px"></p>
       </div>
 
       <div id="entregarList"></div>
+    </section>
+
+    <section class="page" id="page-titulos">
+      <div class="page-heading"><h1>Títulos</h1></div>
+      <div class="tt-tabs">
+        <button type="button" class="tt-tab active" data-tt-tab="titulos">Títulos</button>
+        <button type="button" class="tt-tab" data-tt-tab="hero">Hero</button>
+      </div>
+      <div id="ttBody"></div>
     </section>
 
     <section class="page" id="page-delete">
@@ -1407,6 +1443,15 @@ body.tsite .drag-active{background:#341d0f!important}
         <button type="button" class="btn btn-danger-confirm btn-save-lg" id="btnDangerCancelConfirm">Sim, Cancelar</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalLojaMsg" style="z-index:9999">
+  <div class="modal">
+    <h2 style="margin:0 0 6px;font-size:18px">Mensagem da loja fechada</h2>
+    <p class="subtitle" style="margin:0 0 10px">Aparece no site quando a loja está fechada. Deixe em branco para usar a mensagem padrão.</p>
+    <textarea id="lojaMsgTxt" rows="4" style="width:100%;box-sizing:border-box;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:10px 12px;font:inherit" placeholder="Ex.: Voltamos às 18h!"></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px"><button class="btn sm-btn" type="button" id="lojaMsgSalvar">Salvar</button><button class="btn light sm-btn" type="button" id="lojaMsgFechar">Cancelar</button></div>
   </div>
 </div>
 
@@ -3049,6 +3094,8 @@ function setupUniversalDrag() {
     if (repCard) { type = 'reports-org'; target = repCard; container = $('#reportsOrganizeCompactList'); }
     const orgCard = e.target.closest('.organize-card');
     if (!type && orgCard) { type = 'organize'; target = orgCard; container = $('#organizeCardsList'); }
+    const ttc = e.target.closest('.tt-cust');
+    if (!type && ttc) { type = 'tt-cust'; target = ttc; container = $('#ttList'); }
     const catHeader = e.target.closest('.plate-header-left');
     if (!type && catHeader) { type = 'menu-cat'; target = catHeader.closest('.plate-group'); container = $('#menuContainer'); }
     const itemLeft = e.target.closest('.plate-item-left');
@@ -3110,7 +3157,7 @@ function setupUniversalDrag() {
     if (e.clientY < edgeMargin) window.scrollBy({ top: -14, behavior: 'instant' });
     else if (e.clientY > window.innerHeight - edgeMargin) window.scrollBy({ top: 14, behavior: 'instant' });
 
-    let selector = dragS.type === 'organize' ? '.organize-card:not(.drag-active)' : dragS.type === 'reports-org' ? '.rep-org-card:not(.drag-active)' : dragS.type === 'menu-cat' ? '.plate-group:not(.drag-active)' : '.plate-item:not(.drag-active)';
+    let selector = dragS.type === 'tt-cust' ? '.tt-item:not(.drag-active)' : dragS.type === 'organize' ? '.organize-card:not(.drag-active)' : dragS.type === 'reports-org' ? '.rep-org-card:not(.drag-active)' : dragS.type === 'menu-cat' ? '.plate-group:not(.drag-active)' : '.plate-item:not(.drag-active)';
     const siblings = [...dragS.container.querySelectorAll(selector)];
     let placed = false;
     for (const sib of siblings) {
@@ -3149,6 +3196,22 @@ function setupUniversalDrag() {
           CAT.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
           showToast('Ordem salva com sucesso!');
         } catch(err) { showToast('Erro ao sincronizar ordem.'); }
+      }
+
+      if (dragS.type === 'tt-cust') {
+        const kids = [...dragS.container.children].filter(k => k.classList.contains('tt-item'));
+        const novo = [];
+        let ultimaPrim = null;
+        kids.forEach((k, i) => {
+          if (k.classList.contains('tt-prim')) { ultimaPrim = k.dataset.pn; return; }
+          const cu = TT.custom.find(c => c.id === Number(k.dataset.cid)); if (!cu) return;
+          const prox = kids.slice(i + 1).find(z => z.classList.contains('tt-prim'));
+          if (prox) { cu.cat = prox.dataset.pn; cu.pos = 'before'; } else if (ultimaPrim) { cu.cat = ultimaPrim; cu.pos = 'after'; }
+          novo.push(cu);
+        });
+        TT.custom.forEach(c => { if (!novo.includes(c)) novo.push(c); });
+        TT.custom = novo;
+        ttSalvar('Posição salva'); desenhaTitulos();
       }
 
       if (dragS.type === 'menu-item') {
@@ -3659,6 +3722,13 @@ let BR = BAIRROS_DEF.map(b => [...b]);
 let brBusca = '', brAberto = false;
 const parseTaxa = v => { const n = parseFloat(String(v).trim().replace(',', '.')); return isNaN(n) ? NaN : n; };
 
+let brCombinar = false;
+function aplicaCombinar() {
+  $('#brCombinar').checked = brCombinar;
+  $('#brBox').style.display = brCombinar ? 'none' : '';
+  $('#brCombMsg').hidden = !brCombinar;
+  $('#brSalvarCombinar').hidden = !brCombinar;
+}
 function desenhaBairros() {
   const q = brBusca.trim().toLowerCase();
   const html = BR.map((b, i) => ({ b, i })).filter(({ b }) => !q || String(b[0]).toLowerCase().includes(q)).map(({ b, i }) => `
@@ -3676,6 +3746,7 @@ async function abrirBairros() {
   if (!brAberto) return;
   $('#brMsg').textContent = '';
   desenhaBairros();
+  try { const en = await cfgGet('entrega'); brCombinar = !!(en && en.combinar); aplicaCombinar(); } catch (e) {}
   try {
     const v = await cfgGet('bairros');
     if (Array.isArray(v) && v.length) { BR = v.map(b => [b[0], Number(b[1])]); desenhaBairros(); }
@@ -3684,6 +3755,7 @@ async function abrirBairros() {
 
 $('#page-entregar').addEventListener('input', e => {
   const t = e.target;
+  if (t.id === 'brCombinar') { brCombinar = t.checked; aplicaCombinar(); return; }
   if (t.dataset.brN !== undefined) BR[+t.dataset.brN][0] = t.value;
   else if (t.dataset.brT !== undefined) BR[+t.dataset.brT][1] = t.value;
   else if (t.id === 'brBusca') { brBusca = t.value; desenhaBairros(); }
@@ -3699,6 +3771,11 @@ $('#page-entregar').addEventListener('click', async e => {
   }
   const del = e.target.closest('[data-br-del]');
   if (del) { BR.splice(+del.dataset.brDel, 1); desenhaBairros(); return; }
+  if (e.target.id === 'brSalvar2') {
+    try { await cfgSet('entrega', { combinar: true }); $('#brMsg').textContent = 'Salvo. O site mostra "Taxa da entrega a combinar".'; showToast('Taxa a combinar salva'); }
+    catch (err) { $('#brMsg').textContent = 'Erro ao salvar (' + err.message + ').'; }
+    return;
+  }
   if (e.target.id === 'brSalvar') {
     const lista = [], vistos = new Set();
     for (const b of BR) {
@@ -3712,12 +3789,132 @@ $('#page-entregar').addEventListener('click', async e => {
     lista.sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'));
     try {
       await cfgSet('bairros', lista);
+      await cfgSet('entrega', { combinar: false });
       BR = lista.map(b => [...b]); desenhaBairros();
       $('#brMsg').textContent = 'Salvo. O site já usa os novos bairros e valores.';
       showToast('Bairros e taxas salvos');
     } catch (err) {
       $('#brMsg').textContent = 'Erro ao salvar (' + err.message + '). Rode o SQL de ajuste 3 no Supabase.';
     }
+  }
+});
+
+/* TÍTULOS */
+const TT_DEF = { hero: { t: 'Rancharia', s: 'Cardápio', sub: 'Escolha a proteína, monte as guarnições e peça pelo WhatsApp.' }, extras: { t: 'Acompanhamentos e /Bebidas/', sub: 'Escolha as quantidades para adicionar ao seu pedido.' } };
+let TT = { hero: {}, extras: {}, nomes: {}, custom: [] };
+let ttTab = 'titulos', ttAberto = null, ttCriar = false, ttAba = 't';
+const ttHtml = s => esc(s).replace(/\/([^\/]+)\//g, '<span class="tt-y">/$1/</span>') + '​';
+const ttInp = (id, val, ph, big, attrs) => `<div class="yt ${big ? 'big' : ''}"><div class="yt-b">${ttHtml(val)}</div><textarea id="${id}" rows="1" placeholder="${esc(ph || '')}" data-yt ${attrs || ''}>${esc(val)}</textarea></div>`;
+const AL_SVG = { l: '<path d="M3 5h14M3 10h9M3 15h12"/>', c: '<path d="M3 5h14M6 10h8M4 15h12"/>', r: '<path d="M3 5h14M8 10h9M5 15h12"/>' };
+const ttAl = (id, v) => `<div class="tt-al" id="${id}" data-v="${v || 'l'}">${['l', 'c', 'r'].map(k => `<button type="button" data-al="${k}" class="${(v || 'l') === k ? 'on' : ''}" aria-label="${({ l: 'Esquerda', c: 'Centro', r: 'Direita' })[k]}"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${AL_SVG[k]}</svg></button>`).join('')}</div>`;
+const alDe = id => { const e = document.getElementById(id); return e ? e.dataset.v : 'l'; };
+const ttMsg = t => showToast(t);
+async function renderTitulos() {
+  if (!CAT.length) await loadMenu();
+  try {
+    const v = await cfgGet('titulos') || {};
+    TT = { hero: v.hero || {}, extras: v.extras || {}, nomes: v.nomes || {}, custom: Array.isArray(v.custom) ? v.custom : [] };
+  } catch (e) {}
+  TT.custom.forEach((c, i) => { if (!c.id) c.id = Date.now() + i; });
+  desenhaTitulos();
+}
+function desenhaTitulos() {
+  document.querySelectorAll('#page-titulos .tt-tab').forEach(b => b.classList.toggle('active', b.dataset.ttTab === ttTab));
+  const box = $('#ttBody');
+  if (ttTab === 'hero') {
+    const h = TT.hero, D = TT_DEF;
+    box.innerHTML = `<div class="card">
+      <h3 style="margin:0 0 6px;font-size:16px">Topo do site</h3>
+      <div class="tt-lb">Título principal</div>${ttInp('ttH1', h.t || D.hero.t, '', true)}
+      <div class="tt-lb">Título secundário</div>${ttInp('ttH2', h.s || D.hero.s, '', false)}
+      <div class="tt-lb">Substituto</div>${ttInp('ttH3', h.sub || D.hero.sub, '', false)}
+      <div class="tt-lb">Alinhamento</div>${ttAl('ttHA', h.a)}
+      <p class="subtitle" style="margin:6px 0 10px">Escreva entre / / para o texto ficar amarelo. Ex.: /Cardápio/</p>
+      <button class="btn sm-btn" type="button" data-tt-hsave>Salvar</button>
+    </div>`;
+    return;
+  }
+  let html = `<div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn light sm-btn" type="button" data-tt-criar>${ttCriar ? 'Fechar' : '+ Criar Título'}</button><button class="btn light sm-btn" type="button" data-tt-loja>Loja fechada</button></div>`;
+  if (ttCriar) {
+    html += `<div class="card" style="margin-bottom:12px">
+      <div class="tt-tabs"><button type="button" class="tt-tab ${ttAba === 't' ? 'active' : ''}" data-tt-aba="t">Título</button><button type="button" class="tt-tab ${ttAba === 's' ? 'active' : ''}" data-tt-aba="s">Substituto</button></div>
+      <div ${ttAba === 't' ? '' : 'hidden'}>${ttInp('ttNT', '', 'Título (use /texto/ para amarelo)', true)}</div>
+      <div ${ttAba === 's' ? '' : 'hidden'}>${ttInp('ttNS', '', 'Substituto (use /texto/ para amarelo)', false)}</div>
+      <div class="tt-lb">Alinhamento</div>${ttAl('ttNA', 'l')}
+      <p class="subtitle" style="margin:6px 0 0">Depois de criar, segure e arraste o card cinza para o lugar que quiser entre os cards.</p>
+      <button class="btn sm-btn" type="button" data-tt-add style="margin-top:10px">Criar</button>
+    </div>`;
+  }
+  // Acompanhamentos e Bebidas
+  { const x = TT.extras, ab = ttAberto === 'extras';
+    html += `<div class="tt-card grey"><div class="tt-h" data-tt-h="extras"><strong>Acompanhamentos e Bebidas</strong><span>${ab ? '▴' : '▾'}</span></div>` + (ab ? `<div class="tt-body">
+      <div class="tt-lb">Título</div>${ttInp('ttX1', x.t || TT_DEF.extras.t, '', true)}
+      <div class="tt-lb">Substituto</div>${ttInp('ttX2', x.sub || TT_DEF.extras.sub, '', false)}
+      <div class="tt-lb">Alinhamento</div>${ttAl('ttXA', x.a)}
+      <button class="btn sm-btn" type="button" data-tt-xsave style="margin-top:6px">Salvar</button></div>` : '') + `</div>`; }
+  const custCard = cu => {
+    const ix = TT.custom.indexOf(cu), ab = ttAberto === 'c' + cu.id, nome = String(cu.t || cu.s || 'Sem texto').replace(/\//g, '');
+    return `<div class="tt-card grey tt-item tt-cust" data-cid="${cu.id}"><div class="tt-h" data-tt-h="c${cu.id}"><strong>${esc(nome)}</strong><span>${ab ? '▴' : '▾'}</span></div>` + (ab ? `<div class="tt-body">${ttInp('cu' + ix + 't', cu.t || '', 'Título', true, `data-cu="${ix}" data-f="t"`)}${ttInp('cu' + ix + 's', cu.s || '', 'Substituto', false, `data-cu="${ix}" data-f="s"`)}<div class="tt-lb">Alinhamento</div>${ttAl('cua' + ix, cu.a)}<div style="display:flex;gap:8px;margin-top:6px"><button class="btn sm-btn" type="button" data-tt-save>Salvar</button><button class="btn light sm-btn" type="button" data-tt-del="${ix}">Excluir</button></div></div>` : '') + `</div>`;
+  };
+  const prims = CAT.filter(c => lugarDe(c.id) !== 'item'), nomesP = new Set(prims.map(c => c.nome));
+  html += '<div id="ttList">';
+  prims.forEach((c, pi) => {
+    html += TT.custom.filter(cu => cu.cat === c.nome && cu.pos !== 'after' || (pi === 0 && !nomesP.has(cu.cat))).map(custCard).join('');
+    const aberto = ttAberto === c.id;
+    let body = '';
+    if (aberto) {
+      const subs = CAT.filter(sc => sc.id !== c.id && lugarDe(sc.id) === 'item' && parentsDe(sc.id).includes(String(c.id)));
+      const linha = (nome, rot, subDef) => { const o = TT.nomes[nome] || {}; const i = 'k' + Math.random().toString(36).slice(2, 8);
+        return `<div class="tt-lb">${rot}</div>${ttInp(i + 't', o.t || '', nome, true, `data-ttk="${esc(nome)}" data-f="t"`)}${ttInp(i + 's', o.s || '', subDef || 'Substituto', false, `data-ttk="${esc(nome)}" data-f="s"`)}`; };
+      body = `<div class="tt-body">${linha(c.nome, 'Título do card', c.substituto) + subs.map(sc => linha(sc.nome, 'Subcategoria', sc.substituto)).join('')}<button class="btn sm-btn" type="button" data-tt-save style="margin-top:12px">Salvar</button></div>`;
+    }
+    html += `<div class="tt-card tt-item tt-prim ${aberto ? 'open' : ''}" data-pn="${esc(c.nome)}"><div class="tt-h" data-tt-h="${c.id}"><strong>${esc(c.nome)}</strong><span>${aberto ? '▴' : '▾'}</span></div>${body}</div>`;
+    html += TT.custom.filter(cu => cu.cat === c.nome && cu.pos === 'after').map(custCard).join('');
+  });
+  html += '</div>';
+  box.innerHTML = html;
+}
+async function ttSalvar(ok) {
+  try { await cfgSet('titulos', TT); ttMsg(ok || 'Títulos salvos'); } catch (e) { ttMsg('Erro ao salvar: ' + e.message); }
+}
+$('#page-titulos').addEventListener('input', e => {
+  const t = e.target; if (t.dataset.yt === undefined) return;
+  t.previousElementSibling.innerHTML = ttHtml(t.value);
+});
+$('#page-titulos').addEventListener('keydown', e => { if (e.target.dataset && e.target.dataset.yt !== undefined && e.key === 'Enter') e.preventDefault(); });
+$('#page-titulos').addEventListener('click', async e => {
+  const g = s => e.target.closest(s);
+  let el;
+  if ((el = g('[data-al]'))) { const grp = el.parentElement; grp.dataset.v = el.dataset.al; grp.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); return; }
+  if ((el = g('[data-tt-tab]'))) { ttTab = el.dataset.ttTab; desenhaTitulos(); return; }
+  if (g('[data-tt-loja]')) { abrirMsgLoja(); return; }
+  if (g('[data-tt-criar]')) { ttCriar = !ttCriar; desenhaTitulos(); return; }
+  if ((el = g('[data-tt-aba]'))) { const t = $('#ttNT').value, s = $('#ttNS').value, a = alDe('ttNA'); ttAba = el.dataset.ttAba; desenhaTitulos(); $('#ttNT').value = t; $('#ttNS').value = s; $('#ttNA').dataset.v = a; $('#ttNA').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.al === a)); document.querySelectorAll('#ttNT,#ttNS').forEach(i => i.dispatchEvent(new Event('input', { bubbles: true }))); return; }
+  if (g('[data-tt-add]')) {
+    const t = $('#ttNT').value.trim(), s = $('#ttNS').value.trim();
+    if (!t && !s) { ttMsg('Escreva o título ou o substituto'); return; }
+    const prim = CAT.find(c => lugarDe(c.id) !== 'item'); TT.custom.unshift({ id: Date.now(), cat: prim ? prim.nome : '', pos: 'before', t, s, a: alDe('ttNA') });
+    ttCriar = false; ttAberto = 'criados';
+    await ttSalvar('Título criado'); desenhaTitulos(); return;
+  }
+  if ((el = g('[data-tt-del]'))) { TT.custom.splice(+el.dataset.ttDel, 1); await ttSalvar('Título removido'); desenhaTitulos(); return; }
+  if ((el = g('[data-tt-h]'))) { const id = el.dataset.ttH; if (String(ttAberto) === id) ttAberto = null; else if (id[0] === 'c' && TT.custom.some(c => 'c' + c.id === id)) ttAberto = id; else { const c = CAT.find(c => String(c.id) === id); ttAberto = c ? c.id : id; } desenhaTitulos(); return; }
+  if (g('[data-tt-save]')) {
+    const tmp = {};
+    document.querySelectorAll('#ttBody [data-ttk]').forEach(i => { const k = i.dataset.ttk; (tmp[k] = tmp[k] || {})[i.dataset.f] = i.value.trim(); });
+    Object.keys(tmp).forEach(k => { if (tmp[k].t || tmp[k].s) TT.nomes[k] = { t: tmp[k].t || '', s: tmp[k].s || '' }; else delete TT.nomes[k]; });
+    document.querySelectorAll('#ttBody [data-cu]').forEach(i => { const c = TT.custom[+i.dataset.cu]; if (c) c[i.dataset.f] = i.value.trim(); });
+    TT.custom.forEach((c, ix) => { const a = document.getElementById('cua' + ix); if (a) c.a = a.dataset.v; });
+    await ttSalvar(); return;
+  }
+  const so = (x, d) => (x && x !== d) ? x : '', v = id => $('#' + id).value.trim(), D = TT_DEF;
+  if (g('[data-tt-xsave]')) {
+    TT.extras = { t: so(v('ttX1'), D.extras.t), sub: so(v('ttX2'), D.extras.sub), a: alDe('ttXA') === 'l' ? '' : alDe('ttXA') };
+    await ttSalvar(); return;
+  }
+  if (g('[data-tt-hsave]')) {
+    TT.hero = { t: so(v('ttH1'), D.hero.t), s: so(v('ttH2'), D.hero.s), sub: so(v('ttH3'), D.hero.sub), a: alDe('ttHA') === 'l' ? '' : alDe('ttHA') };
+    await ttSalvar(); return;
   }
 });
 
@@ -3890,7 +4087,7 @@ function renderMenu() {
         </div>
       </div>
       <div class="items-list" data-cid="${c.id}">
-        ${renderPlateItemsHtml(items, isPrato)}
+        ${(!items.length && subcatsHtml) ? '' : renderPlateItemsHtml(items, isPrato)}
       </div>
       ${subcatsHtml}
     </article>`;
@@ -4542,6 +4739,20 @@ function renderLojaStatus() {
   b.innerHTML = LOJA ? SVG_ICONS.lock : SVG_ICONS.store;
 }
 
+/* mensagem de loja fechada (botão na página Títulos) */
+function abrirMsgLoja() {
+  try {
+    const m = $('#modalLojaMsg');
+    m.classList.add('open');
+    $('#lojaMsgTxt').value = '';
+    cfgGet('loja').then(v => { if (v && v.msg) $('#lojaMsgTxt').value = v.msg; }).catch(() => {});
+  } catch (e) { showToast('Erro ao abrir: ' + e.message); }
+}
+$('#lojaMsgFechar').addEventListener('click', () => $('#modalLojaMsg').classList.remove('open'));
+$('#lojaMsgSalvar').addEventListener('click', async () => {
+  try { await cfgSet('loja', { msg: $('#lojaMsgTxt').value.trim() }); showToast('Mensagem salva'); $('#modalLojaMsg').classList.remove('open'); } catch (e) { showToast('Erro ao salvar: ' + e.message); }
+});
+
 $('#btnHeaderStoreToggle').onclick = async () => {
   if (LOJA === null) return loadLoja();
   try {
@@ -4717,6 +4928,7 @@ function navigateTo(page) {
   if (page === 'reports') loadReportsFull();
   if (page === 'delete') { selectedToDelete.clear(); renderDeleteScreen(); }
   if (page === 'sitemenu') renderSiteMenuPage();
+  if (page === 'titulos') renderTitulos();
   if (page === 'entregar') { renderEntregarPage(); carregaMoto(); }
 
   const prevScroll = pageScrollPositions['page-' + page] || 0;
