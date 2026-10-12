@@ -1930,7 +1930,11 @@ async function api(path, opt = {}) {
     }
   });
   clearTimeout(ac.t);
-  if (!r.ok) throw new Error(r.status);
+  if (!r.ok) {
+    let det = '';
+    try { const j = await r.json(); det = j.message || j.hint || j.details || ''; } catch (_) {}
+    const e = new Error(String(r.status)); e.detalhe = det; throw e;
+  }
   if (opt.method === 'PATCH') return null;
   const tx = await r.text();
   return tx ? JSON.parse(tx) : null;
@@ -1986,7 +1990,7 @@ $('#bkFile').addEventListener('change', async e => {
   if (!confirm(`Aplicar o backup de ${dataTxt}?\n\nO painel vai ficar igual ao arquivo: ${pac.categorias.length} categorias, ${pac.produtos.length} produtos e as configurações do site. O que não estiver no arquivo será apagado.`)) return;
   const btn = $('#btnUpload'); btn.disabled = true; btn.textContent = 'Aplicando…';
   let etapa = 'preparando';
-  const passo = async (nome, fn) => { etapa = nome; try { return await fn(); } catch (err) { throw Object.assign(new Error(err.message || String(err)), { etapa: nome }); } };
+  const passo = async (nome, fn) => { etapa = nome; try { return await fn(); } catch (err) { throw Object.assign(new Error(err.message || String(err)), { etapa: nome, detalhe: err.detalhe }); } };
   try {
     const merge = { Prefer: 'resolution=merge-duplicates,return=minimal' };
     // 1) configurações do site (inclui o C.Dia)
@@ -2011,7 +2015,8 @@ $('#bkFile').addEventListener('change', async e => {
   } catch (err) {
     const cod = /^\d{3}$/.test(err.message) ? ' (erro ' + err.message + ')' : '';
     const dica = etapa.startsWith('apagar') ? ' Provavelmente tem item ligado a pedido antigo.' : '';
-    showToast('Parou em "' + (err.etapa || etapa) + '"' + cod + '.' + dica + ' Algumas partes podem já ter sido gravadas; tente de novo.');
+    const motivo = err.detalhe ? ' Motivo: ' + String(err.detalhe).slice(0, 160) : '';
+    showToast('Parou em "' + (err.etapa || etapa) + '"' + cod + '.' + dica + motivo + ' Algumas partes podem já ter sido gravadas; tente de novo.');
     btn.disabled = false; btn.textContent = '↑ Upload';
   }
 });
