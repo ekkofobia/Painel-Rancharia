@@ -985,6 +985,9 @@ body.tsite .drag-active{background:#341d0f!important}
 .adm-head strong{font-size:17px}
 .adm-head small{opacity:.85}
 .adm-card pre{margin:8px 0 10px;white-space:pre-wrap;word-break:break-word;font:13px/1.45 ui-monospace,Menlo,monospace;background:rgba(0,0,0,.2);border-radius:10px;padding:10px;color:#fff}
+.adm-card.min{cursor:pointer}
+.adm-card.min:not(.open) pre,.adm-card.min:not(.open) button{display:none}
+.adm-card.min:not(.open) .adm-head{margin-bottom:0}
 .adm-card button{background:#fff;color:#c0392b;font-weight:800;border-radius:999px;min-height:34px;padding:0 16px;margin-top:6px}
 .sm-row{display:grid;grid-template-columns:1fr 1fr 38px;gap:8px;margin-bottom:8px;align-items:center}
 .sm-x{width:38px;height:38px;min-height:38px;padding:0;border-radius:50%;flex:none;font-size:13px}
@@ -1021,6 +1024,50 @@ body.tsite .drag-active{background:#341d0f!important}
 .ent-call{flex:none;white-space:nowrap}
 #motoPicker{flex-wrap:nowrap;overflow:visible;gap:8px;justify-content:center}
 #motoPicker .filter-pill{flex:1 1 0;min-width:0;max-width:140px;padding-left:6px;padding-right:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.menu-sub{font-size:14px;font-weight:700;color:var(--muted);margin:-4px 2px 10px}
+.cdia-actions{display:flex;gap:8px;margin:6px 0 12px;flex-wrap:wrap;align-items:center}
+.cdia-actions .btn.on{background:var(--yellow) !important;border-color:#2a1509 !important}
+.cdia-list{display:grid;gap:10px}
+.cdia-card{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;cursor:pointer;color:#171719}
+.cdia-card.sel,.cdia-mini.on{border-color:#2a1509;background:#fff6c2}
+.cdia-chk{width:22px;height:22px;border-radius:7px;border:2px solid #2a1509;flex:none;display:grid;place-items:center}
+.cdia-card.sel .cdia-chk,.cdia-mini.on .cdia-chk{background:#2a1509}
+.cdia-card.sel .cdia-chk::after,.cdia-mini.on .cdia-chk::after{content:'✓';color:#fff;font-size:14px;font-weight:800;line-height:1}
+.cdia-nome{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-weight:700;font-size:16px;color:#171719;padding:4px 0;outline:0}
+.cdia-nome:focus{border-bottom:2px solid var(--yellow)}
+.cdia-go,.cdia-x{display:none}
+.cdia-list.m-cfg .cdia-card{border-style:dashed}
+.cdia-list.m-cfg .cdia-go{display:block;font-size:22px;color:var(--muted)}
+.cdia-list.m-del .cdia-x{display:block;border:0;background:var(--red);color:#fff;width:30px;height:30px;border-radius:50%;font-size:18px;line-height:1;cursor:pointer}
+.cdia-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cdia-mini{display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;font:inherit;font-weight:600;font-size:14px;text-align:left;color:#171719;cursor:pointer;min-width:0}
+.action-buttons-row .btn.on{background:var(--yellow) !important;border-color:#2a1509 !important}
+.plate-header{flex-wrap:nowrap !important;align-items:flex-start !important}
+.plate-header-left{flex:1 1 0 !important;min-width:0 !important}
+.plate-header-right{flex:none;margin-top:2px}
+.btn-add-cat{width:46px !important;padding:0 !important;justify-content:center !important;font-size:24px !important;font-weight:600 !important;line-height:1 !important;height:35px !important;border-radius:999px !important}
+.stepper-ctrl{height:50px;width:100%}
+.stepper-btn{flex:none;width:40px;height:40px;min-width:40px;aspect-ratio:1/1;padding:0;font-size:20px}
+.stepper-ctrl input{flex:1;min-width:0;width:auto}
+.cdia-list{grid-template-columns:minmax(0,1fr)}
+.cdia-nome{width:0}
+.cdia-cfg{border:1.5px solid #2a1509;background:#fff;color:#2a1509;border-radius:999px;height:32px;padding:0 12px;font:inherit;font-weight:700;font-size:12px;cursor:pointer;flex:none}
+.cdia-list.m-del .cdia-cfg{display:none}
+.modal-pills-selector{grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important}
+#checkLimitWrap>div{min-width:0}
+.foto-opts{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 6px;scrollbar-width:thin}
+.foto-opt{position:relative;flex:0 0 42%;scroll-snap-align:start;padding:0;border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#000;aspect-ratio:1/1;cursor:pointer}
+.foto-opt img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-opt i{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.85);border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.foto-opt.on{border-color:#2a1509;box-shadow:0 0 0 2px #2a1509}
+.foto-opt.on i{background:#2a1509}
+.foto-opt.on i::after{content:'';position:absolute;left:5px;top:3px;width:5px;height:9px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.stepper-ctrl{min-width:0;gap:3px}
+.stepper-btn{width:36px;height:36px;min-width:36px;font-size:18px}
+#formMenuGeneric{overflow-x:hidden}
+/* backup */
+.bk-box { margin: 6px 0 12px; display: grid; gap: 8px; }
+.bk-last { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
 </style>
 </head>
 <body>
@@ -1113,12 +1160,14 @@ body.tsite .drag-active{background:#341d0f!important}
         </div>
       </div>
 
+      <div class="menu-sub" id="menuSubTitle"></div>
+
       <div class="sticky-actions-bar">
         <div class="action-buttons-row">
           <button class="btn light" id="btnNewCat">Categoria</button>
-          <button class="btn light" id="btnNewPrd">Produto</button>
+          <button class="btn light" id="btnNewPrd">C.Dia</button>
           <button class="btn light" id="btnNewBatchPrd">Vários</button>
-          <button class="btn light" id="btnGoOrganize">Organizar</button>
+          <button class="btn light" id="btnGoOrganize">Subcategoria</button>
         </div>
       </div>
 
@@ -1139,6 +1188,27 @@ body.tsite .drag-active{background:#341d0f!important}
       </div>
 
       <div class="organize-list" id="organizeCardsList"></div>
+    </section>
+
+    <section class="page" id="page-cdia">
+      <div class="page-heading" style="margin-bottom:4px"><h1>Cardápio do dia</h1></div>
+      <p class="subtitle" style="margin:0 0 8px">Marque qual cardápio aparece hoje no site e no painel.</p>
+      <div class="cdia-actions">
+        <button class="btn light" id="cdiaBtnNew">Criar</button>
+        <button class="btn light" id="cdiaBtnDel">Excluir</button>
+        <button class="btn-back-menu-fixed" style="margin-left:auto" onclick="navigateTo('menu')">Voltar</button>
+      </div>
+      <div class="cdia-list" id="cdiaList"></div>
+    </section>
+
+    <section class="page" id="page-cdiacfg">
+      <div class="page-heading" style="margin-bottom:0"><h1>Gestão do Cardápio</h1></div>
+      <div class="menu-sub" id="cdiaCfgSub"></div>
+      <div class="cdia-actions">
+        <p class="subtitle" style="margin:0;align-self:center">Toque para escolher o que aparece neste cardápio.</p>
+        <button class="btn-back-menu-fixed" onclick="navigateTo('cdia')">Voltar</button>
+      </div>
+      <div class="cdia-grid" id="cdiaCfgGrid"></div>
     </section>
 
     <section class="page" id="page-reports">
@@ -1350,7 +1420,12 @@ body.tsite .drag-active{background:#341d0f!important}
           <textarea id="smSobre" rows="5"></textarea>
         </div>
         <div class="form-group">
+          <label for="smPix">Chave Pix (aparece no checkout)</label>
+          <input type="text" id="smPix" placeholder="CPF, e-mail, telefone ou chave aleatória">
+        </div>
+        <div class="form-group">
           <label>Horário de funcionamento</label>
+          <p class="subtitle" style="margin:0 0 6px">A loja abre e fecha sozinha por estes horários (ex.: "Segunda a sexta" · "11h às 15h"). O botão da loja no topo abre/fecha quando você quiser.</p>
           <div id="smHoras"></div>
         </div>
         <div class="sm-actions">
@@ -1419,6 +1494,10 @@ body.tsite .drag-active{background:#341d0f!important}
             <option value="w80">80 mm (Padrão bobina)</option>
             <option value="w58">Compacto (58 mm)</option>
           </select>
+        </div>
+        <div class="bk-box">
+          <button class="btn" id="btnBackup" type="button" style="width:100%">↓ Baixar backup das configurações</button>
+          <p class="bk-last" id="bkLast">Nenhum backup baixado ainda.</p>
         </div>
         <button class="btn light small" id="btnLogout" type="button" style="width:100%;padding:9.5px 12px;margin-top:6px">Sair do Painel</button>
       </div>
@@ -1497,7 +1576,7 @@ body.tsite .drag-active{background:#341d0f!important}
     <h2 id="productModalTitle" style="margin:0 0 12px;font-size:18px">Produto</h2>
     <form id="formProductGeneric">
       <div class="form-group"><input id="pName" placeholder="Nome do Produto" required></div>
-      <div class="form-group" id="pDescGroup"><input id="pDesc" placeholder="Descrição (Opcional)"></div>
+      <div class="form-group" id="pDescGroup"><input id="pDesc" placeholder="Substituto / descrição (opcional)"></div>
       <div class="form-group" id="pPriceGroup"><input id="pPrice" type="text" inputmode="decimal" placeholder="Preço (R$)"></div>
       <div class="form-group">
         <label>Categorias (marque uma ou mais)</label>
@@ -1687,7 +1766,8 @@ async function saveCatConfig(c, cfg) {
     parents: cfg.parents ?? c.parents ?? [],
     item_order: cfg.item_order ?? c.item_order ?? [],
     substituto: cfg.substituto ?? c.substituto ?? '',
-    apartir_de: cfg.apartir_de !== undefined ? Number(cfg.apartir_de) : (c.apartir_de || 0)
+    apartir_de: cfg.apartir_de !== undefined ? Number(cfg.apartir_de) : (c.apartir_de || 0),
+    foto: [1, 2, 3].includes(Number(cfg.foto ?? c.foto)) ? Number(cfg.foto ?? c.foto) : 1
   };
   const descricao = JSON.stringify(payload);
   
@@ -1719,7 +1799,8 @@ function aplicarConfigs(lista) {
         parents: j.parents || c.parents,
         item_order: j.item_order || [],
         substituto: j.substituto || '',
-        apartir_de: j.apartir_de !== undefined ? Number(j.apartir_de) : 0
+        apartir_de: j.apartir_de !== undefined ? Number(j.apartir_de) : 0,
+        foto: [1, 2, 3].includes(Number(j.foto)) ? Number(j.foto) : 1
       }); 
     } catch (e) {}
   });
@@ -1846,7 +1927,46 @@ async function api(path, opt = {}) {
   return tx ? JSON.parse(tx) : null;
 }
 
+/* ===== Backup das configurações (arquivo .json) ===== */
+function bkMostra() {
+  const v = LS('bk_last', null);
+  $('#bkLast').textContent = v ? 'Último backup: ' + new Date(v).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ' às') : 'Nenhum backup baixado ainda.';
+}
+async function baixarBackup() {
+  const btn = $('#btnBackup'); btn.disabled = true; btn.textContent = 'Gerando backup…';
+  try {
+    const [sc, cats, prods] = await Promise.all([
+      api('site_config?select=key,value'),
+      api('categorias?select=*'),
+      api('produtos?select=*')
+    ]);
+    const agora = new Date();
+    const pacote = {
+      sistema: 'Rancharia — backup do painel',
+      gerado_em: agora.toISOString(),
+      preferencias: { imprimir_automatico: !!autoPrint, largura_papel: paperWidth },
+      site_config: sc || [],
+      categorias: cats || [],
+      produtos: prods || []
+    };
+    const pad = n => String(n).padStart(2, '0');
+    const nome = `backup-rancharia-${agora.getFullYear()}-${pad(agora.getMonth() + 1)}-${pad(agora.getDate())}-${pad(agora.getHours())}${pad(agora.getMinutes())}.json`;
+    const blob = new Blob([JSON.stringify(pacote, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    SV('bk_last', agora.toISOString()); bkMostra();
+    showToast('Backup baixado');
+  } catch (e) {
+    showToast('Não foi possível gerar o backup. Tente de novo.');
+  } finally {
+    btn.disabled = false; btn.textContent = '↓ Baixar backup das configurações';
+  }
+}
+$('#btnBackup').addEventListener('click', baixarBackup);
+
 function initApp() {
+  bkMostra();
   $('#chkAutoPrint').checked = autoPrint;
   $('#selPaperWidth').value = paperWidth;
   initDatePickerControls();
@@ -3413,6 +3533,7 @@ $('#deleteContent').addEventListener('click', async e => {
 /* ===== ADM (mensagens de teste enviadas pelo site) ===== */
 const isAdm = p => String(p.detalhes || '').startsWith('[ADM]');
 let ADM = [];
+const ADM_ABERTOS = new Set();
 let admHidden = new Set();
 try { admHidden = new Set(JSON.parse(localStorage.getItem('adm_hidden') || '[]')); } catch (e) {}
 
@@ -3420,8 +3541,9 @@ function renderAdmCard(p) {
   const txt = String(p.detalhes || '').replace(/^\[ADM\]\s*/, '');
   const [titulo, ...resto] = txt.split('\n');
   const hora = new Date(p.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  return `<div class="adm-card">
-    <div class="adm-head"><strong>${esc(titulo)}</strong><small>${hora}</small></div>
+  const fb = /feedback/i.test(titulo);   // comanda de feedback do cliente: vem minimizada, toque pra abrir
+  return `<div class="adm-card ${fb ? 'min' : ''} ${fb && ADM_ABERTOS.has(p.id) ? 'open' : ''}" ${fb ? `data-adm-tog="${p.id}"` : ''}>
+    <div class="adm-head"><strong>${esc(titulo)}</strong><small>${hora}${fb ? ' ▾' : ''}</small></div>
     ${resto.join('\n').trim() ? `<pre>${esc(resto.join('\n').trim())}</pre>` : ''}
     <button type="button" data-adm-ok="${p.id}">Ok, apagar</button>
   </div>`;
@@ -3440,6 +3562,8 @@ async function dispensaAdm(id) {
 }
 
 $('#ordersList').addEventListener('click', e => {
+  const tg = e.target.closest('[data-adm-tog]');
+  if (tg && !e.target.closest('button')) { const id = Number(tg.dataset.admTog); if (tg.classList.toggle('open')) ADM_ABERTOS.add(id); else ADM_ABERTOS.delete(id); return; }
   const b = e.target.closest('[data-adm-ok]');
   if (b) dispensaAdm(Number(b.dataset.admOk));
 });
@@ -3465,7 +3589,7 @@ const SITE_DEF = {
 let SM = JSON.parse(JSON.stringify(SITE_DEF));
 
 function desenhaSiteMenu() {
-  $('#smSobre').value = SM.sobre;
+  $('#smSobre').value = SM.sobre; $('#smPix').value = SM.pix || '';
   $('#smHoras').innerHTML = SM.horarios.map((h, i) => `<div class="sm-row">
     <input type="text" data-sm-d="${i}" value="${esc(h[0])}" placeholder="Dia(s)">
     <input type="text" data-sm-h="${i}" value="${esc(h[1])}" placeholder="Horário">
@@ -3479,7 +3603,7 @@ async function renderSiteMenuPage() {
   try {
     const v = await cfgGet('site');
     if (v) {
-      SM = { sobre: v.sobre || SITE_DEF.sobre, horarios: Array.isArray(v.horarios) && v.horarios.length ? v.horarios : SITE_DEF.horarios };
+      SM = { sobre: v.sobre || SITE_DEF.sobre, horarios: Array.isArray(v.horarios) && v.horarios.length ? v.horarios : SITE_DEF.horarios, pix: v.pix || '' };
       desenhaSiteMenu();
     }
   } catch (e) {
@@ -3489,6 +3613,7 @@ async function renderSiteMenuPage() {
 
 $('#page-sitemenu').addEventListener('input', e => {
   if (e.target.id === 'smSobre') SM.sobre = e.target.value;
+  if (e.target.id === 'smPix') SM.pix = e.target.value;
   if (e.target.dataset.smD !== undefined) SM.horarios[+e.target.dataset.smD][0] = e.target.value;
   if (e.target.dataset.smH !== undefined) SM.horarios[+e.target.dataset.smH][1] = e.target.value;
 });
@@ -3497,10 +3622,10 @@ $('#page-sitemenu').addEventListener('click', async e => {
   const del = e.target.closest('[data-sm-del]');
   if (del) { SM.horarios.splice(+del.dataset.smDel, 1); desenhaSiteMenu(); return; }
   if (e.target.id === 'smSalvar') {
-    const limpo = { sobre: SM.sobre.trim(), horarios: SM.horarios.filter(h => h[0].trim() || h[1].trim()).map(h => [h[0].trim(), h[1].trim()]) };
+    const limpo = { sobre: SM.sobre.trim(), pix: (SM.pix || '').trim(), horarios: SM.horarios.filter(h => h[0].trim() || h[1].trim()).map(h => [h[0].trim(), h[1].trim()]) };
     try {
       await cfgSet('site', limpo);
-      SM = limpo;
+      SM = limpo; loadLoja();
       $('#smMsg').textContent = 'Salvo. O site já mostra o novo texto.';
       showToast('Menu do site salvo');
     } catch (err) {
@@ -3983,6 +4108,11 @@ function renderPlateItemsHtml(items, isPrato = false) {
   `).join('');
 }
 
+const SUBABERTAS = new Set();   // subcategorias abertas: continuam abertas depois de editar um item
+function toggleSubAcc(h) {
+  const box = h.closest('.subcat-min-accordion'), id = Number(box.dataset.subCid);
+  if (box.classList.toggle('open')) SUBABERTAS.add(id); else SUBABERTAS.delete(id);
+}
 let COLAPSADOS = new Set();
 try { COLAPSADOS = new Set(JSON.parse(localStorage.getItem('rancharia_colapsados') || '[]')); } catch (e) {}
 document.addEventListener('click', e => {                    // toque nos 6 pontinhos: minimiza / abre o card da categoria
@@ -4008,6 +4138,9 @@ function renderMenu() {
   }
 
   const categoriasFiltradas = CAT.filter(c => {
+    if (cdiaOculta(c)) return false;
+    if (menuView === 'sub') return lugarDe(c.id) === 'item';
+    if (lugarDe(c.id) === 'item') return false;
     const lug = lugarDe(c.id);
     if (activeMenuFilter === 'principal') return lug === 'principal' || lug === 'ambos';
     if (activeMenuFilter === 'bump') return lug === 'bump' || lug === 'ambos';
@@ -4035,8 +4168,8 @@ function renderMenu() {
             const subtituloOpcoes = sc.substituto ? esc(sc.substituto) : `${scSorted.items.length} opções disponíveis`;
 
             return `
-              <div class="subcat-min-accordion" data-sub-cid="${sc.id}">
-                <div class="subcat-min-acc-header" onclick="this.closest('.subcat-min-accordion').classList.toggle('open')">
+              <div class="subcat-min-accordion ${SUBABERTAS.has(sc.id) ? 'open' : ''}" data-sub-cid="${sc.id}">
+                <div class="subcat-min-acc-header" onclick="toggleSubAcc(this)">
                   <div class="subcat-min-left-info">
                     <span class="min-icon">☰</span>
                     <div class="subcat-min-titles">
@@ -4081,9 +4214,9 @@ function renderMenu() {
             </span>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
+        <div class="plate-header-right" style="display:flex;align-items:center;gap:8px">
           ${(isPrato && plan) ? `<label class="price-pill">R$ <input data-price-id="${plan.id}" type="text" inputmode="decimal" value="${fmt(plan.preco)}"></label>` : ''}
-          <button class="btn light small btn-add-cat" data-add-prod="${c.id}">Adicionar</button>
+          <button class="btn light small btn-add-cat" data-add-prod="${c.id}" aria-label="Adicionar item">+</button>
         </div>
       </div>
       <div class="items-list" data-cid="${c.id}">
@@ -4155,6 +4288,11 @@ $('#menuContainer').addEventListener('click', async e => {
 /* MODAL DE CATEGORIA */
 $('#btnNewCat').onclick = () => openCategoryModal();
 
+const FOTO_URL = {
+  1: 'https://res.cloudinary.com/dwrq06fta/image/upload/v1790037884/file_00000000e9ec820eb2c1cd4c9d129425_h5aobq.webp',
+  2: 'https://res.cloudinary.com/dwrq06fta/image/upload/v1791773447/file_00000000c774820e80a770fb01c46ec6_hftmgc.webp',
+  3: 'https://res.cloudinary.com/dwrq06fta/image/upload/v1791808828/file_00000000aedc820eb3c02eabffd0109e_uskzdl.webp'
+};
 function openCategoryModal(cat, fromBatch = false) {
   savedScrollPosition = window.scrollY;
   $('#menuModalTitle').textContent = cat ? 'Editar Categoria' : 'Nova Categoria';
@@ -4164,6 +4302,7 @@ function openCategoryModal(cat, fromBatch = false) {
   let curMin = cat?.min_escolha !== undefined ? Number(cat.min_escolha) : 0;
   let curApartir = cat?.apartir_de !== undefined ? (cat.apartir_de ? fmt(cat.apartir_de) : '') : '';
   let curSubstituto = cat?.substituto || '';
+  let curFoto = [1, 2, 3].includes(Number(cat?.foto)) ? Number(cat.foto) : 1;
   const selectedParents = cat ? parentsDe(cat.id) : [];
 
   const planProd = cat ? PRD.find(x => x.categoria_id === cat.id && x.nome === PLAN) : null;
@@ -4199,9 +4338,9 @@ function openCategoryModal(cat, fromBatch = false) {
         </div>
       </div>
 
-      <div class="form-group" id="groupCatSubstituto" style="margin-top:10px;${isSubMin ? '' : 'display:none'}">
+      <div class="form-group" id="groupCatSubstituto" style="margin-top:10px;${(isSubMin || curDisp === 'prato') ? '' : 'display:none'}">
         <label>Substituto / Descrição (abaixo do título)</label>
-        <input id="catSubstituto" value="${esc(curSubstituto)}" placeholder="Ex: Escolha o sabor do seu suco ou refrigerante">
+        <input id="catSubstituto" value="${esc(curSubstituto)}" placeholder="${curDisp === 'prato' ? 'Ex: Com uma proteína / Com duas proteínas' : 'Ex: Escolha o sabor do seu suco ou refrigerante'}">
       </div>
 
       <div class="form-group" id="groupCatPrice" style="${curDisp === 'prato' ? 'margin-top:10px;' : 'display:none'}">
@@ -4246,7 +4385,7 @@ function openCategoryModal(cat, fromBatch = false) {
         </div>
         <input type="hidden" id="catDisplayType" value="${curDisp}">
         
-        <div id="checkLimitWrap" style="display:${curDisp === 'checklist' ? 'grid' : 'none'};grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;background:var(--bg);padding:10px;border-radius:12px;border:1px solid var(--line)">
+        <div id="checkLimitWrap" style="display:${(curDisp === 'checklist' || curDisp === 'prato') ? 'grid' : 'none'};grid-template-columns:${curDisp === 'prato' ? 'minmax(0,1fr)' : 'minmax(0,1fr) minmax(0,1fr)'};gap:8px;margin-top:8px;background:var(--bg);padding:10px;border-radius:12px;border:1px solid var(--line)">
           <div>
             <span style="font-size:11px;color:var(--muted);font-weight:700;display:block;margin-bottom:4px">Mínimo obrigatório:</span>
             <div class="stepper-ctrl">
@@ -4255,13 +4394,19 @@ function openCategoryModal(cat, fromBatch = false) {
               <button type="button" class="stepper-btn" id="btnIncMin">+</button>
             </div>
           </div>
-          <div>
+          <div id="blkMax" style="${curDisp === 'prato' ? 'display:none' : ''}">
             <span style="font-size:11px;color:var(--muted);font-weight:700;display:block;margin-bottom:4px">Limite de escolhas:</span>
             <div class="stepper-ctrl">
               <button type="button" class="stepper-btn" id="btnDecLimit">−</button>
               <input type="number" id="catMaxLimit" min="1" max="20" step="1" value="${curMax}" readonly>
               <button type="button" class="stepper-btn" id="btnIncLimit">+</button>
             </div>
+          </div>
+        </div>
+        <div id="fotoWrap" style="display:${curDisp === 'prato' ? 'block' : 'none'};margin-top:8px;background:var(--bg);padding:10px;border-radius:12px;border:1px solid var(--line)">
+          <span style="font-size:11px;color:var(--muted);font-weight:700;display:block;margin-bottom:6px">Foto do prato no site:</span>
+          <div class="foto-opts">
+            ${[1, 2, 3].map(n => `<button type="button" class="foto-opt ${curFoto === n ? 'on' : ''}" data-foto="${n}"><img src="${FOTO_URL[n]}" alt="Foto ${n}" loading="lazy"><i></i></button>`).join('')}
           </div>
         </div>
       </div>
@@ -4297,8 +4442,18 @@ function openCategoryModal(cat, fromBatch = false) {
   function syncMinSubcatFields() {
     const isMinSub = (curDisp === 'min');
     $('#groupCatApartir').style.display = isMinSub ? 'block' : 'none';
-    $('#groupCatSubstituto').style.display = isMinSub ? 'block' : 'none';
+    $('#groupCatSubstituto').style.display = (isMinSub || curDisp === 'prato') ? 'block' : 'none';
+    $('#catSubstituto').placeholder = curDisp === 'prato' ? 'Ex: Com uma proteína / Com duas proteínas' : 'Ex: Escolha o sabor do seu suco ou refrigerante';
+    const w = $('#checkLimitWrap'); w.style.display = (curDisp === 'checklist' || curDisp === 'prato') ? 'grid' : 'none';
+    w.style.gridTemplateColumns = curDisp === 'prato' ? 'minmax(0,1fr)' : 'minmax(0,1fr) minmax(0,1fr)';
+    $('#blkMax').style.display = curDisp === 'prato' ? 'none' : '';
+    $('#fotoWrap').style.display = curDisp === 'prato' ? 'block' : 'none';
   }
+  $('#fotoWrap').onclick = e => {
+    const b = e.target.closest('.foto-opt'); if (!b) return;
+    curFoto = [1, 2, 3].includes(Number(b.dataset.foto)) ? Number(b.dataset.foto) : 1;
+    $('#fotoWrap').querySelectorAll('.foto-opt').forEach(o => o.classList.toggle('on', o === b));
+  };
 
   $('#wrapCatLugar').onclick = e => {
     const opt = e.target.closest('.modal-pill-option');
@@ -4316,7 +4471,6 @@ function openCategoryModal(cat, fromBatch = false) {
     $('#wrapCatDisp').querySelectorAll('.modal-pill-option').forEach(o => o.classList.toggle('active', o === opt));
     curDisp = opt.dataset.val;
     $('#catDisplayType').value = curDisp;
-    $('#checkLimitWrap').style.display = curDisp === 'checklist' ? 'grid' : 'none';
     $('#groupCatPrice').style.display = curDisp === 'prato' ? 'grid' : 'none';
     syncMinSubcatFields();
   };
@@ -4394,7 +4548,8 @@ function openCategoryModal(cat, fromBatch = false) {
       parents: checkedParents, 
       item_order: cat?.item_order || [],
       substituto,
-      apartir_de
+      apartir_de,
+      foto: curFoto
     };
 
     if (cat) {
@@ -4422,6 +4577,9 @@ function openCategoryModal(cat, fromBatch = false) {
         const novaCat = Object.assign(res[0], payload, cfg);
         CAT.push(novaCat);
         cid = novaCat.id;
+        if (tipo === 'item') menuView = 'sub';
+        else { menuView = 'main'; const _a = cdiaAtivo(); if (Array.isArray(_a.cats) && !_a.cats.includes(cid)) { _a.cats.push(cid); cdiaSave(); } }   // vai direto pro C.Dia selecionado
+        try { syncSubBtn(); } catch (e) {}
         await saveCatConfig(novaCat, cfg);
         
         if (exibicao === 'prato') {
@@ -4508,8 +4666,8 @@ function updateProductFormVisibility(selectedCatIds) {
     return c && exibicaoDe(c) === 'prato';
   });
 
-  $('#pDescGroup').style.display = isPratoOnly ? 'none' : 'grid';
-  $('#pPriceGroup').style.display = isPratoOnly ? 'none' : 'grid';
+  $('#pDescGroup').style.display = 'grid';   // substituto/descrição e preço sempre aparecem (prato à la carte tem preço por item)
+  $('#pPriceGroup').style.display = 'grid';
 }
 
 function openProductModal(prod, defCids) {
@@ -4724,13 +4882,66 @@ $('#formBatchProducts').onsubmit = async e => {
 };
 
 /* ESTADO DA LOJA & IMPRESSÃO */
+
+/* ===== LOJA: horário automático + abrir/fechar manual ===== */
+const _sn = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const _DIAS = { dom: 0, seg: 1, ter: 2, qua: 3, qui: 4, sex: 5, sab: 6 };
+function parseDias(txt) {
+  const t = _sn(txt), set = new Set();
+  if (/todos os dias|todo dia|diariamente/.test(t)) return [0, 1, 2, 3, 4, 5, 6];
+  const re = /\b(dom|seg|ter|qua|qui|sex|sab)[a-z]*(?:-feira)?(?:\s*(?:a|ate|-)\s*(dom|seg|ter|qua|qui|sex|sab)[a-z]*(?:-feira)?)?/g;
+  let m;
+  while ((m = re.exec(t))) {
+    const a = _DIAS[m[1]];
+    if (m[2]) { const b = _DIAS[m[2]]; for (let d = a, n = 0; n < 8; d = (d + 1) % 7, n++) { set.add(d); if (d === b) break; } }
+    else set.add(a);
+  }
+  return [...set];
+}
+function parseHoras(txt) {
+  const t = _sn(txt).replace(/hrs?\b/g, 'h'), out = [];
+  const re = /(\d{1,2})\s*(?:h|:)?\s*(\d{2})?\s*(?:h)?\s*(?:as|a|-|ate)\s*(\d{1,2})\s*(?:h|:)?\s*(\d{2})?/g;
+  let m;
+  while ((m = re.exec(t))) { if (+m[1] <= 24 && +m[3] <= 24) out.push([+m[1] * 60 + (+m[2] || 0), +m[3] * 60 + (+m[4] || 0)]); }
+  return out;
+}
+function janelasLoja(rows) {
+  const w = [];
+  (rows || []).forEach(r => { const d = parseDias(r[0]), h = parseHoras(r[1]); if (d.length && h.length) h.forEach(([i, f]) => w.push({ d: new Set(d), i, f })); });
+  return w;
+}
+function agoraBA(ms) {
+  const p = {};
+  new Intl.DateTimeFormat('en-US', { timeZone: 'America/Bahia', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date(ms)).forEach(x => { p[x.type] = x.value; });
+  return { dow: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), min: (+p.hour % 24) * 60 + +p.minute };
+}
+function estadoHorario(rows, ms) {   // true = aberta, false = fechada, null = horário não entendido
+  const W = janelasLoja(rows); if (!W.length) return null;
+  const { dow, min } = agoraBA(ms || Date.now()), prev = (dow + 6) % 7;
+  return W.some(w => w.i < w.f ? (w.d.has(dow) && min >= w.i && min < w.f) : ((w.d.has(dow) && min >= w.i) || (w.d.has(prev) && min < w.f)));
+}
+function proxEstado(rows, ms, alvo) {
+  for (let t = ms + 60000; t < ms + 8 * 864e5; t += 300000) if (estadoHorario(rows, t) === alvo) return t;
+  return null;
+}
+
+let LOJA_MARK_D = false, LOJA_CFG_D = {}, HOR_D = null;
+function lojaFechadaD() {
+  const sch = estadoHorario(HOR_D, Date.now()), m = LOJA_CFG_D && LOJA_CFG_D.manual;
+  if (m && m.estado) { if (!m.ate || Date.now() < Date.parse(m.ate)) return m.estado === 'fechada'; return sch === false; }
+  if (LOJA_MARK_D) return true;
+  return sch === false;
+}
 async function loadLoja() {
   try {
-    const r = await api('categorias?select=id&nome=eq.__loja_fechada');
-    LOJA = r.length > 0;
+    const [r, lj, st] = await Promise.all([api('categorias?select=id&nome=eq.__loja_fechada'), cfgGet('loja').catch(() => null), cfgGet('site').catch(() => null)]);
+    LOJA_MARK_D = r.length > 0; LOJA_CFG_D = lj || {};
+    HOR_D = (st && Array.isArray(st.horarios) && st.horarios.length) ? st.horarios : SITE_DEF.horarios;
+    LOJA = lojaFechadaD();
   } catch(e) { LOJA = null; }
   renderLojaStatus();
 }
+setInterval(() => { if (LOJA !== null) { LOJA = lojaFechadaD(); renderLojaStatus(); } }, 30000);
 
 function renderLojaStatus() {
   const b = $('#btnHeaderStoreToggle');
@@ -4750,15 +4961,29 @@ function abrirMsgLoja() {
 }
 $('#lojaMsgFechar').addEventListener('click', () => $('#modalLojaMsg').classList.remove('open'));
 $('#lojaMsgSalvar').addEventListener('click', async () => {
-  try { await cfgSet('loja', { msg: $('#lojaMsgTxt').value.trim() }); showToast('Mensagem salva'); $('#modalLojaMsg').classList.remove('open'); } catch (e) { showToast('Erro ao salvar: ' + e.message); }
+  try { const cur = (await cfgGet('loja')) || {}; cur.msg = $('#lojaMsgTxt').value.trim(); await cfgSet('loja', cur); LOJA_CFG_D = cur; showToast('Mensagem salva'); $('#modalLojaMsg').classList.remove('open'); } catch (e) { showToast('Erro ao salvar: ' + e.message); }
 });
 
 $('#btnHeaderStoreToggle').onclick = async () => {
   if (LOJA === null) return loadLoja();
   try {
-    if (LOJA) await api('categorias?nome=eq.__loja_fechada', { method: 'DELETE' });
-    else await api('categorias', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ nome: '__loja_fechada', ordem: 9999 }) });
-    LOJA = !LOJA;
+    const agora = Date.now(), sch = estadoHorario(HOR_D, agora), cfg = { ...LOJA_CFG_D };
+    if (LOJA) {   // abrir agora
+      if (LOJA_MARK_D) await api('categorias?nome=eq.__loja_fechada', { method: 'DELETE' });
+      LOJA_MARK_D = false;
+      if (sch === false) { const t1 = proxEstado(HOR_D, agora, true), t2 = t1 && proxEstado(HOR_D, t1, false); cfg.manual = { estado: 'aberta', ate: new Date(t2 || agora + 6 * 3600e3).toISOString() }; }
+      else delete cfg.manual;
+    } else {      // fechar agora
+      if (sch === false) { delete cfg.manual; }   // o horário já mantém fechada: só cancela a abertura manual
+      else {
+        if (!LOJA_MARK_D) await api('categorias', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ nome: '__loja_fechada', ordem: 9999 }) });
+        LOJA_MARK_D = true;
+        const t = sch === true ? proxEstado(HOR_D, agora, false) : null;
+        cfg.manual = { estado: 'fechada', ate: t ? new Date(t).toISOString() : null };
+      }
+    }
+    await cfgSet('loja', cfg); LOJA_CFG_D = cfg;
+    LOJA = lojaFechadaD();
     renderLojaStatus();
     showToast(LOJA ? 'Loja fechada' : 'Loja aberta');
   } catch(e) { showToast('Erro ao alternar loja.'); }
@@ -4925,6 +5150,8 @@ function navigateTo(page) {
   if (page === 'orders') renderOrders();
   if (page === 'menu') renderMenu();
   if (page === 'organize') renderOrganizePage();
+  if (page === 'cdia') renderCdia();
+  if (page === 'cdiacfg') renderCdiaCfg();
   if (page === 'reports') loadReportsFull();
   if (page === 'delete') { selectedToDelete.clear(); renderDeleteScreen(); }
   if (page === 'sitemenu') renderSiteMenuPage();
@@ -4972,6 +5199,73 @@ $('#menuOverlay').onclick = closeSidebar;
 
 $('#chkAutoPrint').onchange = e => { autoPrint = e.target.checked; SV('auto', autoPrint); showToast('Impressão automática: ' + (autoPrint ? 'Ativada' : 'Desativada')); };
 $('#selPaperWidth').onchange = e => { paperWidth = e.target.value; SV('papel', paperWidth); showToast('Largura do papel ajustada'); };
+
+/* ===== C.DIA: cardápio do dia (site_config: cdia) ===== */
+let CDIA = { cards: [{ id: 'c1', nome: 'Segunda a sexta', cats: null }, { id: 'c2', nome: 'Sábado e domingo', cats: null }], ativo: 'c1' };
+let cdiaMode = '', cdiaEdit = null;
+let menuView = 'main';
+function syncSubBtn() { $('#btnGoOrganize').classList.toggle('on', menuView === 'sub'); }
+$('#btnGoOrganize').onclick = () => { menuView = menuView === 'sub' ? 'main' : 'sub'; syncSubBtn(); renderMenu(); window.scrollTo(0, 0); };
+const cdiaAtivo = () => CDIA.cards.find(c => c.id === CDIA.ativo) || CDIA.cards[0];
+function cdiaOculta(c) { const a = cdiaAtivo(); return !!(a && Array.isArray(a.cats)) && lugarDe(c.id) !== 'item' && !a.cats.includes(c.id); }
+function cdiaSub() { const el = $('#menuSubTitle'); if (el) el.textContent = cdiaAtivo().nome; }
+async function cdiaSave() { try { await cfgSet('cdia', CDIA); } catch (e) { showToast('Erro ao salvar: ' + e.message); } }
+async function cdiaLoad() {
+  try { const v = await cfgGet('cdia'); if (v && Array.isArray(v.cards) && v.cards.length) { CDIA = v; if (!CDIA.cards.some(c => c.id === CDIA.ativo)) CDIA.ativo = CDIA.cards[0].id; } } catch (e) {}
+  cdiaSub(); try { renderMenu(); } catch (e) {}
+}
+function renderCdia() {
+  $('#cdiaBtnDel').classList.toggle('on', cdiaMode === 'del');
+  const L = $('#cdiaList'); L.className = 'cdia-list' + (cdiaMode ? ' m-' + cdiaMode : '');
+  L.innerHTML = CDIA.cards.map(c => `<div class="cdia-card ${c.id === CDIA.ativo ? 'sel' : ''}" data-id="${c.id}"><span class="cdia-chk"></span><input class="cdia-nome" value="${esc(c.nome)}" maxlength="40" data-id="${c.id}"><button type="button" class="cdia-cfg" data-cfg="${c.id}">Configurar</button><button type="button" class="cdia-x" data-x="${c.id}">×</button></div>`).join('');
+}
+$('#btnNewPrd').onclick = () => { cdiaLoad(); navigateTo('cdia'); };
+$('#cdiaBtnNew').onclick = async () => {
+  CDIA.cards.push({ id: 'c' + Date.now().toString(36), nome: 'Novo cardápio', cats: null });
+  renderCdia(); await cdiaSave();
+  const ins = document.querySelectorAll('.cdia-nome'); const l = ins[ins.length - 1]; if (l) { l.focus(); l.select(); }
+};
+$('#cdiaBtnDel').onclick = () => { cdiaMode = cdiaMode === 'del' ? '' : 'del'; renderCdia(); };
+$('#cdiaList').addEventListener('click', async e => {
+  const cf = e.target.closest('.cdia-cfg');
+  if (cf) { cdiaEdit = cf.dataset.cfg; navigateTo('cdiacfg'); return; }
+  const x = e.target.closest('.cdia-x');
+  if (x) {
+    if (CDIA.cards.length < 2) { showToast('Precisa ficar pelo menos 1 cardápio'); return; }
+    const c = CDIA.cards.find(k => k.id === x.dataset.x);
+    if (!c || !confirm('Excluir "' + c.nome + '"?')) return;
+    CDIA.cards = CDIA.cards.filter(k => k.id !== c.id);
+    if (CDIA.ativo === c.id) CDIA.ativo = CDIA.cards[0].id;
+    renderCdia(); cdiaSub(); renderMenu(); await cdiaSave(); return;
+  }
+  if (e.target.closest('.cdia-nome')) return;
+  const card = e.target.closest('.cdia-card'); if (!card) return;
+  if (cdiaMode === 'del') return;
+  CDIA.ativo = card.dataset.id; renderCdia(); cdiaSub(); renderMenu(); await cdiaSave(); showToast('Cardápio: ' + cdiaAtivo().nome);
+});
+$('#cdiaList').addEventListener('change', async e => {
+  const i = e.target.closest('.cdia-nome'); if (!i) return;
+  const c = CDIA.cards.find(k => k.id === i.dataset.id); if (!c) return;
+  c.nome = i.value.trim() || 'Sem nome'; i.value = c.nome; cdiaSub(); await cdiaSave();
+});
+async function renderCdiaCfg() {
+  const c = CDIA.cards.find(x => x.id === cdiaEdit); if (!c) { navigateTo('cdia'); return; }
+  if (!CAT.length) await loadMenu();
+  $('#cdiaCfgSub').textContent = c.nome;
+  const cats = CAT.filter(x => lugarDe(x.id) !== 'item');
+  $('#cdiaCfgGrid').innerHTML = cats.map(x => `<button type="button" class="cdia-mini ${(!Array.isArray(c.cats) || c.cats.includes(x.id)) ? 'on' : ''}" data-cid="${x.id}"><span class="cdia-chk"></span><span>${esc(x.nome)}</span></button>`).join('') || '<p class="subtitle">Nenhuma categoria.</p>';
+}
+$('#cdiaCfgGrid').addEventListener('click', async e => {
+  const b = e.target.closest('.cdia-mini'); if (!b) return;
+  const c = CDIA.cards.find(x => x.id === cdiaEdit); if (!c) return;
+  const id = Number(b.dataset.cid);
+  if (!Array.isArray(c.cats)) c.cats = CAT.filter(x => lugarDe(x.id) !== 'item').map(x => x.id);
+  c.cats = c.cats.includes(id) ? c.cats.filter(k => k !== id) : c.cats.concat(id);
+  b.classList.toggle('on', c.cats.includes(id));
+  if (c.id === CDIA.ativo) renderMenu();
+  await cdiaSave();
+});
+cdiaLoad();
 
 initApp();
 </script>
