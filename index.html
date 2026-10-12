@@ -1942,7 +1942,7 @@ function bkMostra() {
   $('#bkLast').textContent = v ? 'Último backup: ' + new Date(v).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ' às') : 'Nenhum backup baixado ainda.';
 }
 async function baixarBackup() {
-  const btn = $('#btnBackup'); btn.disabled = true; btn.textContent = 'Gerando backup…';
+  const btn = $('#btnBackup'); btn.disabled = true; btn.textContent = 'Gerando…';
   try {
     const [sc, cats, prods] = await Promise.all([
       api('site_config?select=key,value'),
@@ -1969,7 +1969,7 @@ async function baixarBackup() {
   } catch (e) {
     showToast('Não foi possível gerar o backup. Tente de novo.');
   } finally {
-    btn.disabled = false; btn.textContent = '↓ Baixar backup das configurações';
+    btn.disabled = false; btn.textContent = '↓ Backup';
   }
 }
 $('#btnBackup').addEventListener('click', baixarBackup);
@@ -1985,19 +1985,23 @@ $('#bkFile').addEventListener('change', async e => {
   const dataTxt = pac.gerado_em ? new Date(pac.gerado_em).toLocaleString('pt-BR') : 'data desconhecida';
   if (!confirm(`Aplicar o backup de ${dataTxt}?\n\nO painel vai ficar igual ao arquivo: ${pac.categorias.length} categorias, ${pac.produtos.length} produtos e as configurações do site. O que não estiver no arquivo será apagado.`)) return;
   const btn = $('#btnUpload'); btn.disabled = true; btn.textContent = 'Aplicando…';
+  let etapa = 'preparando';
+  const passo = async (nome, fn) => { etapa = nome; try { return await fn(); } catch (err) { throw Object.assign(new Error(err.message || String(err)), { etapa: nome }); } };
   try {
     const merge = { Prefer: 'resolution=merge-duplicates,return=minimal' };
-    // 1) configurações do site
-    for (const row of (pac.site_config || [])) {
-      await api('site_config', { method: 'POST', headers: merge, body: JSON.stringify({ key: row.key, value: row.value, updated_at: new Date().toISOString() }) });
-    }
+    // 1) configurações do site (inclui o C.Dia)
+    await passo('configurações do site', async () => {
+      for (const row of (pac.site_config || [])) {
+        await api('site_config', { method: 'POST', headers: merge, body: JSON.stringify({ key: row.key, value: row.value, updated_at: new Date().toISOString() }) });
+      }
+    });
     // 2) categorias e produtos: grava o que está no arquivo e apaga o que não estiver nele
     const cats = pac.categorias, prods = pac.produtos;
-    if (cats.length) await api('categorias', { method: 'POST', headers: merge, body: JSON.stringify(cats) });
-    if (prods.length) await api('produtos', { method: 'POST', headers: merge, body: JSON.stringify(prods) });
+    await passo('gravar categorias', async () => { if (cats.length) await api('categorias', { method: 'POST', headers: merge, body: JSON.stringify(cats) }); });
+    await passo('gravar produtos', async () => { if (prods.length) await api('produtos', { method: 'POST', headers: merge, body: JSON.stringify(prods) }); });
     const idsP = prods.map(p => p.id).filter(x => x != null), idsC = cats.map(c => c.id).filter(x => x != null);
-    if (idsP.length) await api('produtos?id=not.in.(' + idsP.join(',') + ')', { method: 'DELETE' });
-    if (idsC.length) await api('categorias?id=not.in.(' + idsC.join(',') + ')', { method: 'DELETE' });
+    await passo('apagar produtos que saíram', async () => { if (idsP.length) await api('produtos?id=not.in.(' + idsP.join(',') + ')', { method: 'DELETE' }); });
+    await passo('apagar categorias que saíram', async () => { if (idsC.length) await api('categorias?id=not.in.(' + idsC.join(',') + ')', { method: 'DELETE' }); });
     // 3) preferências deste aparelho
     const pr = pac.preferencias || {};
     autoPrint = !!pr.imprimir_automatico; SV('auto', autoPrint); $('#chkAutoPrint').checked = autoPrint;
@@ -2005,7 +2009,9 @@ $('#bkFile').addEventListener('change', async e => {
     showToast('Backup aplicado. Recarregando…');
     setTimeout(() => location.reload(), 900);
   } catch (err) {
-    showToast('Não foi possível aplicar o backup. Nada foi confirmado; tente de novo.');
+    const cod = /^\d{3}$/.test(err.message) ? ' (erro ' + err.message + ')' : '';
+    const dica = etapa.startsWith('apagar') ? ' Provavelmente tem item ligado a pedido antigo.' : '';
+    showToast('Parou em "' + (err.etapa || etapa) + '"' + cod + '.' + dica + ' Algumas partes podem já ter sido gravadas; tente de novo.');
     btn.disabled = false; btn.textContent = '↑ Upload';
   }
 });
