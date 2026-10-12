@@ -2001,9 +2001,29 @@ $('#bkFile').addEventListener('change', async e => {
     });
     // 2) categorias e produtos: grava o que está no arquivo e apaga o que não estiver nele
     const cats = pac.categorias, prods = pac.produtos;
-    await passo('gravar categorias', async () => { if (cats.length) await api('categorias', { method: 'POST', headers: merge, body: JSON.stringify(cats) }); });
-    await passo('gravar produtos', async () => { if (prods.length) await api('produtos', { method: 'POST', headers: merge, body: JSON.stringify(prods) }); });
-    const idsP = prods.map(p => p.id).filter(x => x != null), idsC = cats.map(c => c.id).filter(x => x != null);
+    // ids são gerados pelo banco: atualiza o que já existe (PATCH) e insere o resto sem id, remapeando as referências
+    const mapCat = {}, mapProd = {};
+    let idsC = [], idsP = [];
+    const grava = async (tabela, linhas, mapa, ajusta) => {
+      const existentes = new Set((await api(tabela + '?select=id')).map(x => x.id));
+      const finais = [];
+      for (const l of linhas) {
+        const { id, ...resto } = l;
+        const corpo = ajusta ? ajusta(resto) : resto;
+        if (id != null && existentes.has(id)) {
+          await api(tabela + '?id=eq.' + id, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(corpo) });
+          mapa[id] = id; finais.push(id);
+        } else {
+          const r = await api(tabela, { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(corpo) });
+          const novo = r && r[0] && r[0].id;
+          if (id != null && novo != null) mapa[id] = novo;
+          if (novo != null) finais.push(novo);
+        }
+      }
+      return finais;
+    };
+    await passo('gravar categorias', async () => { idsC = await grava('categorias', cats, mapCat); });
+    await passo('gravar produtos', async () => { idsP = await grava('produtos', prods, mapProd, r => ({ ...r, categoria_id: mapCat[r.categoria_id] ?? r.categoria_id })); });
     await passo('apagar produtos que saíram', async () => { if (idsP.length) await api('produtos?id=not.in.(' + idsP.join(',') + ')', { method: 'DELETE' }); });
     await passo('apagar categorias que saíram', async () => { if (idsC.length) await api('categorias?id=not.in.(' + idsC.join(',') + ')', { method: 'DELETE' }); });
     // 3) preferências deste aparelho
