@@ -1067,7 +1067,12 @@ body.tsite .drag-active{background:#341d0f!important}
 #formMenuGeneric{overflow-x:hidden}
 /* backup */
 .bk-box { margin: 6px 0 12px; display: grid; gap: 8px; }
+.bk-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bk-b { width: 100%; min-height: 42px; height: 42px; padding: 0 12px; }
 .bk-last { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
+.ap-row { display: flex; align-items: center; gap: 10px; justify-content: flex-start; text-align: left; cursor: pointer; margin: 0 0 12px; }
+.ap-row input { margin: 0; flex: none; width: 18px; height: 18px; }
+.ap-row span { font-size: 15px; }
 </style>
 </head>
 <body>
@@ -1487,7 +1492,7 @@ body.tsite .drag-active{background:#341d0f!important}
     <section class="page" id="page-settings">
       <div class="page-heading"><h1>Configurações</h1></div>
       <div class="card" style="max-width:540px">
-        <div class="form-group"><label><input type="checkbox" id="chkAutoPrint"> Imprimir novos pedidos automaticamente</label></div>
+        <label class="ap-row"><input type="checkbox" id="chkAutoPrint"><span>Imprimir novos pedidos automaticamente</span></label>
         <div class="form-group">
           <label>Largura do papel para impressão</label>
           <select id="selPaperWidth">
@@ -1496,10 +1501,14 @@ body.tsite .drag-active{background:#341d0f!important}
           </select>
         </div>
         <div class="bk-box">
-          <button class="btn" id="btnBackup" type="button" style="width:100%">↓ Baixar backup das configurações</button>
+          <div class="bk-btns">
+            <button class="btn bk-b" id="btnBackup" type="button">↓ Backup</button>
+            <button class="btn light bk-b" id="btnUpload" type="button">↑ Upload</button>
+            <input type="file" id="bkFile" accept="application/json,.json" hidden>
+          </div>
           <p class="bk-last" id="bkLast">Nenhum backup baixado ainda.</p>
         </div>
-        <button class="btn light small" id="btnLogout" type="button" style="width:100%;padding:9.5px 12px;margin-top:6px">Sair do Painel</button>
+        <button class="btn light small" id="btnLogout" type="button" style="display:block;margin:14px 0 0 auto;padding:9.5px 14px">Sair do Painel</button>
       </div>
     </section>
   </main>
@@ -1964,6 +1973,42 @@ async function baixarBackup() {
   }
 }
 $('#btnBackup').addEventListener('click', baixarBackup);
+
+/* ===== Upload do backup: aplica o arquivo no painel (site, categorias, produtos e preferências) ===== */
+$('#btnUpload').addEventListener('click', () => $('#bkFile').click());
+$('#bkFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  let pac;
+  try { pac = JSON.parse(await f.text()); } catch (_) { showToast('Arquivo inválido.'); return; }
+  if (!pac || pac.sistema !== 'Rancharia — backup do painel' || !Array.isArray(pac.categorias) || !Array.isArray(pac.produtos)) { showToast('Esse arquivo não é um backup do painel.'); return; }
+  const dataTxt = pac.gerado_em ? new Date(pac.gerado_em).toLocaleString('pt-BR') : 'data desconhecida';
+  if (!confirm(`Aplicar o backup de ${dataTxt}?\n\nO painel vai ficar igual ao arquivo: ${pac.categorias.length} categorias, ${pac.produtos.length} produtos e as configurações do site. O que não estiver no arquivo será apagado.`)) return;
+  const btn = $('#btnUpload'); btn.disabled = true; btn.textContent = 'Aplicando…';
+  try {
+    const merge = { Prefer: 'resolution=merge-duplicates,return=minimal' };
+    // 1) configurações do site
+    for (const row of (pac.site_config || [])) {
+      await api('site_config', { method: 'POST', headers: merge, body: JSON.stringify({ key: row.key, value: row.value, updated_at: new Date().toISOString() }) });
+    }
+    // 2) categorias e produtos: grava o que está no arquivo e apaga o que não estiver nele
+    const cats = pac.categorias, prods = pac.produtos;
+    if (cats.length) await api('categorias', { method: 'POST', headers: merge, body: JSON.stringify(cats) });
+    if (prods.length) await api('produtos', { method: 'POST', headers: merge, body: JSON.stringify(prods) });
+    const idsP = prods.map(p => p.id).filter(x => x != null), idsC = cats.map(c => c.id).filter(x => x != null);
+    if (idsP.length) await api('produtos?id=not.in.(' + idsP.join(',') + ')', { method: 'DELETE' });
+    if (idsC.length) await api('categorias?id=not.in.(' + idsC.join(',') + ')', { method: 'DELETE' });
+    // 3) preferências deste aparelho
+    const pr = pac.preferencias || {};
+    autoPrint = !!pr.imprimir_automatico; SV('auto', autoPrint); $('#chkAutoPrint').checked = autoPrint;
+    if (pr.largura_papel) { paperWidth = pr.largura_papel; SV('papel', paperWidth); $('#selPaperWidth').value = paperWidth; }
+    showToast('Backup aplicado. Recarregando…');
+    setTimeout(() => location.reload(), 900);
+  } catch (err) {
+    showToast('Não foi possível aplicar o backup. Nada foi confirmado; tente de novo.');
+    btn.disabled = false; btn.textContent = '↑ Upload';
+  }
+});
 
 function initApp() {
   bkMostra();
