@@ -353,6 +353,31 @@ body.tsite .metric-box{background:#341d0f;border:1px solid var(--line);color:var
 body.tsite .card{background:linear-gradient(160deg,#402617,#341d0f 55%)}
 .card-title{font-size:16px;font-weight:700;margin:0 0 10px}
 
+.tt-rodape{margin:16px 0 0}
+.tt-rod-card{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1.5px solid #2a1509;border-radius:14px;padding:10px 12px;flex-wrap:wrap}
+.tt-rod-info{min-width:0;flex:1}
+.tt-rod-info span{font-size:13px;color:var(--ink);word-break:break-word}
+.tt-rod-card .tt-lb{margin:0 0 4px}
+.tt-rod-in{width:100%;min-height:40px;border-radius:10px;border:1.5px solid var(--line);padding:8px 10px;font:inherit;background:var(--bg);color:var(--ink)}
+.tt-aviso-btn{height:40px;border-radius:999px;padding:0 14px;display:inline-flex;align-items:center;gap:6px;flex:none;color:#b45309;font-weight:700}
+.tt-aviso-btn span{font-size:14px}
+.tt-aviso-btn.on{background:#f59e0b;color:#fff;border-color:#f59e0b}
+.ord-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.ord-timer{font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;color:#2a1509;background:#fff3c4;border:1.5px solid #2a1509;border-radius:999px;padding:1px 8px;line-height:1.4}
+.ord-timer.warn{background:#ffd6d6;color:#9b1c1c;border-color:#9b1c1c}
+.cli-row{display:grid;grid-template-columns:12px minmax(0,1fr) auto auto;align-items:center;gap:10px;width:100%;box-sizing:border-box;padding:7px 10px;margin-bottom:5px;border-radius:12px;background:var(--surface);border:1.5px solid var(--line);text-align:left;color:var(--ink);font:inherit;cursor:pointer;overflow:hidden}
+.cli-row:disabled{cursor:default}
+.cli-dot{width:12px;height:12px;border-radius:50%}
+.cli-dot.verde{background:#2fb344}.cli-dot.amarelo{background:#f2c94c}.cli-dot.vermelho{background:#e03131}
+.cli-nome{min-width:0;display:flex;flex-direction:column}
+.cli-nome strong{font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli-nome small{font-size:11px;color:var(--muted)}
+.cli-data{font-size:12px;color:var(--muted);white-space:nowrap}
+.cli-quando{font-size:12px;font-weight:700;white-space:nowrap;min-width:78px;text-align:right}
+.ent-rep-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.ent-rep-row strong{flex:1}
+.ent-rep-row span{color:var(--muted);font-size:12px}
+.ent-rep-total{font-weight:700;border-bottom:0}
 /* SELETOR CALENDÁRIO */
 .date-picker-card{
   position:sticky;top:60px;z-index:55;
@@ -1031,8 +1056,8 @@ body.tsite .drag-active{background:#341d0f!important}
 .cdia-card{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;cursor:pointer;color:#171719}
 .cdia-card.sel,.cdia-mini.on{border-color:#2a1509;background:#fff6c2}
 .cdia-chk{width:22px;height:22px;border-radius:7px;border:2px solid #2a1509;flex:none;display:grid;place-items:center}
-.cdia-card.sel .cdia-chk,.cdia-mini.on .cdia-chk{background:#2a1509}
-.cdia-card.sel .cdia-chk::after,.cdia-mini.on .cdia-chk::after{content:'✓';color:#fff;font-size:14px;font-weight:800;line-height:1}
+.cdia-card.sel .cdia-chk,.cdia-mini.on .cdia-chk{background:#2a1509 !important;border-color:#2a1509 !important}
+.cdia-card.sel .cdia-chk::after,.cdia-mini.on .cdia-chk::after{content:'✓';color:#FFD54F;font-size:14px;font-weight:800;line-height:1}
 .cdia-nome{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-weight:700;font-size:16px;color:#171719;padding:4px 0;outline:0}
 .cdia-nome:focus{border-bottom:2px solid var(--yellow)}
 .cdia-go,.cdia-x{display:none}
@@ -1134,6 +1159,7 @@ body.tsite .drag-active{background:#341d0f!important}
       <button class="nav-item" data-page="menu">Cardápio</button>
       <button class="nav-item" data-page="organize">Organizar</button>
       <button class="nav-item" data-page="reports">Relatórios</button>
+      <button class="nav-item" data-page="clientes">Clientes</button>
       <button class="nav-item" data-page="sitemenu">Menu do site</button>
       <button class="nav-item" data-page="entregar">Entregar</button>
       <button class="nav-item" data-page="titulos">Títulos</button>
@@ -1195,6 +1221,11 @@ body.tsite .drag-active{background:#341d0f!important}
       <div class="organize-list" id="organizeCardsList"></div>
     </section>
 
+    <section class="page" id="page-clientes">
+      <div class="page-heading"><h1>Clientes</h1></div>
+      <p class="subtitle" style="margin:0 0 10px">Verde: pediu até 7 dias atrás · Amarelo: 8 a 20 dias · Vermelho: 21 dias ou mais</p>
+      <div id="clientesList"></div>
+    </section>
     <section class="page" id="page-cdia">
       <div class="page-heading" style="margin-bottom:4px"><h1>Cardápio do dia</h1></div>
       <p class="subtitle" style="margin:0 0 8px">Marque qual cardápio aparece hoje no site e no painel.</p>
@@ -1268,6 +1299,11 @@ body.tsite .drag-active{background:#341d0f!important}
             <h2 style="font-size:16px;font-weight:800;letter-spacing:-.3px;margin:0">Ranking dos mais vendidos</h2>
           </div>
           <div id="categoriesAccordionList"></div>
+        </div>
+
+        <div class="rep-sortable-block" data-rep-id="block-entregas">
+          <div class="page-heading" style="margin-bottom:8px"><h2 style="font-size:16px;font-weight:800;letter-spacing:-.3px;margin:0">Taxas de entrega por motoboy</h2></div>
+          <div id="repEntregas" class="card"></div>
         </div>
 
         <div class="rep-sortable-block" data-rep-id="block-metrics">
@@ -1474,6 +1510,7 @@ body.tsite .drag-active{background:#341d0f!important}
         <button type="button" class="tt-tab" data-tt-tab="hero">Hero</button>
       </div>
       <div id="ttBody"></div>
+      <div id="ttRodape" class="tt-rodape"></div>
     </section>
 
     <section class="page" id="page-delete">
@@ -1668,6 +1705,19 @@ let activeMenuFilter = 'todos';
 let currentOrgTab = 'principal';
 let pollInterval = null;
 let audioCtx = null;
+function desbloqueiaAudio() {
+  try {
+    audioCtx = audioCtx || new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch (e) {}
+}
+document.addEventListener('click', e => {
+  if (!navigator.vibrate) return;
+  if (e.target.closest('button, a, [role="button"], .nav-item, input[type="checkbox"], input[type="radio"], select')) {
+    try { navigator.vibrate(12); } catch (err) {}
+  }
+}, true);
+['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, desbloqueiaAudio, { once: true, passive: true }));
 let openCards = {};
 let LOJA = null;
 
@@ -2112,18 +2162,33 @@ $('#btnLogout').onclick = () => {
   closeSidebar();
 };
 
-function beep() {
+function sino(t) {
+  [[1885, 0.5], [2828, 0.28], [3770, 0.14]].forEach(([f, g]) => {
+    const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    gn.gain.setValueAtTime(0.0001, t);
+    gn.gain.exponentialRampToValueAtTime(g, t + 0.004);
+    gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.84);
+    o.connect(gn); gn.connect(audioCtx.destination);
+    o.start(t); o.stop(t + 0.9);
+  });
+}
+function tocaCampainha(n) {
   try {
     audioCtx = audioCtx || new AudioContext();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.frequency.value = 880;
-    gain.gain.value = 0.2;
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.3);
-  } catch(e){}
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const t0 = audioCtx.currentTime + 0.05;
+    for (let i = 0; i < n; i++) sino(t0 + i * 0.35);
+  } catch (e) {}
+}
+let lembreteTimer = null;
+function lembreteNovos() {
+  if (!P.some(p => p.status === 'novo' && !p.teste)) { clearInterval(lembreteTimer); lembreteTimer = null; return; }
+  tocaCampainha(3);
+}
+function beep() {
+  tocaCampainha(2);
+  if (!lembreteTimer) lembreteTimer = setInterval(lembreteNovos, 20000);
 }
 
 function showToast(msg) {
@@ -2146,7 +2211,7 @@ if (logoEl) {
 
     if (logoClickCount === 5) {
       logoClickCount = 0;
-      window.location.href = 'https://rancharia.vercel.app';
+      window.location.href = 'https://rancharia.juaba.workers.dev/';
       return;
     }
 
@@ -2159,6 +2224,27 @@ if (logoEl) {
     }, 400);
   });
 }
+
+/* cronômetro de atendimento (começa ao clicar em Preparar = aceitar) */
+function fmtDur(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60;
+  const p2 = n => String(n).padStart(2, '0');
+  return h ? `${h}:${p2(m)}:${p2(ss)}` : `${p2(m)}:${p2(ss)}`;
+}
+function timerHTML(p) {
+  const ini = +localStorage.getItem('aceite_' + p.id);
+  if (!ini) return '';
+  const fim = p.status === 'entregue' || p.status === 'cancelado';
+  const ms = fim ? (+localStorage.getItem('fim_' + p.id) || Date.now()) - ini : Date.now() - ini;
+  return `<span class="ord-timer ${ms > 15 * 60000 ? 'warn' : ''}" data-ini="${ini}" ${fim ? 'data-fim="1"' : ''}>${fmtDur(ms)}</span>`;
+}
+setInterval(() => {
+  document.querySelectorAll('.ord-timer:not([data-fim])').forEach(el => {
+    const ms = Date.now() - +el.dataset.ini;
+    el.textContent = fmtDur(ms);
+    el.classList.toggle('warn', ms > 15 * 60000);
+  });
+}, 1000);
 
 /* PEDIDOS COM FLUXO COMPLETO DE STATUS */
 const hoje = () => new Date().toLocaleDateString('sv-SE');
@@ -2277,7 +2363,7 @@ function renderOrderCard(p) {
           ${p.impresso_em ? ' · 🖨 impresso' : (isActive ? ' · <span style="color:#d9480f">não impresso</span>' : '')}
         </div>
       </div>
-      <div><span class="badge ${p.status}">${ST[p.status] || p.status}</span></div>
+      <div class="ord-side">${timerHTML(p)}<span class="badge ${p.status}">${ST[p.status] || p.status}</span></div>
     </div>
     ${p.status === 'cancelado' && p.motivo_cancelamento ? `<div class="order-motivo">Motivo: ${esc(p.motivo_cancelamento)}</div>` : ''}
     ${isOpen ? `<div class="order-detail-box">${esc((p.detalhes || '').replace(/\*/g, ''))}</div>` : ''}
@@ -2354,6 +2440,8 @@ async function updateOrderStatus(p, status, motivo) {
   try {
     await ensureSession();
     const extra = (status === 'cancelado' && motivo) ? { motivo_cancelamento: motivo } : null;
+    if (status === 'preparando' && !localStorage.getItem('aceite_' + p.id)) localStorage.setItem('aceite_' + p.id, String(Date.now()));
+    if ((status === 'entregue' || status === 'cancelado') && !localStorage.getItem('fim_' + p.id)) localStorage.setItem('fim_' + p.id, String(Date.now()));
     let res = await patchStatus(p, status, extra);
     if (res.status === 401) { await ensureSession(true); res = await patchStatus(p, status, extra); }
 
@@ -2579,6 +2667,7 @@ function updateFilterDatesAndRerender() {
   renderParetoDonutComponent();
   renderOpsAndMatrixInsideReports();
   renderCategoriesAccordion();
+  renderRepEntregas();
 }
 
 function getFilteredOrders() {
@@ -3736,6 +3825,7 @@ $('#page-sitemenu').addEventListener('click', async e => {
 
 /* ===== Página: Entregar (pedidos de entrega prontos) ===== */
 const MOTO_KEY = 'rancharia_motos_v1';
+let ENT_MAP = {};
 let MOTO = { contatos: [{ nome: 'Motoboy 1', tel: '' }, { nome: 'Motoboy 2', tel: '' }, { nome: 'Motoboy 3', tel: '' }], sel: 0, lojaBairro: 'Centro' };
 try { Object.assign(MOTO, JSON.parse(localStorage.getItem(MOTO_KEY) || '{}')); } catch (e) {}
 let motoEditando = false;
@@ -3825,11 +3915,13 @@ $('#page-entregar').addEventListener('click', async e => {
     if (tel.length <= 11) tel = '55' + tel;
     const bairro = enderecoDe(p).bairro || 'bairro não informado';
     const msg = `${MOTO.lojaBairro} x ${bairro}`;
+    ENT_MAP[p.id] = c.nome || 'Motoboy'; cfgSet('entregas', ENT_MAP).catch(() => {});
     window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
   }
 });
 
 async function carregaMoto() {
+  try { ENT_MAP = (await cfgGet('entregas')) || {}; } catch (e) {}
   try {
     const v = await cfgGet('motoboys');
     if (v) { Object.assign(MOTO, v); localStorage.setItem(MOTO_KEY, JSON.stringify(MOTO)); renderEntregarPage(); }
@@ -4027,6 +4119,7 @@ $('#page-entregar').addEventListener('click', async e => {
 const TT_DEF = { hero: { t: 'Rancharia', s: 'Cardápio', sub: 'Escolha a proteína, monte as guarnições e peça pelo WhatsApp.' }, extras: { t: 'Acompanhamentos e /Bebidas/', sub: 'Escolha as quantidades para adicionar ao seu pedido.' } };
 let TT = { hero: {}, extras: {}, nomes: {}, custom: [] };
 let ttTab = 'titulos', ttAberto = null, ttCriar = false, ttAba = 't';
+let ttAvisoEdit = false, AVISO_D = { texto: '', ativo: false };
 const ttHtml = s => esc(s).replace(/\/([^\/]+)\//g, '<span class="tt-y">/$1/</span>') + '​';
 const ttInp = (id, val, ph, big, attrs) => `<div class="yt ${big ? 'big' : ''}"><div class="yt-b">${ttHtml(val)}</div><textarea id="${id}" rows="1" placeholder="${esc(ph || '')}" data-yt ${attrs || ''}>${esc(val)}</textarea></div>`;
 const AL_SVG = { l: '<path d="M3 5h14M3 10h9M3 15h12"/>', c: '<path d="M3 5h14M6 10h8M4 15h12"/>', r: '<path d="M3 5h14M8 10h9M5 15h12"/>' };
@@ -4037,12 +4130,23 @@ async function renderTitulos() {
   if (!CAT.length) await loadMenu();
   try {
     const v = await cfgGet('titulos') || {};
-    TT = { hero: v.hero || {}, extras: v.extras || {}, nomes: v.nomes || {}, custom: Array.isArray(v.custom) ? v.custom : [] };
+    TT = { hero: v.hero || {}, extras: v.extras || {}, nomes: v.nomes || {}, custom: Array.isArray(v.custom) ? v.custom : [], rodape: typeof v.rodape === 'string' ? v.rodape : '' };
+    AVISO_D = (await cfgGet('aviso')) || AVISO_D;
   } catch (e) {}
   TT.custom.forEach((c, i) => { if (!c.id) c.id = Date.now() + i; });
   desenhaTitulos();
 }
+/* card fixo embaixo: texto do rodapé do site */
+let ttRodEdit = false;
+function ttDesenhaRodape() {
+  const box = $('#ttRodape'); if (!box) return;
+  const txt = TT.rodape || '© 2026 Rancharia · Todos os direitos reservados';
+  box.innerHTML = ttRodEdit
+    ? `<div class="tt-rod-card"><div class="tt-lb">Rodapé do site</div><input id="ttRodTxt" class="tt-rod-in" maxlength="120" value="${esc(txt)}"><div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm-btn" type="button" data-tt-rod-save>Salvar</button><button class="btn light sm-btn" type="button" data-tt-rod>Cancelar</button></div></div>`
+    : `<div class="tt-rod-card"><div class="tt-rod-info"><div class="tt-lb">Rodapé do site</div><span>${esc(txt)}</span></div><button class="btn light sm-btn" type="button" data-tt-rod>Editar</button></div>`;
+}
 function desenhaTitulos() {
+  ttDesenhaRodape();
   document.querySelectorAll('#page-titulos .tt-tab').forEach(b => b.classList.toggle('active', b.dataset.ttTab === ttTab));
   const box = $('#ttBody');
   if (ttTab === 'hero') {
@@ -4058,7 +4162,8 @@ function desenhaTitulos() {
     </div>`;
     return;
   }
-  let html = `<div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn light sm-btn" type="button" data-tt-criar>${ttCriar ? 'Fechar' : '+ Criar Título'}</button><button class="btn light sm-btn" type="button" data-tt-loja>Loja fechada</button></div>`;
+  const avisoCard = () => `<div class="tt-rod-card" style="margin-bottom:10px;flex-direction:column;align-items:stretch;border-radius:0"><div class="tt-lb">Aviso do pós check-out</div><textarea id="ttAvisoTxt" class="tt-rod-in" style="border-radius:0" rows="3" maxlength="300" placeholder="Ex.: Estamos com atraso nas entregas, desculpe">${esc(AVISO_D.texto || '')}</textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm-btn" type="button" data-tt-aviso-btn>${AVISO_D.ativo ? 'Sem aviso' : 'Salvar'}</button><button class="btn light sm-btn" type="button" data-tt-aviso>Fechar</button></div></div>`;
+  let html = `<div style="display:flex;gap:8px;margin-bottom:10px;align-items:center"><button class="btn light sm-btn" type="button" data-tt-criar style="flex:0 1 auto;padding:0 12px">${ttCriar ? 'Fechar' : '+ Criar Título'}</button><button class="btn light sm-btn" type="button" data-tt-loja style="flex:0 1 auto;padding:0 12px">Loja fechada</button><button class="btn light tt-aviso-btn ${AVISO_D.ativo ? 'on' : ''}" type="button" data-tt-aviso title="Aviso do site" aria-label="Aviso do site"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>Aviso</span></button></div>${ttAvisoEdit ? avisoCard() : ''}`;
   if (ttCriar) {
     html += `<div class="card" style="margin-bottom:12px">
       <div class="tt-tabs"><button type="button" class="tt-tab ${ttAba === 't' ? 'active' : ''}" data-tt-aba="t">Título</button><button type="button" class="tt-tab ${ttAba === 's' ? 'active' : ''}" data-tt-aba="s">Substituto</button></div>
@@ -4109,6 +4214,19 @@ $('#page-titulos').addEventListener('keydown', e => { if (e.target.dataset && e.
 $('#page-titulos').addEventListener('click', async e => {
   const g = s => e.target.closest(s);
   let el;
+  if (g('[data-tt-aviso]')) { ttAvisoEdit = !ttAvisoEdit; desenhaTitulos(); return; }
+  if (g('[data-tt-aviso-btn]')) {
+    if (AVISO_D.ativo) AVISO_D = { texto: AVISO_D.texto, ativo: false };
+    else {
+      const txt = (($('#ttAvisoTxt') || {}).value || '').trim();
+      if (!txt) { ttMsg('Escreva o aviso antes de salvar'); return; }
+      AVISO_D = { texto: txt, ativo: true };
+    }
+    try { await cfgSet('aviso', AVISO_D); ttMsg(AVISO_D.ativo ? 'Aviso ativado no pós check-out' : 'Aviso desligado'); } catch (e) { ttMsg('Erro ao salvar: ' + e.message); }
+    ttAvisoEdit = false; desenhaTitulos(); return;
+  }
+  if (g('[data-tt-rod]')) { ttRodEdit = !ttRodEdit; ttDesenhaRodape(); return; }
+  if (g('[data-tt-rod-save]')) { TT.rodape = ($('#ttRodTxt').value || '').trim(); ttRodEdit = false; await ttSalvar('Rodapé salvo'); ttDesenhaRodape(); return; }
   if ((el = g('[data-al]'))) { const grp = el.parentElement; grp.dataset.v = el.dataset.al; grp.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); return; }
   if ((el = g('[data-tt-tab]'))) { ttTab = el.dataset.ttTab; desenhaTitulos(); return; }
   if (g('[data-tt-loja]')) { abrirMsgLoja(); return; }
@@ -5169,23 +5287,70 @@ function buildTicket(p) {
       t.appendChild(document.createElement('hr'));
     } else if (limpa.startsWith('Total:')) {
       add(limpa);
-    } else if (limpa.startsWith('CNPJ:') || limpa.includes('CNPJ:')) {
-      t.appendChild(document.createElement('br'));
-      add(limpa.trim(), 'c');
+    } else if (limpa.includes('CNPJ:')) {
+      // CNPJ não aparece na comanda
     } else {
       add(limpa);
     }
   });
 
-  if (!String(p.detalhes || '').includes('CNPJ:')) {
-    t.appendChild(document.createElement('br'));
-    add('CNPJ: 12.345.678/0001-90', 'c');
-  }
 }
 
 function loadReportsFull() {
   updateFilterDatesAndRerender();
 }
+
+function renderRepEntregas() {
+  const box = $('#repEntregas'); if (!box) return;
+  const grupos = {}; let total = 0;
+  getFilteredOrders().forEach(p => {
+    const m = String(p.detalhes || '').match(/Entrega \([^)]*\): R\$\s*([\d.]+(?:,\d+)?)/);
+    if (!m) return;
+    const v = parseFloat(m[1].replace(/\./g, '').replace(',', '.')) || 0;
+    const nome = ENT_MAP[p.id] || 'Sem motoboy';
+    if (!grupos[nome]) grupos[nome] = { qtd: 0, soma: 0 };
+    grupos[nome].qtd++; grupos[nome].soma += v; total += v;
+  });
+  const nomes = Object.keys(grupos).sort();
+  if (!nomes.length) { box.innerHTML = '<p class="subtitle">Nenhuma taxa de entrega no período.</p>'; return; }
+  box.innerHTML = nomes.map(n => `<div class="ent-rep-row"><strong>${esc(n)}</strong><span>${grupos[n].qtd} entregas</span><b>${R(grupos[n].soma)}</b></div>`).join('')
+    + `<div class="ent-rep-row ent-rep-total"><strong>Total das taxas</strong><span></span><b>${R(total)}</b></div>`;
+}
+
+/* CLIENTES: verde = até 7 dias, amarelo = 8 a 20 dias, vermelho = 21 dias ou mais */
+async function renderClientes() {
+  const box = $('#clientesList'); if (!box) return;
+  box.innerHTML = '<p class="subtitle">Carregando clientes…</p>';
+  let rows = [];
+  try { rows = await baixaTabela('pedidos', 'cliente,status,created_at,detalhes'); }
+  catch (e) { box.innerHTML = '<p class="subtitle">Não consegui carregar os clientes.</p>'; return; }
+  const mapa = {};
+  rows.filter(r => r.status !== 'cancelado' && String(r.cliente || '').trim()).forEach(r => {
+    const nome = String(r.cliente).trim(), k = nome.toLowerCase(), t = new Date(r.created_at).getTime();
+    if (!mapa[k]) mapa[k] = { nome, qtd: 0, ultimo: 0, tel: '' };
+    mapa[k].qtd++;
+    if (t >= mapa[k].ultimo) {
+      mapa[k].ultimo = t;
+      const m = String(r.detalhes || '').match(/WHATSAPP:\*?\s*([+()\d\s-]{8,})/);
+      if (m) mapa[k].tel = m[1].replace(/\D/g, '');
+    }
+  });
+  const lista = Object.values(mapa).sort((a, b) => b.ultimo - a.ultimo);
+  if (!lista.length) { box.innerHTML = '<p class="subtitle">Nenhum cliente ainda.</p>'; return; }
+  const agora = Date.now();
+  box.innerHTML = lista.map(c => {
+    const dias = Math.floor((agora - c.ultimo) / 86400000);
+    const cor = dias <= 7 ? 'verde' : dias <= 20 ? 'amarelo' : 'vermelho';
+    const quando = dias === 0 ? 'hoje' : dias === 1 ? 'ontem' : `há ${dias} dias`;
+    const dt = new Date(c.ultimo).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    const tel = c.tel ? (c.tel.length <= 11 ? '55' + c.tel : c.tel) : '';
+    return `<button type="button" class="cli-row" data-tel="${tel}" ${tel ? '' : 'disabled title="Sem WhatsApp cadastrado"'}><span class="cli-dot ${cor}"></span><span class="cli-nome"><strong>${esc(c.nome)}</strong><small>${c.qtd} ${c.qtd === 1 ? 'pedido' : 'pedidos'}</small></span><span class="cli-data">${dt}</span><span class="cli-quando">${quando}</span></button>`;
+  }).join('');
+}
+$('#clientesList').addEventListener('click', e => {
+  const b = e.target.closest('.cli-row'); if (!b || !b.dataset.tel) return;
+  window.open(`https://wa.me/${b.dataset.tel}`, '_blank', 'noopener');
+});
 
 /* NAVEGAÇÃO ENTRE PÁGINAS MANTENDO SCROLL */
 $('#btnGoOrganize').onclick = () => navigateTo('organize');
@@ -5250,6 +5415,7 @@ function navigateTo(page) {
   if (page === 'orders') renderOrders();
   if (page === 'menu') renderMenu();
   if (page === 'organize') renderOrganizePage();
+  if (page === 'clientes') renderClientes();
   if (page === 'cdia') renderCdia();
   if (page === 'cdiacfg') renderCdiaCfg();
   if (page === 'reports') loadReportsFull();
