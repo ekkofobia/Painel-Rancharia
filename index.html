@@ -1717,6 +1717,27 @@ document.addEventListener('click', e => {
     try { navigator.vibrate(12); } catch (err) {}
   }
 }, true);
+function somLiberado() { return !!(audioCtx && audioCtx.state === 'running'); }
+function criaBotaoSom() {
+  if (document.getElementById('btnAtivarSom')) return;
+  const b = document.createElement('button');
+  b.id = 'btnAtivarSom'; b.type = 'button'; b.hidden = true;
+  b.textContent = '🔔 Ativar som';
+  b.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:9999;padding:12px 18px;border:0;border-radius:999px;background:#E0A93B;color:#1B2A22;font-weight:700;font-size:15px;font-family:system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer';
+  b.onclick = () => {
+    desbloqueiaAudio();
+    setTimeout(() => { tocaCampainha(1); atualizaBotaoSom(); }, 150);
+  };
+  document.body.appendChild(b);
+  atualizaBotaoSom();
+  setInterval(atualizaBotaoSom, 3000);
+}
+function atualizaBotaoSom() {
+  const b = document.getElementById('btnAtivarSom');
+  if (b) b.hidden = !!(dashboardAberto() && somLiberado());
+}
+function dashboardAberto() { return !$('#modalLogin').classList.contains('open'); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', criaBotaoSom); else criaBotaoSom();
 ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, desbloqueiaAudio, { once: true, passive: true }));
 let openCards = {};
 let LOJA = null;
