@@ -2231,11 +2231,23 @@ function fmtDur(ms) {
   const p2 = n => String(n).padStart(2, '0');
   return h ? `${h}:${p2(m)}:${p2(ss)}` : `${p2(m)}:${p2(ss)}`;
 }
+let TEMPOS = {};
+async function carregaTempos() {
+  try { const v = await cfgGet('tempos'); if (v && typeof v === 'object') TEMPOS = v; } catch (e) {}
+}
+async function salvaTempos() {
+  const ids = Object.keys(TEMPOS).map(Number).sort((a, b) => b - a).slice(0, 300);
+  const enxuto = {};
+  ids.forEach(id => enxuto[id] = TEMPOS[id]);
+  TEMPOS = enxuto;
+  try { await cfgSet('tempos', TEMPOS); } catch (e) {}
+}
 function timerHTML(p) {
-  const ini = +localStorage.getItem('aceite_' + p.id);
+  const tp = TEMPOS[p.id] || {};
+  const ini = +tp.ini;
   if (!ini) return '';
   const fim = p.status === 'entregue' || p.status === 'cancelado';
-  const ms = fim ? (+localStorage.getItem('fim_' + p.id) || Date.now()) - ini : Date.now() - ini;
+  const ms = fim ? (+tp.fim || Date.now()) - ini : Date.now() - ini;
   return `<span class="ord-timer ${ms > 15 * 60000 ? 'warn' : ''}" data-ini="${ini}" ${fim ? 'data-fim="1"' : ''}>${fmtDur(ms)}</span>`;
 }
 setInterval(() => {
@@ -2288,6 +2300,7 @@ async function loadOrders(force) {
     lastFull = Date.now();
     const raw = await api('pedidos?select=*&order=created_at.desc&limit=500');
     setLiveStatus(true);
+    await carregaTempos();
     aplicaPedidos(raw);
   } catch(err) {
     if (err.message === '401' || err.message === '403') $('#btnLogout').click();
@@ -2440,8 +2453,8 @@ async function updateOrderStatus(p, status, motivo) {
   try {
     await ensureSession();
     const extra = (status === 'cancelado' && motivo) ? { motivo_cancelamento: motivo } : null;
-    if (status === 'preparando' && !localStorage.getItem('aceite_' + p.id)) localStorage.setItem('aceite_' + p.id, String(Date.now()));
-    if ((status === 'entregue' || status === 'cancelado') && !localStorage.getItem('fim_' + p.id)) localStorage.setItem('fim_' + p.id, String(Date.now()));
+    if (status === 'preparando' && !(TEMPOS[p.id] || {}).ini) { TEMPOS[p.id] = { ...(TEMPOS[p.id] || {}), ini: Date.now() }; salvaTempos(); }
+    if ((status === 'entregue' || status === 'cancelado') && !(TEMPOS[p.id] || {}).fim) { TEMPOS[p.id] = { ...(TEMPOS[p.id] || {}), fim: Date.now() }; salvaTempos(); }
     let res = await patchStatus(p, status, extra);
     if (res.status === 401) { await ensureSession(true); res = await patchStatus(p, status, extra); }
 
